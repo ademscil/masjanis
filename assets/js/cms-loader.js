@@ -273,7 +273,15 @@
               if (href) el.href = href;
               if (text) el.textContent = text;
             } else {
-              if (text) el.textContent = text;
+              // Gunakan innerHTML untuk field yang bisa berisi HTML (subtitle, deskripsi)
+              if (text) {
+                const htmlFields = ['hero_subtitle','cta_subtitle','features_subtitle','testimonials_subtitle'];
+                if (htmlFields.includes(attr)) {
+                  el.innerHTML = text;
+                } else {
+                  el.textContent = text;
+                }
+              }
             }
           });
         };

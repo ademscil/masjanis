@@ -178,7 +178,14 @@ async function saveProduct() {
     return;
   }
 
-  saveBtn.disabled = true;
+  await new Promise(resolve => showConfirm(
+        'Simpan Produk?',
+        'Apakah Anda yakin ingin menyimpan perubahan ini?',
+        resolve,
+        '💾',
+        'Ya, Simpan'
+      ));
+      saveBtn.disabled = true;
   saveBtn.textContent = 'Menyimpan…';
 
   try {

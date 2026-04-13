@@ -144,7 +144,14 @@ async function saveClass() {
     is_active,
   };
 
-  saveBtn.disabled = true;
+  await new Promise(resolve => showConfirm(
+        'Simpan Kelas?',
+        'Apakah Anda yakin ingin menyimpan perubahan ini?',
+        resolve,
+        '💾',
+        'Ya, Simpan'
+      ));
+      saveBtn.disabled = true;
   saveBtn.textContent = 'Menyimpan…';
 
   try {

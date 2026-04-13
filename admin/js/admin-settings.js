@@ -85,7 +85,14 @@ async function saveSettings() {
   successEl.style.display = 'none';
 
   const saveBtn = document.querySelector('#panelSettings .btn-save');
-  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Menyimpan...'; }
+  if (saveBtn) { await new Promise(resolve => showConfirm(
+        'Simpan Pengaturan?',
+        'Apakah Anda yakin ingin menyimpan perubahan ini?',
+        resolve,
+        '💾',
+        'Ya, Simpan'
+      ));
+      saveBtn.disabled = true; saveBtn.textContent = '⏳ Menyimpan...'; }
 
   try {
     // Upload hero image jika ada file baru
@@ -160,6 +167,13 @@ async function saveInfo() {
   const btn    = document.querySelector('#panelInfo .btn-save');
   errEl.textContent = ''; errEl.classList.remove('visible');
   succEl.style.display = 'none';
+
+  await new Promise(resolve => showConfirm(
+    'Simpan Informasi?',
+    'Apakah Anda yakin ingin menyimpan perubahan informasi ini?',
+    resolve, '💾', 'Ya, Simpan'
+  ));
+
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
 
   const vals = {

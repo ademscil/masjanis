@@ -117,7 +117,14 @@ async function saveArticle() {
     return;
   }
 
-  saveBtn.disabled = true;
+  await new Promise(resolve => showConfirm(
+        'Simpan Artikel?',
+        'Apakah Anda yakin ingin menyimpan perubahan ini?',
+        resolve,
+        '💾',
+        'Ya, Simpan'
+      ));
+      saveBtn.disabled = true;
   saveBtn.textContent = 'Menyimpan…';
 
   try {

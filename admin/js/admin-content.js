@@ -52,7 +52,14 @@ async function saveTestimonial() {
   const saveBtn = document.getElementById('testimonialSaveBtn');
   errEl.textContent = ''; errEl.classList.remove('visible');
   if (!name || !content) { errEl.textContent = 'Nama dan isi testimoni wajib diisi.'; errEl.classList.add('visible'); return; }
-  saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
+  await new Promise(resolve => showConfirm(
+        'Simpan Testimoni?',
+        'Apakah Anda yakin ingin menyimpan perubahan ini?',
+        resolve,
+        '💾',
+        'Ya, Simpan'
+      ));
+      saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
   const payload = { name, location: location || null, rating, sort_order: order, content, is_active };
   const { error } = id
     ? await supabase.from('testimonials').update(payload).eq('id', id)
@@ -133,7 +140,14 @@ async function saveFeature() {
   const saveBtn = document.getElementById('featureSaveBtn');
   errEl.textContent = ''; errEl.classList.remove('visible');
   if (!title || !desc) { errEl.textContent = 'Judul dan deskripsi wajib diisi.'; errEl.classList.add('visible'); return; }
-  saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
+  await new Promise(resolve => showConfirm(
+        'Simpan Fitur?',
+        'Apakah Anda yakin ingin menyimpan perubahan ini?',
+        resolve,
+        '💾',
+        'Ya, Simpan'
+      ));
+      saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
   const payload = { icon, title, description: desc, sort_order: order, is_active };
   const { error } = id
     ? await supabase.from('features').update(payload).eq('id', id)

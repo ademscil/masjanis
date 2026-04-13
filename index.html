@@ -274,7 +274,7 @@
           hero.style.backgroundImage = `linear-gradient(135deg,rgba(45,106,79,0.88) 0%,rgba(64,145,108,0.75) 60%,rgba(116,198,157,0.6) 100%),url('${map.hero_image_url}')`;
         }
         if (map.hero_title) { const h1 = hero?.querySelector('h1'); if (h1) h1.innerHTML = map.hero_title; }
-        if (map.hero_subtitle) { const p = hero?.querySelector('p'); if (p) p.textContent = map.hero_subtitle; }
+        if (map.hero_subtitle) { const p = hero?.querySelector('p'); if (p) p.innerHTML = map.hero_subtitle; }
       }
     } catch(e) {}
 
