@@ -3746,7 +3746,7 @@
       // Ambil data dari DB atau pakai default dari select saat ini
       let items = [];
       try {
-        const { data } = await dataClient.from('site_settings').select('value').eq('key', settingKey).single();
+        const { data } = await dataClient.from('site_settings').select('value').eq('key', settingKey).maybeSingle();
         if (data?.value) items = JSON.parse(data.value);
       } catch(e) {}
       if (!items.length) {
