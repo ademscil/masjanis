@@ -118,8 +118,15 @@ function initTopicChips() {
       const tab = document.querySelector(`.filter-tab[data-filter="${filterVal}"]`);
       if (tab) {
         tab.click();
-        tab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Scroll ke section artikel
+        const grid = document.getElementById('articlesGrid');
+        if (grid) {
+          setTimeout(() => grid.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
       }
+      // Visual feedback pada chip yang diklik
+      document.querySelectorAll('.topic-chip').forEach(c => c.style.background = '');
+      chip.style.background = 'rgba(255,255,255,0.3)';
     });
   });
 }

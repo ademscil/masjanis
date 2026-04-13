@@ -746,32 +746,45 @@
         width: 100%;
         height: auto;
         position: relative;
-        flex-direction: row;
-        flex-wrap: wrap;
-        padding: 0.5rem;
+        flex-direction: column;
+        padding: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
       }
 
-      .sidebar-brand { display: none; }
+      .sidebar-brand {
+        display: flex;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
 
       .sidebar-nav {
         display: flex;
-        flex-wrap: wrap;
-        padding: 0;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0.4rem 0.5rem;
         gap: 0.25rem;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
       }
+      .sidebar-nav::-webkit-scrollbar { display: none; }
 
       .sidebar-nav a {
-        padding: 0.5rem 0.75rem;
+        padding: 0.45rem 0.75rem;
         font-size: 0.78rem;
         border-left: none;
         border-radius: var(--radius-sm);
         border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       .sidebar-nav a.active,
       .sidebar-nav a:hover {
         border-left-color: transparent;
         border-bottom-color: #74c69d;
+        background: rgba(255,255,255,0.1);
       }
 
       #dashboardView { flex-direction: column; }
@@ -787,7 +800,7 @@
     }
 
     @media (max-width: 480px) {
-      .sidebar-nav a .nav-icon { display: none; }
+      .sidebar-nav a .nav-icon { font-size: 0.9rem; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
     }
 
@@ -1667,12 +1680,26 @@
         <section id="panelInfo" class="admin-panel" hidden>
           <div class="panel-header">
             <h3>Informasi</h3>
-            <p>Kelola informasi kontak dan media sosial yang tampil di website</p>
+            <p>Kelola informasi kontak, tentang kami, dan media sosial</p>
           </div>
           <div id="infoError" class="form-error" role="alert"></div>
           <div id="infoSuccess" style="display:none;background:#d1fae5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.75rem 1rem;color:#065f46;font-size:0.875rem;margin-bottom:1rem;">✅ Informasi berhasil disimpan!</div>
 
           <div class="crud-form-wrap">
+            <h4>🏢 Tentang Kami</h4>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="infoAboutTitle">Judul Tentang Kami</label>
+                <input type="text" id="infoAboutTitle" placeholder="Warisan Alam Nusantara dalam Setiap Tetes" />
+              </div>
+              <div class="form-field full-width">
+                <label for="infoAboutBody">Deskripsi Tentang Kami</label>
+                <textarea id="infoAboutBody" rows="4" placeholder="Ceritakan tentang MasJanis..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
             <h4>📍 Kontak & Operasional</h4>
             <div class="form-grid">
               <div class="form-field full-width">
@@ -2130,6 +2157,12 @@
 
       document.getElementById('productForm').style.display = 'block';
       document.getElementById('productForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      clearDirty();
+      // Mark dirty saat ada perubahan
+      document.getElementById('productForm').querySelectorAll('input,textarea,select').forEach(el => {
+        el.addEventListener('input', markDirty, { once: false });
+        el.addEventListener('change', markDirty, { once: false });
+      });
       // Init CKEditor
       initEditor('productDesc').then(() => setEditorData('productDesc', product?.description || ''));
     }
@@ -2161,9 +2194,26 @@
       if (urlEl) urlEl.value = '';
     }
 
+    // ===== UNSAVED CHANGES TRACKING =====
+    let _formDirty = false;
+    function markDirty() { _formDirty = true; }
+    function clearDirty() { _formDirty = false; }
+
+    function confirmDiscard(onConfirm) {
+      if (!_formDirty) { onConfirm(); return; }
+      showConfirm(
+        'Buang Perubahan?',
+        'Ada perubahan yang belum disimpan. Yakin ingin menutup form ini?',
+        () => { clearDirty(); onConfirm(); },
+        '⚠️'
+      );
+    }
+
     function hideProductForm() {
-      document.getElementById('productForm').style.display = 'none';
-      document.getElementById('productId').value = '';
+      confirmDiscard(() => {
+        document.getElementById('productForm').style.display = 'none';
+        document.getElementById('productId').value = '';
+      });
     }
 
     async function saveProduct() {
@@ -2237,6 +2287,7 @@
         if (error) throw error;
 
         hideProductForm();
+        clearDirty();
         showToast('Produk berhasil disimpan ✓', 'success');
         await loadProducts();
 
@@ -2399,8 +2450,11 @@
     }
 
     function hideArticleForm() {
-      document.getElementById('articleForm').style.display = 'none';
-      document.getElementById('articleId').value = '';
+      confirmDiscard(() => {
+        document.getElementById('articleForm').style.display = 'none';
+        document.getElementById('articleId').value = '';
+      });
+    }
     }
 
     async function saveArticle() {
@@ -2620,8 +2674,11 @@
     }
 
     function hideClassForm() {
-      document.getElementById('classForm').style.display = 'none';
-      document.getElementById('classId').value = '';
+      confirmDiscard(() => {
+        document.getElementById('classForm').style.display = 'none';
+        document.getElementById('classId').value = '';
+      });
+    }
     }
 
     async function saveClass() {
@@ -3237,6 +3294,8 @@
       const { data } = await dataClient.from('site_settings').select('key,value');
       if (!data) return;
       const map = Object.fromEntries(data.map(s => [s.key, s.value]));
+      document.getElementById('infoAboutTitle').value = map.about_title || '';
+      document.getElementById('infoAboutBody').value  = map.about_body  || '';
       document.getElementById('infoAddress').value   = map.address   || '';
       document.getElementById('infoPhone').value     = map.phone     || '';
       document.getElementById('infoEmail').value     = map.email     || '';
@@ -3256,6 +3315,8 @@
       if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
 
       const vals = {
+        about_title: document.getElementById('infoAboutTitle').value.trim(),
+        about_body:  document.getElementById('infoAboutBody').value.trim(),
         address:   document.getElementById('infoAddress').value.trim(),
         phone:     document.getElementById('infoPhone').value.trim(),
         email:     document.getElementById('infoEmail').value.trim(),
@@ -3267,12 +3328,15 @@
       };
 
       try {
-        for (const [key, value] of Object.entries(vals)) {
-          if (!value) continue;
+        const upserts = Object.entries(vals)
+          .filter(([, v]) => v !== '')
+          .map(([key, value]) => ({ key, value }));
+        if (upserts.length) {
           const { error } = await dataClient.from('site_settings')
-            .upsert({ key, value }, { onConflict: 'key' });
+            .upsert(upserts, { onConflict: 'key' });
           if (error) throw error;
         }
+        showToast('Informasi berhasil disimpan', 'success');
         succEl.style.display = 'block';
         setTimeout(() => { succEl.style.display = 'none'; }, 3000);
       } catch (err) {
