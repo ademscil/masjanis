@@ -128,7 +128,7 @@
         <div class="product-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}${badge}</div>
         <div class="product-body">
           <h3>${esc(p.name)}</h3>
-          <p>${esc(p.description || '')}</p>
+          <p>${p.description || ''}</p>
           <div class="product-footer">
             <div class="product-price">
               ${orig ? `<span class="original">${orig}</span>` : ''}${price}
@@ -176,7 +176,7 @@
         <div class="article-body">
           <span class="badge badge-green">${a.category}</span>
           <h3>${esc(a.title)}</h3>
-          <p>${esc(a.excerpt || '')}</p>
+          <p>${a.excerpt || ''}</p>
           <div class="article-meta">${time}${date}</div>
           <span class="btn btn-outline btn-sm" style="margin-top:auto;">Baca Selengkapnya</span>
         </div>
@@ -215,7 +215,7 @@
             ${c.duration_hours ? `<span>⏱ ${c.duration_hours} jam</span>` : ''}
             ${c.video_count ? `<span>🎬 ${c.video_count} video</span>` : ''}
           </div>
-          <p class="kelas-desc">${esc(c.description || '')}</p>
+          <p class="kelas-desc">${c.description || ''}</p>
           <div class="kelas-footer">
             <div class="kelas-price">
               ${orig ? `<span class="original">${orig}</span>` : ''}${price}
@@ -245,7 +245,7 @@
       <div class="download-card ${d.category} fade-in" data-category="${d.category}">
         <div class="download-icon">${d.emoji || '📄'}</div>
         <h3>${esc(d.title)}</h3>
-        <p>${esc(d.description || '')}</p>
+        <p>${d.description || ''}</p>
         <div class="download-meta">
           ${d.file_size ? `<span class="size">📦 ${d.file_size}</span>` : '<span></span>'}
           ${btn}
@@ -375,7 +375,7 @@
           return `
             <div class="testimonial-card fade-in visible">
               <div class="stars">${stars}</div>
-              <p class="testimonial-text">${esc(t.content)}</p>
+              <p class="testimonial-text">${t.content}</p>
               <div class="testimonial-author">
                 ${avatar}
                 <div class="author-info">
@@ -402,7 +402,7 @@
           <div class="feature-card fade-in visible">
             <div class="feature-icon">${f.icon}</div>
             <h3>${esc(f.title)}</h3>
-            <p>${esc(f.description)}</p>
+            <p>${f.description}</p>
           </div>`).join('');
       });
   }
