@@ -234,6 +234,25 @@
       renderDownload,
       'initDownload'
     );
+    initDownloadStats();
+  }
+
+  function initDownloadStats() {
+    const db = getClient();
+    if (!db) return;
+    const totalEl    = document.getElementById('dlStatTotal');
+    const kategoriEl = document.getElementById('dlStatKategori');
+    if (!totalEl && !kategoriEl) return;
+
+    db.from('downloads').select('id, category').eq('is_active', true)
+      .then(({ data }) => {
+        if (!data) return;
+        if (totalEl) totalEl.textContent = data.length;
+        if (kategoriEl) {
+          const uniqueCategories = new Set(data.map(d => d.category)).size;
+          kategoriEl.textContent = uniqueCategories;
+        }
+      });
   }
 
   function renderDownload(d) {
