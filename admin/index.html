@@ -2280,6 +2280,12 @@
     }
 
     async function toggleProductActive(id, currentValue) {
+      const label = currentValue ? 'Nonaktifkan' : 'Aktifkan';
+      const msg   = currentValue
+        ? 'Produk ini akan disembunyikan dari halaman publik.'
+        : 'Produk ini akan ditampilkan kembali di halaman publik.';
+      await new Promise(resolve => showConfirm(label + ' Produk', msg, resolve, currentValue ? '🔴' : '🟢'));
+      // confirmed
       const { error } = await supabase
         .from('products')
         .update({ is_active: !currentValue })
@@ -2289,7 +2295,7 @@
         showToast('Gagal mengubah status produk: ' + error.message, 'error');
         return;
       }
-
+      showToast(`Produk berhasil di${currentValue ? 'nonaktifkan' : 'aktifkan'}`, 'success');
       await loadProducts();
     }
 
@@ -2503,6 +2509,12 @@
     }
 
     async function toggleArticleActive(id, currentValue) {
+      const label = currentValue ? 'Nonaktifkan' : 'Aktifkan';
+      const msg   = currentValue
+        ? 'Artikel ini akan disembunyikan dari halaman publik.'
+        : 'Artikel ini akan ditampilkan kembali di halaman publik.';
+      await new Promise(resolve => showConfirm(label + ' Artikel', msg, resolve, currentValue ? '🔴' : '🟢'));
+      // confirmed
       const { error } = await supabase
         .from('articles')
         .update({ is_active: !currentValue })
@@ -2512,11 +2524,9 @@
         showToast('Gagal mengubah status artikel: ' + error.message, 'error');
         return;
       }
-
+      showToast(`Artikel berhasil di${currentValue ? 'nonaktifkan' : 'aktifkan'}`, 'success');
       await loadArticles();
     }
-
-    // ===== CLASSES CRUD =====
 
     async function loadClasses() {
       const container = document.getElementById('classesList');
@@ -2716,6 +2726,12 @@
     }
 
     async function toggleClassActive(id, currentValue) {
+      const label = currentValue ? 'Nonaktifkan' : 'Aktifkan';
+      const msg   = currentValue
+        ? 'Kelas ini akan disembunyikan dari halaman publik.'
+        : 'Kelas ini akan ditampilkan kembali di halaman publik.';
+      await new Promise(resolve => showConfirm(label + ' Kelas', msg, resolve, currentValue ? '🔴' : '🟢'));
+      // confirmed
       const { error } = await supabase
         .from('classes')
         .update({ is_active: !currentValue })
@@ -2725,11 +2741,9 @@
         showToast('Gagal mengubah status kelas: ' + error.message, 'error');
         return;
       }
-
+      showToast(`Kelas berhasil di${currentValue ? 'nonaktifkan' : 'aktifkan'}`, 'success');
       await loadClasses();
     }
-
-    // ===== DOWNLOADS CRUD =====
 
     // Preview nama file yang dipilih untuk upload
     function previewDownloadFile(input) {
@@ -2949,6 +2963,12 @@
     }
 
     async function toggleDownloadActive(id, currentValue) {
+      const label = currentValue ? 'Nonaktifkan' : 'Aktifkan';
+      const msg   = currentValue
+        ? 'Download ini akan disembunyikan dari halaman publik.'
+        : 'Download ini akan ditampilkan kembali di halaman publik.';
+      await new Promise(resolve => showConfirm(label + ' Download', msg, resolve, currentValue ? '🔴' : '🟢'));
+      // confirmed
       const { error } = await supabase
         .from('downloads')
         .update({ is_active: !currentValue })
@@ -2958,11 +2978,9 @@
         showToast('Gagal mengubah status download: ' + error.message, 'error');
         return;
       }
-
+      showToast(`Download berhasil di${currentValue ? 'nonaktifkan' : 'aktifkan'}`, 'success');
       await loadDownloads();
     }
-
-    // ===== CONTACTS =====
 
     function formatDate(isoStr) {
       if (!isoStr) return '—';
@@ -3340,7 +3358,11 @@
     }
 
     async function toggleTestimonialActive(id, current) {
+      const label = current ? 'Nonaktifkan' : 'Aktifkan';
+      const msg   = current ? 'Testimoni ini akan disembunyikan dari halaman publik.' : 'Testimoni ini akan ditampilkan kembali.';
+      await new Promise(resolve => showConfirm(label + ' Testimoni', msg, resolve, current ? '🔴' : '🟢'));
       await supabase.from('testimonials').update({ is_active: !current }).eq('id', id);
+      showToast(`Testimoni berhasil di${current ? 'nonaktifkan' : 'aktifkan'}`, 'success');
       await loadTestimonials();
     }
 
@@ -3416,7 +3438,11 @@
     }
 
     async function toggleFeatureActive(id, current) {
+      const label = current ? 'Nonaktifkan' : 'Aktifkan';
+      const msg   = current ? 'Fitur ini akan disembunyikan dari halaman publik.' : 'Fitur ini akan ditampilkan kembali.';
+      await new Promise(resolve => showConfirm(label + ' Fitur', msg, resolve, current ? '🔴' : '🟢'));
       await supabase.from('features').update({ is_active: !current }).eq('id', id);
+      showToast(`Fitur berhasil di${current ? 'nonaktifkan' : 'aktifkan'}`, 'success');
       await loadFeatures();
     }
 
@@ -3731,18 +3757,36 @@
     }
 
     // ===== CUSTOM CONFIRM DIALOG =====
-    function showConfirm(title, message, onConfirm, icon = '🗑️') {
+    function showConfirm(title, message, onConfirm, icon = '🗑️', okLabel = null) {
       const overlay = document.getElementById('confirmOverlay');
       document.getElementById('confirmTitle').textContent = title;
       document.getElementById('confirmMessage').textContent = message;
       document.getElementById('confirmIcon').textContent = icon;
+
+      // Label tombol OK dinamis berdasarkan icon/aksi
+      const okBtn = document.getElementById('confirmOkBtn');
+      if (okLabel) {
+        okBtn.textContent = okLabel;
+      } else if (icon === '🔴') {
+        okBtn.textContent = 'Ya, Nonaktifkan';
+        okBtn.style.background = '#b45309';
+      } else if (icon === '🟢') {
+        okBtn.textContent = 'Ya, Aktifkan';
+        okBtn.style.background = '#2d6a4f';
+      } else {
+        okBtn.textContent = 'Ya, Hapus';
+        okBtn.style.background = '#be123c';
+      }
+
       overlay.classList.add('open');
 
-      const okBtn     = document.getElementById('confirmOkBtn');
       const cancelBtn = document.getElementById('confirmCancelBtn');
-
-      const close = () => overlay.classList.remove('open');
+      const close = () => {
+        overlay.classList.remove('open');
+        okBtn.style.background = '';
+      };
       const newOk = okBtn.cloneNode(true);
+      newOk.style.background = okBtn.style.background;
       okBtn.parentNode.replaceChild(newOk, okBtn);
       newOk.addEventListener('click', () => { close(); onConfirm(); });
       cancelBtn.onclick = close;
