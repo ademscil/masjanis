@@ -1,4 +1,4 @@
-# Tasks – HerbalNusa Website
+# Tasks – MasJanis Website
 
 ## Status Legend
 - ✅ Done
@@ -65,10 +65,10 @@
 |---|---|---|---|
 | 5.1 | Pasang link pembayaran di Shop | Buka `shop.html`, cari `<!-- GANTI URL INI DENGAN LINK PEMBAYARAN ANDA -->` di setiap modal, ganti `div.payment-iframe-placeholder` dengan `<iframe src="URL_ANDA">` | ⏳ |
 | 5.2 | Pasang Google Maps di Kontak | Buka `kontak.html`, cari `<!-- GANTI DENGAN EMBED GOOGLE MAPS -->`, ganti `div.map-wrap` dengan `<iframe src="EMBED_URL_MAPS">` | ⏳ |
-| 5.3 | Update nama brand | Ganti semua "HerbalNusa" di semua file HTML | ⏳ |
-| 5.4 | Update nomor telepon & email | Cari `+62 812-3456-7890` dan `info@herbalnusa.id` di semua file | ⏳ |
+| 5.3 | Update nama brand | Ganti semua "MasJanis" di semua file HTML | ⏳ |
+| 5.4 | Update nomor telepon & email | Cari `+62 812-3456-7890` dan `info@masjanis.id` di semua file | ⏳ |
 | 5.5 | Update alamat | Cari `Jl. Raya Herbal No. 88` di `kontak.html` | ⏳ |
-| 5.6 | Update URL sitemap & canonical | Ganti `herbalnusa.netlify.app` dengan domain aktual di `sitemap.xml`, `robots.txt`, dan meta tag di `index.html` | ⏳ |
+| 5.6 | Update URL sitemap & canonical | Ganti `masjanis.netlify.app` dengan domain aktual di `sitemap.xml`, `robots.txt`, dan meta tag di `index.html` | ⏳ |
 | 5.7 | Tambah link social media | Ganti `div.social-link` dengan `<a href="URL_SOSMED">` di footer dan kontak | ⏳ |
 | 5.8 | Tambah file download nyata | Ganti `href="#"` pada tombol unduh di `download.html` dengan URL file aktual | ⏳ |
 | 5.9 | Tambah link daftar kelas | Ganti `href="#"` pada tombol "Daftar Sekarang" di `kelas.html` dengan URL platform kelas | ⏳ |

@@ -1,4 +1,4 @@
-# Requirements – HerbalNusa Website
+# Requirements – MasJanis Website
 
 ## Overview
 Website penjualan obat herbal Indonesia berbasis static HTML/CSS/JS, siap deploy ke Netlify (gratis). Terinspirasi dari meandqi.com namun fokus pada produk herbal nusantara.

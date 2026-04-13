@@ -1,4 +1,4 @@
-# Design – HerbalNusa Website
+# Design – MasJanis Website
 
 ## Stack
 - **HTML5** — semantic markup, multi-page (MPA)

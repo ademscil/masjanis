@@ -1,8 +1,8 @@
-# Design Document — herbalnusa-cms
+# Design Document — masjanis-cms
 
 ## Overview
 
-Fitur ini mengubah website HerbalNusa dari static HTML menjadi CMS-driven website dengan backend Supabase. Stack tetap vanilla HTML/CSS/JS + Supabase JS SDK via CDN — tidak ada build step, tidak ada framework.
+Fitur ini mengubah website MasJanis dari static HTML menjadi CMS-driven website dengan backend Supabase. Stack tetap vanilla HTML/CSS/JS + Supabase JS SDK via CDN — tidak ada build step, tidak ada framework.
 
 Arsitektur terbagi dua lapisan:
 
@@ -638,7 +638,7 @@ Konfigurasi minimum: **100 iterasi per property test**
 Setiap property test harus diberi tag komentar yang mereferensikan property di dokumen desain ini:
 
 ```js
-// Feature: herbalnusa-cms, Property 6: CRUD round-trip — data tersimpan dan terbaca kembali
+// Feature: masjanis-cms, Property 6: CRUD round-trip — data tersimpan dan terbaca kembali
 test('CRUD round-trip untuk products', () => {
   fc.assert(fc.property(
     fc.record({

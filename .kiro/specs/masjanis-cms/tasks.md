@@ -3,7 +3,7 @@
 ## Overview
 
 Website MasJanis — platform penjualan produk herbal dengan CMS berbasis Supabase.
-Rebrand dari HerbalNusa ke MasJanis. Stack: vanilla HTML/CSS/JS + Supabase + Netlify.
+Rebrand dari MasJanis ke MasJanis. Stack: vanilla HTML/CSS/JS + Supabase + Netlify.
 
 **Status: Production-ready & deployed di masjanis.com**
 

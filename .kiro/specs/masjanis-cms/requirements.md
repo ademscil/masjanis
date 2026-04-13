@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Fitur ini menambahkan CMS Admin Panel berbasis Supabase ke website HerbalNusa yang saat ini bersifat static HTML/CSS/JS. Tujuannya adalah memungkinkan admin mengelola konten (produk, artikel, kelas, download, dan pesan kontak) melalui antarmuka web tanpa menyentuh kode HTML, serta mengintegrasikan halaman-halaman publik agar mengambil data secara dinamis dari database Supabase.
+Fitur ini menambahkan CMS Admin Panel berbasis Supabase ke website MasJanis yang saat ini bersifat static HTML/CSS/JS. Tujuannya adalah memungkinkan admin mengelola konten (produk, artikel, kelas, download, dan pesan kontak) melalui antarmuka web tanpa menyentuh kode HTML, serta mengintegrasikan halaman-halaman publik agar mengambil data secara dinamis dari database Supabase.
 
 Stack tetap: vanilla HTML/CSS/JS + Supabase JS SDK via CDN. Deploy: Netlify (frontend) + Supabase (backend/database).
 
@@ -233,7 +233,7 @@ Stack tetap: vanilla HTML/CSS/JS + Supabase JS SDK via CDN. Deploy: Netlify (fro
 
 ### Requirement 15: Integrasi Frontend — index.html
 
-**User Story:** Sebagai pengunjung, saya ingin melihat produk unggulan di beranda, agar saya mendapat gambaran produk terbaik HerbalNusa.
+**User Story:** Sebagai pengunjung, saya ingin melihat produk unggulan di beranda, agar saya mendapat gambaran produk terbaik MasJanis.
 
 #### Acceptance Criteria
 
