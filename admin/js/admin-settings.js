@@ -61,7 +61,10 @@ async function loadSettings() {
 
   if (map.hero_image_url) document.getElementById('settingHeroImage').value = map.hero_image_url;
   if (map.hero_title)     document.getElementById('settingHeroTitle').value = map.hero_title;
-  if (map.hero_subtitle)  document.getElementById('settingHeroSubtitle').value = map.hero_subtitle;
+  if (map.hero_subtitle)  {
+    document.getElementById('settingHeroSubtitle').value = map.hero_subtitle;
+    initEditor('settingHeroSubtitle').then(() => setEditorData('settingHeroSubtitle', map.hero_subtitle));
+  }
 
   PAGES.forEach(page => {
     const val = map[`page_header_${page}`];
@@ -108,7 +111,7 @@ async function saveSettings() {
     const updates = [
       { key: 'hero_image_url', value: document.getElementById('settingHeroImage').value.trim() },
       { key: 'hero_title',     value: document.getElementById('settingHeroTitle').value.trim() },
-      { key: 'hero_subtitle',  value: document.getElementById('settingHeroSubtitle').value.trim() },
+      { key: 'hero_subtitle',  value: getEditorData('settingHeroSubtitle') },
       ...PAGES.map(page => ({
         key: `page_header_${page}`,
         value: document.getElementById(`settingHeader_${page}`)?.value?.trim() || ''
