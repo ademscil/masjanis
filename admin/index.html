@@ -1953,9 +1953,9 @@
     // Placeholder — will be implemented in subsequent tasks
     function loadPanelData(panelId) {
       if (panelId === 'panelDashboard') setTimeout(loadDashboardStats, 50);
-      if (panelId === 'panelProducts')  loadProducts();
+      if (panelId === 'panelProducts')  { loadProducts(); loadCategoriesFromDB(); }
       if (panelId === 'panelArticles')  loadArticles();
-      if (panelId === 'panelClasses')   loadClasses();
+      if (panelId === 'panelClasses')   { loadClasses(); loadCategoriesFromDB(); }
       if (panelId === 'panelDownloads') loadDownloads();
       if (panelId === 'panelContacts')  loadContacts();
       if (panelId === 'panelSettings')     loadSettings();
@@ -3720,86 +3720,178 @@
     }
 
     // ===== CATEGORY / LEVEL MANAGER MODAL =====
-    function openCategoryManager(type) {
+    // ===== CATEGORY / LEVEL MANAGER =====
+    // Key di site_settings: 'product_categories' dan 'class_levels' (JSON array)
+    const CAT_DEFAULTS = {
+      product: [
+        { value: 'suplemen', label: 'Suplemen' },
+        { value: 'minuman',  label: 'Minuman'  },
+        { value: 'perawatan',label: 'Perawatan'},
+        { value: 'paket',    label: 'Paket'    },
+      ],
+      class: [
+        { value: 'pemula',   label: 'Pemula'   },
+        { value: 'menengah', label: 'Menengah' },
+        { value: 'lanjutan', label: 'Lanjutan' },
+      ],
+    };
+
+    async function openCategoryManager(type) {
       const isProduct = type === 'product';
       const selectId  = isProduct ? 'productCategory' : 'classLevel';
+      const settingKey= isProduct ? 'product_categories' : 'class_levels';
       const title     = isProduct ? 'Kelola Kategori Produk' : 'Kelola Level Kelas';
-      const select    = document.getElementById(selectId);
-      const options   = Array.from(select.options).map(o => ({ value: o.value, label: o.text }));
+      const icon      = isProduct ? '🏷️' : '🎓';
 
-      // Build modal HTML
+      // Ambil data dari DB atau pakai default dari select saat ini
+      let items = [];
+      try {
+        const { data } = await dataClient.from('site_settings').select('value').eq('key', settingKey).single();
+        if (data?.value) items = JSON.parse(data.value);
+      } catch(e) {}
+      if (!items.length) {
+        items = Array.from(document.getElementById(selectId).options).map(o => ({ value: o.value, label: o.text }));
+      }
+
+      // Hapus modal lama jika ada
+      document.getElementById('catManagerOverlay')?.remove();
+
       const modal = document.createElement('div');
       modal.id = 'catManagerOverlay';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+      modal.style.cssText = `
+        position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;
+        display:flex;align-items:center;justify-content:center;padding:1rem;`;
+
+      const renderRows = (list) => list.map((item, idx) => `
+        <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid #f0f0f0;" data-idx="${idx}">
+          <span style="width:24px;text-align:center;color:#aaa;font-size:0.8rem;flex-shrink:0;">${idx + 1}</span>
+          <input type="text" value="${item.label}"
+            style="flex:1;padding:0.55rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;outline:none;"
+            onfocus="this.style.borderColor='var(--green-mid)'" onblur="this.style.borderColor='var(--border)'"
+            onchange="catMgrUpdate(${idx}, this.value)" />
+          <button onclick="catMgrDelete(${idx})"
+            style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:#fee2e2;color:#be123c;border:none;border-radius:6px;cursor:pointer;font-size:1rem;flex-shrink:0;"
+            title="Hapus">✕</button>
+        </div>`).join('');
+
       modal.innerHTML = `
-        <div style="background:#fff;border-radius:12px;padding:1.75rem;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
-          <h3 style="margin-bottom:1rem;font-size:1.05rem;color:var(--text-dark);">⚙️ ${title}</h3>
-          <div id="catList" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;max-height:260px;overflow-y:auto;">
-            ${options.map(o => `
-              <div style="display:flex;align-items:center;gap:0.5rem;" data-val="${o.value}">
-                <input type="text" value="${o.label}" data-orig="${o.value}"
-                  style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;"
-                  onchange="updateCatOption('${selectId}','${o.value}',this.value)" />
-                <button onclick="removeCatOption('${selectId}','${o.value}',this.closest('[data-val]'))"
-                  style="padding:0.4rem 0.6rem;background:#fee2e2;color:#be123c;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">✕</button>
-              </div>`).join('')}
-          </div>
-          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
-            <input type="text" id="newCatValue" placeholder="value (misal: herbal)" style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;" />
-            <input type="text" id="newCatLabel" placeholder="Label (misal: Herbal)" style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;" />
-            <button onclick="addCatOption('${selectId}')"
-              style="padding:0.5rem 0.75rem;background:var(--green-dark);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.875rem;">＋</button>
-          </div>
-          <p style="font-size:0.78rem;color:var(--text-light);margin-bottom:1rem;">Perubahan hanya berlaku di form ini. Untuk perubahan permanen, update juga di database.</p>
-          <div style="display:flex;justify-content:flex-end;">
+        <div style="background:#fff;border-radius:14px;width:100%;max-width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.2);overflow:hidden;">
+          <div style="padding:1.25rem 1.5rem;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+            <h3 style="font-size:1rem;font-weight:700;color:var(--text-dark);margin:0;">${icon} ${title}</h3>
             <button onclick="document.getElementById('catManagerOverlay').remove()"
-              style="padding:0.5rem 1.25rem;background:var(--green-dark);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Selesai</button>
+              style="width:28px;height:28px;border:none;background:#f5f5f5;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;">✕</button>
+          </div>
+          <div style="padding:1rem 1.5rem;max-height:300px;overflow-y:auto;" id="catMgrList">
+            ${renderRows(items)}
+          </div>
+          <div style="padding:0.75rem 1.5rem;border-top:1px solid #f0f0f0;display:flex;gap:0.6rem;">
+            <input type="text" id="catMgrNewName" placeholder="Tambah nama baru..."
+              style="flex:1;padding:0.55rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;outline:none;"
+              onfocus="this.style.borderColor='var(--green-mid)'" onblur="this.style.borderColor='var(--border)'"
+              onkeydown="if(event.key==='Enter'){catMgrAdd();}" />
+            <button onclick="catMgrAdd()"
+              style="padding:0.55rem 1rem;background:var(--green-dark);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.875rem;font-weight:600;white-space:nowrap;">
+              + Tambah
+            </button>
+          </div>
+          <div style="padding:0.75rem 1.5rem;border-top:1px solid #f0f0f0;display:flex;gap:0.6rem;justify-content:flex-end;">
+            <button onclick="document.getElementById('catManagerOverlay').remove()"
+              style="padding:0.55rem 1.1rem;background:#f5f5f5;color:var(--text-mid);border:none;border-radius:6px;cursor:pointer;font-size:0.875rem;">
+              Batal
+            </button>
+            <button onclick="catMgrSave()"
+              style="padding:0.55rem 1.25rem;background:var(--green-dark);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.875rem;font-weight:600;">
+              💾 Simpan
+            </button>
           </div>
         </div>`;
+
       document.body.appendChild(modal);
       modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+      // State
+      modal._items    = [...items];
+      modal._selectId = selectId;
+      modal._settingKey = settingKey;
+      modal._renderRows = renderRows;
     }
 
-    function updateCatOption(selectId, origVal, newLabel) {
-      const select = document.getElementById(selectId);
-      const opt = Array.from(select.options).find(o => o.value === origVal);
-      if (opt) opt.text = newLabel;
+    function catMgrUpdate(idx, newLabel) {
+      const modal = document.getElementById('catManagerOverlay');
+      if (!modal) return;
+      modal._items[idx].label = newLabel;
     }
 
-    function removeCatOption(selectId, val, rowEl) {
-      const select = document.getElementById(selectId);
-      const opt = Array.from(select.options).find(o => o.value === val);
-      if (opt) select.removeChild(opt);
-      if (rowEl) rowEl.remove();
+    function catMgrDelete(idx) {
+      const modal = document.getElementById('catManagerOverlay');
+      if (!modal) return;
+      modal._items.splice(idx, 1);
+      document.getElementById('catMgrList').innerHTML = modal._renderRows(modal._items);
     }
 
-    function addCatOption(selectId) {
-      const valInput   = document.getElementById('newCatValue');
-      const labelInput = document.getElementById('newCatLabel');
-      const val   = valInput.value.trim().toLowerCase().replace(/\s+/g, '-');
-      const label = labelInput.value.trim();
-      if (!val || !label) { showToast('Isi value dan label terlebih dahulu', 'warning'); return; }
-      const select = document.getElementById(selectId);
-      if (Array.from(select.options).find(o => o.value === val)) {
-        showToast('Value sudah ada', 'warning'); return;
+    function catMgrAdd() {
+      const modal = document.getElementById('catManagerOverlay');
+      const input = document.getElementById('catMgrNewName');
+      if (!modal || !input) return;
+      const label = input.value.trim();
+      if (!label) { showToast('Masukkan nama terlebih dahulu', 'warning'); input.focus(); return; }
+      const value = label.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+      if (modal._items.find(i => i.value === value)) {
+        showToast('Nama ini sudah ada', 'warning'); return;
       }
-      const opt = new Option(label, val);
-      select.appendChild(opt);
-      select.value = val;
-      // Tambah ke list di modal
-      const list = document.getElementById('catList');
-      const row  = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:0.5rem;';
-      row.dataset.val = val;
-      row.innerHTML = `
-        <input type="text" value="${label}" data-orig="${val}"
-          style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;"
-          onchange="updateCatOption('${selectId}','${val}',this.value)" />
-        <button onclick="removeCatOption('${selectId}','${val}',this.closest('[data-val]'))"
-          style="padding:0.4rem 0.6rem;background:#fee2e2;color:#be123c;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">✕</button>`;
-      list.appendChild(row);
-      valInput.value = ''; labelInput.value = '';
-      showToast(`Opsi "${label}" ditambahkan`, 'success');
+      modal._items.push({ value, label });
+      document.getElementById('catMgrList').innerHTML = modal._renderRows(modal._items);
+      input.value = '';
+      input.focus();
+    }
+
+    async function catMgrSave() {
+      const modal = document.getElementById('catManagerOverlay');
+      if (!modal) return;
+      const items     = modal._items;
+      const selectId  = modal._selectId;
+      const settingKey= modal._settingKey;
+
+      if (!items.length) { showToast('Minimal harus ada 1 opsi', 'warning'); return; }
+
+      try {
+        // Simpan ke site_settings
+        const { error } = await dataClient.from('site_settings')
+          .upsert({ key: settingKey, value: JSON.stringify(items) }, { onConflict: 'key' });
+        if (error) throw error;
+
+        // Update dropdown di form
+        const select = document.getElementById(selectId);
+        const currentVal = select.value;
+        select.innerHTML = items.map(i => `<option value="${i.value}">${i.label}</option>`).join('');
+        // Pertahankan nilai yang dipilih jika masih ada
+        if (items.find(i => i.value === currentVal)) select.value = currentVal;
+
+        showToast('Berhasil disimpan ke database ✓', 'success');
+        modal.remove();
+      } catch(e) {
+        showToast('Gagal menyimpan: ' + e.message, 'error');
+      }
+    }
+
+    // Load kategori dari DB saat panel produk/kelas dibuka
+    async function loadCategoriesFromDB() {
+      try {
+        const { data } = await dataClient.from('site_settings')
+          .select('key,value')
+          .in('key', ['product_categories', 'class_levels']);
+        if (!data) return;
+        data.forEach(row => {
+          const items = JSON.parse(row.value || '[]');
+          if (!items.length) return;
+          const selectId = row.key === 'product_categories' ? 'productCategory' : 'classLevel';
+          const select = document.getElementById(selectId);
+          if (!select) return;
+          const current = select.value;
+          select.innerHTML = items.map(i => `<option value="${i.value}">${i.label}</option>`).join('');
+          if (items.find(i => i.value === current)) select.value = current;
+        });
+      } catch(e) { /* silent */ }
     }
 
     // Init Quill untuk form Download
