@@ -30,7 +30,6 @@
 .download-card.ebook::before { background: linear-gradient(90deg, var(--green-dark), var(--green-light)); }
 .download-card.panduan::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
 .download-card.infografis::before { background: linear-gradient(90deg, #6ea8fe, #0d6efd); }
-.download-card.video::before { background: linear-gradient(90deg, #f1aeb5, #dc3545); }
 
 .download-card:hover {
   transform: translateY(-5px);
@@ -50,7 +49,6 @@
 .download-card.ebook .download-icon { background: var(--green-pale); }
 .download-card.panduan .download-icon { background: #fef3cd; }
 .download-card.infografis .download-icon { background: #cfe2ff; }
-.download-card.video .download-icon { background: #f8d7da; }
 
 .download-card h3 {
   font-size: 1rem;
@@ -120,15 +118,6 @@
 }
 .download-card.infografis .btn-download:hover {
   background: #0d6efd;
-  color: var(--white);
-}
-
-.download-card.video .btn-download {
-  background: #f8d7da;
-  color: #842029;
-}
-.download-card.video .btn-download:hover {
-  background: #dc3545;
   color: var(--white);
 }
 
