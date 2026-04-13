@@ -1,0 +1,188 @@
+/* ===== DOWNLOAD PAGE ===== */
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.75rem;
+}
+
+.download-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.75rem 1.5rem;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.download-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.download-card.ebook::before { background: linear-gradient(90deg, var(--green-dark), var(--green-light)); }
+.download-card.panduan::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.download-card.infografis::before { background: linear-gradient(90deg, #6ea8fe, #0d6efd); }
+.download-card.video::before { background: linear-gradient(90deg, #f1aeb5, #dc3545); }
+
+.download-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.download-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.download-card.ebook .download-icon { background: var(--green-pale); }
+.download-card.panduan .download-icon { background: #fef3cd; }
+.download-card.infografis .download-icon { background: #cfe2ff; }
+.download-card.video .download-icon { background: #f8d7da; }
+
+.download-card h3 {
+  font-size: 1rem;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+.download-card p {
+  color: var(--text-mid);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.download-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.download-meta .size {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+}
+
+.download-card.ebook .btn-download {
+  background: var(--green-pale);
+  color: var(--green-dark);
+}
+.download-card.ebook .btn-download:hover {
+  background: var(--green-dark);
+  color: var(--white);
+}
+
+.download-card.panduan .btn-download {
+  background: #fef3cd;
+  color: #92400e;
+}
+.download-card.panduan .btn-download:hover {
+  background: var(--gold);
+  color: var(--white);
+}
+
+.download-card.infografis .btn-download {
+  background: #cfe2ff;
+  color: #084298;
+}
+.download-card.infografis .btn-download:hover {
+  background: #0d6efd;
+  color: var(--white);
+}
+
+.download-card.video .btn-download {
+  background: #f8d7da;
+  color: #842029;
+}
+.download-card.video .btn-download:hover {
+  background: #dc3545;
+  color: var(--white);
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stat-card .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  display: block;
+}
+
+.stat-card span:last-child {
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+
+@media (max-width: 1200px) {
+  .download-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .download-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .download-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+@media (max-width: 480px) {
+  .newsletter-form { flex-direction: column; }
+  .newsletter-form input { width: 100%; }
+  .newsletter-form .btn { width: 100%; justify-content: center; }
+}

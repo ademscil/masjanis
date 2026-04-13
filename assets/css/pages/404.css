@@ -1,0 +1,17 @@
+/* ===== 404 PAGE ===== */
+body { display: flex; flex-direction: column; min-height: 100vh; }
+.not-found {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--green-pale) 0%, var(--white) 100%);
+}
+.not-found .emoji { font-size: 5rem; margin-bottom: 1.5rem; }
+.not-found h1 { font-size: 6rem; color: var(--green-dark); line-height: 1; margin-bottom: 0.5rem; }
+.not-found h2 { font-size: 1.75rem; color: var(--text-dark); margin-bottom: 1rem; }
+.not-found p { color: var(--text-mid); font-size: 1.05rem; max-width: 420px; margin-bottom: 2.5rem; }
+.not-found-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
