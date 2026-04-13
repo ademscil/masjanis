@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-validate:
+    name: Lint & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci --if-present || true
+
+      - name: Validate HTML files
+        run: |
+          echo "=== Checking for orphan CSS in HTML body ==="
+          python3 - <<'EOF'
+          import os, re, sys
+
+          files = [
+            'index.html', '404.html',
+            'pages/shop.html', 'pages/kelas.html', 'pages/teori.html',
+            'pages/download.html', 'pages/kontak.html',
+            'pages/product-detail.html', 'pages/kelas-detail.html', 'pages/teori-detail.html',
+          ]
+
+          errors = []
+          for f in files:
+            if not os.path.exists(f): continue
+            content = open(f, encoding='utf-8').read()
+            head_count = content.count('</head>')
+            body_count = content.count('<body')
+            if head_count > 1 or body_count > 1:
+              errors.append(f"{f}: duplicate head/body ({head_count} </head>, {body_count} <body>)")
+
+          if errors:
+            print("❌ HTML structure errors:")
+            for e in errors: print(f"  {e}")
+            sys.exit(1)
+          else:
+            print("✅ All HTML files have valid structure")
+          EOF
+
+      - name: Check for .html references in navigation
+        run: |
+          echo "=== Checking for .html in nav links ==="
+          python3 - <<'EOF'
+          import os, re, sys
+
+          files = [
+            'index.html', '404.html',
+            'pages/shop.html', 'pages/kelas.html', 'pages/teori.html',
+            'pages/download.html', 'pages/kontak.html',
+            'pages/product-detail.html', 'pages/kelas-detail.html', 'pages/teori-detail.html',
+          ]
+
+          errors = []
+          for f in files:
+            if not os.path.exists(f): continue
+            content = open(f, encoding='utf-8').read()
+            # Cari href ke .html (kecuali CDN dan external)
+            matches = re.findall(r'href="(?!https?://|//)[^"]*\.html[^"]*"', content)
+            if matches:
+              errors.append(f"{f}: {matches[:3]}")
+
+          if errors:
+            print("⚠️  Found .html references in href (should use clean paths):")
+            for e in errors: print(f"  {e}")
+            # Warning only, tidak fail
+          else:
+            print("✅ No .html references in navigation")
+          EOF
+
+      - name: Check asset paths exist
+        run: |
+          echo "=== Checking critical asset files ==="
+          python3 - <<'EOF'
+          import os, sys
+
+          required = [
+            'assets/css/styles.css',
+            'assets/js/main.js',
+            'assets/js/cms-loader.js',
+            'assets/js/supabase-config.js',
+            'assets/js/page-header-loader.js',
+            'assets/img/gambarlogo-removebg-preview.png',
+            'admin/js/admin-config.js',
+            'admin/js/admin-ui.js',
+            'admin/js/admin-editor.js',
+            'admin/js/admin-products.js',
+            '_redirects',
+            'netlify.toml',
+          ]
+
+          missing = [f for f in required if not os.path.exists(f)]
+          if missing:
+            print("❌ Missing required files:")
+            for f in missing: print(f"  {f}")
+            sys.exit(1)
+          else:
+            print(f"✅ All {len(required)} required files present")
+          EOF
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "✅ CI checks passed"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"

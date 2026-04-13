@@ -1,0 +1,49 @@
+name: Preview Deploy (development)
+
+on:
+  push:
+    branches: [development]
+  pull_request:
+    branches: [main]
+
+jobs:
+  preview:
+    name: Preview Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy Preview to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          DEPLOY_OUTPUT=$(netlify deploy \
+            --dir=. \
+            --message="Preview: ${{ github.ref_name }} — ${{ github.sha }}" \
+            2>&1)
+          echo "$DEPLOY_OUTPUT"
+          PREVIEW_URL=$(echo "$DEPLOY_OUTPUT" | grep -o 'https://[a-z0-9-]*\.netlify\.app' | head -1)
+          echo "PREVIEW_URL=$PREVIEW_URL" >> $GITHUB_ENV
+
+      - name: Comment PR with preview URL
+        if: github.event_name == 'pull_request' && env.PREVIEW_URL != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Preview Deploy\n\n**URL:** ${{ env.PREVIEW_URL }}\n**Branch:** \`${{ github.ref_name }}\`\n**Commit:** \`${{ github.sha }}\``
+            })
