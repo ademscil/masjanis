@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Kelas – MasJanis</title>
+  <meta name="description" content="" id="metaDesc" />
+  <meta property="og:title" content="" id="ogTitle" />
+  <meta property="og:description" content="" id="ogDesc" />
+  <meta property="og:image" content="" id="ogImage" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js"></script>
+  <style>
+    .breadcrumb {
+      padding: 1rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--green-mid); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--green-dark); }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 3rem;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+
+    /* Left: main info */
+    .kelas-hero {
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 6rem;
+      position: relative;
+      margin-bottom: 2rem;
+      background: var(--off-white);
+      min-height: 200px;
+    }
+    .kelas-hero img {
+      width: 100%;
+      height: auto;
+      display: block;
+      position: static;
+      object-fit: unset;
+    }
+    .kelas-hero.bg1 { background: linear-gradient(135deg, #d8f3dc, #52b788); }
+    .kelas-hero.bg2 { background: linear-gradient(135deg, #fef3cd, #e9a800); }
+    .kelas-hero.bg3 { background: linear-gradient(135deg, #cfe2ff, #3d8bcd); }
+    .kelas-hero.bg4 { background: linear-gradient(135deg, #f8d7da, #dc3545); }
+    .kelas-hero.bg5 { background: linear-gradient(135deg, #e2d9f3, #7c3aed); }
+    .kelas-hero.bg6 { background: linear-gradient(135deg, #d1ecf1, #0dcaf0); }
+
+    .kelas-main h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      color: var(--text-dark);
+      line-height: 1.3;
+      margin-bottom: 1rem;
+    }
+
+    .kelas-stats-row {
+      display: flex; flex-wrap: wrap; gap: 1.25rem;
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .kelas-stat {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.88rem; color: var(--text-mid);
+    }
+    .kelas-stat strong { color: var(--text-dark); }
+
+    .kelas-desc-full {
+      font-size: 0.95rem; line-height: 1.8;
+      color: var(--text-mid);
+    }
+
+    /* Right: sticky card */
+    .enroll-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-hover);
+      padding: 2rem;
+      position: sticky;
+      top: 90px;
+    }
+
+    .enroll-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .enroll-price-orig {
+      font-size: 1rem; color: var(--text-light);
+      text-decoration: line-through;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 0.5rem;
+    }
+
+    .enroll-discount {
+      display: inline-block;
+      background: #fee2e2; color: #991b1b;
+      font-size: 0.8rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 50px;
+      margin-bottom: 1.25rem;
+    }
+
+    .enroll-includes {
+      list-style: none; padding: 0; margin: 1.25rem 0;
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+
+    .enroll-includes li {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.88rem; color: var(--text-mid);
+    }
+
+    .enroll-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+    .level-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.9rem; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .level-pemula   { background: #d1fae5; color: #065f46; }
+    .level-menengah { background: #fef3cd; color: #92400e; }
+    .level-lanjutan { background: #fee2e2; color: #991b1b; }
+
+    /* Share */
+    .detail-share {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.85rem; color: var(--text-light);
+      margin-top: 1.5rem;
+    }
+    .share-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; transition: var(--transition);
+      text-decoration: none;
+    }
+    .share-btn:hover { background: var(--green-pale); border-color: var(--green-light); }
+
+    /* Related */
+    .related-section { background: var(--off-white); padding: 4rem 2rem; }
+    .related-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+    }
+
+    /* Related cards */
+    .kelas-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .kelas-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .kelas-img {
+      width: 100%;
+      height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #d8f3dc, #52b788);
+    }
+    .kelas-img.bg1 { background: linear-gradient(135deg, #d8f3dc, #52b788); }
+    .kelas-img.bg2 { background: linear-gradient(135deg, #fef3cd, #e9a800); }
+    .kelas-img.bg3 { background: linear-gradient(135deg, #cfe2ff, #3d8bcd); }
+    .kelas-img.bg4 { background: linear-gradient(135deg, #f8d7da, #dc3545); }
+    .kelas-img.bg5 { background: linear-gradient(135deg, #e2d9f3, #7c3aed); }
+    .kelas-img.bg6 { background: linear-gradient(135deg, #d1ecf1, #0dcaf0); }
+    .kelas-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .kelas-body h3 { font-size: 0.95rem; color: var(--text-dark); margin-bottom: 0.75rem; line-height: 1.4; }
+    .kelas-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+    .kelas-price { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--green-dark); }
+
+    /* Skeleton */
+    .detail-skeleton {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 2rem 4rem;
+      display: grid; grid-template-columns: 1fr 420px; gap: 3rem;
+    }
+
+    /* Not found */
+    .not-found {
+      text-align: center; padding: 6rem 2rem;
+      max-width: 480px; margin: 0 auto;
+    }
+    .not-found .icon { font-size: 4rem; margin-bottom: 1rem; }
+    .not-found h2 { font-size: 1.5rem; color: var(--text-dark); margin-bottom: 0.75rem; }
+    .not-found p { color: var(--text-mid); margin-bottom: 2rem; }
+
+    @media (max-width: 900px) {
+      .detail-layout { grid-template-columns: 1fr; }
+      .detail-skeleton { grid-template-columns: 1fr; }
+      .enroll-card { position: static; }
+      .related-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .detail-layout { padding: 0 1rem 3rem; }
+      .breadcrumb { padding: 1rem; }
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-page="kelas">
+
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<div class="breadcrumb" id="breadcrumb">
+  <a href="/">Beranda</a><span>›</span>
+  <a href="/kelas">List Kelas</a><span>›</span>
+  <span id="breadcrumbName">Memuat...</span>
+</div>
+
+<main id="mainContent">
+  <!-- Skeleton -->
+  <div class="detail-skeleton" id="skeletonWrap">
+    <div>
+      <div class="skeleton" style="height:320px;border-radius:var(--radius);margin-bottom:2rem;"></div>
+      <div class="skeleton skeleton-line short" style="width:25%;height:28px;margin-bottom:1rem;"></div>
+      <div class="skeleton skeleton-line" style="height:36px;margin-bottom:0.5rem;"></div>
+      <div class="skeleton skeleton-line medium" style="height:36px;margin-bottom:1.5rem;"></div>
+      <div class="skeleton skeleton-line" style="height:14px;margin-bottom:0.5rem;"></div>
+      <div class="skeleton skeleton-line" style="height:14px;margin-bottom:0.5rem;"></div>
+      <div class="skeleton skeleton-line medium" style="height:14px;"></div>
+    </div>
+    <div class="skeleton" style="height:380px;border-radius:var(--radius);"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="detail-layout" id="detailWrap" style="display:none;">
+    <!-- Left -->
+    <div class="kelas-main">
+      <div class="kelas-hero bg1" id="kelasHero"><span id="kelasEmoji">🎓</span></div>
+
+      <div class="level-badge level-pemula" id="levelBadge">Pemula</div>
+      <h1 id="kelasTitle">—</h1>
+
+      <div class="kelas-stats-row">
+        <div class="kelas-stat" id="statInstructor" style="display:none;">👤 <strong id="instrName">—</strong></div>
+        <div class="kelas-stat" id="statDuration"   style="display:none;">⏱ <strong id="durVal">—</strong> jam</div>
+        <div class="kelas-stat" id="statVideos"     style="display:none;">🎬 <strong id="vidVal">—</strong> video</div>
+      </div>
+
+      <p class="kelas-desc-full" id="kelasDesc">—</p>
+
+      <div class="detail-share" style="margin-top:2rem;">
+        <span>Bagikan:</span>
+        <a class="share-btn" id="shareWa" href="#" target="_blank" rel="noopener">💬</a>
+        <a class="share-btn" id="shareFb" href="#" target="_blank" rel="noopener">👥</a>
+        <button class="share-btn" id="shareCopy">🔗</button>
+      </div>
+    </div>
+
+    <!-- Right: enroll card -->
+    <div class="enroll-card">
+      <div class="enroll-price" id="enrollPrice">—</div>
+      <div class="enroll-price-orig" id="enrollOrig" style="display:none;"></div>
+      <div class="enroll-discount" id="enrollDisc" style="display:none;"></div>
+
+      <button class="btn btn-primary" id="btnDaftar" style="width:100%;justify-content:center;font-size:1rem;padding:0.9rem;">
+        🎓 Daftar Sekarang
+      </button>
+
+      <hr class="enroll-divider" />
+
+      <ul class="enroll-includes">
+        <li>✅ Akses seumur hidup</li>
+        <li>📱 Bisa diakses di semua perangkat</li>
+        <li>🎬 Video pembelajaran berkualitas HD</li>
+        <li>📄 Materi & modul dapat diunduh</li>
+        <li>🏆 Sertifikat kelulusan</li>
+      </ul>
+
+      <hr class="enroll-divider" />
+
+      <a href="/kontak" class="btn btn-outline" style="width:100%;justify-content:center;">
+        💬 Tanya Dulu
+      </a>
+    </div>
+  </div>
+
+  <div class="not-found" id="notFoundWrap" style="display:none;">
+    <div class="icon">🎓</div>
+    <h2>Kelas Tidak Ditemukan</h2>
+    <p>Kelas yang Anda cari tidak tersedia atau sudah tidak aktif.</p>
+    <a href="/kelas" class="btn btn-primary">← Kembali ke List Kelas</a>
+  </div>
+</main>
+
+<!-- Related -->
+<section class="related-section" id="relatedSection" style="display:none;">
+  <div style="max-width:1100px;margin:0 auto 2rem;">
+    <div class="section-header fade-in">
+      <div class="section-tag">Kelas Lainnya</div>
+      <h2>Kelas yang Mungkin Anda Suka</h2>
+    </div>
+  </div>
+  <div class="related-grid" id="relatedGrid"></div>
+</section>
+
+<!-- Payment modal -->
+<div class="modal-overlay payment-modal" id="paymentModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <h3 id="modalProductName">Kelas</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <div style="padding:1.5rem;" id="modalIframeWrap"></div>
+      <div style="padding:1rem 1.5rem;background:var(--green-pale);border-radius:0 0 var(--radius) var(--radius);font-size:0.85rem;color:var(--green-dark);display:flex;align-items:center;gap:0.5rem;">
+        🔒 Pembayaran diproses melalui platform pembayaran aman.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Level Kelas</h4>
+      <ul>
+        <li><a href="/kelas">Pemula</a></li>
+        <li><a href="/kelas">Menengah</a></li>
+        <li><a href="/kelas">Lanjutan</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="/main.js"></script>
+<script src="/page-header-loader.js"></script>
+<script src="/cms-loader.js"></script>
+<script>
+(function () {
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function fmt(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
+  function renderDetail(c) {
+    document.title = c.title + ' – MasJanis';
+    document.getElementById('metaDesc').content = c.description || '';
+    document.getElementById('ogTitle').content  = c.title + ' – MasJanis';
+    document.getElementById('ogDesc').content   = c.description || '';
+    if (c.image_url) document.getElementById('ogImage').content = c.image_url;
+
+    document.getElementById('breadcrumbName').textContent = c.title;
+
+    const hero = document.getElementById('kelasHero');
+    hero.className = 'kelas-hero ' + (c.bg_class || 'bg1');
+    if (c.image_url) {
+      hero.innerHTML = `<img src="${esc(c.image_url)}" alt="${esc(c.title)}" style="width:100%;height:auto;display:block;" />`;
+    } else {
+      document.getElementById('kelasEmoji').textContent = c.emoji || '🎓';
+    }
+
+    const lvlEl = document.getElementById('levelBadge');
+    lvlEl.className = 'level-badge level-' + c.level;
+    lvlEl.textContent = { pemula:'Pemula', menengah:'Menengah', lanjutan:'Lanjutan' }[c.level] || c.level;
+
+    document.getElementById('kelasTitle').textContent = c.title;
+    // Render description sebagai HTML (support tag dari CMS)
+    const descEl = document.getElementById('kelasDesc');
+    if (c.description) {
+      descEl.innerHTML = c.description;
+    } else {
+      descEl.textContent = 'Deskripsi belum tersedia.';
+    }
+
+    if (c.instructor) {
+      document.getElementById('instrName').textContent = c.instructor;
+      document.getElementById('statInstructor').style.display = '';
+    }
+    if (c.duration_hours) {
+      document.getElementById('durVal').textContent = c.duration_hours;
+      document.getElementById('statDuration').style.display = '';
+    }
+    if (c.video_count) {
+      document.getElementById('vidVal').textContent = c.video_count;
+      document.getElementById('statVideos').style.display = '';
+    }
+
+    // Enroll card price
+    document.getElementById('enrollPrice').textContent = c.price ? fmt(c.price) : 'Hubungi Kami';
+    if (c.original_price && c.original_price > c.price) {
+      document.getElementById('enrollOrig').textContent = fmt(c.original_price);
+      document.getElementById('enrollOrig').style.display = '';
+      const disc = Math.round((1 - c.price / c.original_price) * 100);
+      document.getElementById('enrollDisc').textContent = 'Hemat ' + disc + '%';
+      document.getElementById('enrollDisc').style.display = '';
+    }
+
+    // Daftar button
+    const btnDaftar = document.getElementById('btnDaftar');
+    if (c.payment_url) {
+      btnDaftar.addEventListener('click', () => {
+        const modal  = document.getElementById('paymentModal');
+        const nameEl = document.getElementById('modalProductName');
+        const wrap   = document.getElementById('modalIframeWrap');
+        if (nameEl) nameEl.textContent = c.title;
+        if (wrap) wrap.innerHTML = `<iframe src="${c.payment_url}" width="100%" height="380" frameborder="0" style="border:none;border-radius:8px;"></iframe>`;
+        if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      });
+    } else {
+      btnDaftar.addEventListener('click', () => { window.location.href = 'kontak.html'; });
+    }
+
+    // Share
+    const url  = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('Ikuti kelas ' + c.title + ' di MasJanis!');
+    document.getElementById('shareWa').href = 'https://wa.me/?text=' + text + '%20' + url;
+    document.getElementById('shareFb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
+    document.getElementById('shareCopy').addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const btn = document.getElementById('shareCopy');
+        btn.textContent = '✅';
+        if (typeof showToast === 'function') showToast('Link berhasil disalin!', 'success', 2000);
+        setTimeout(() => { btn.textContent = '🔗'; }, 2000);
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = window.location.href;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const btn = document.getElementById('shareCopy');
+        btn.textContent = '✅';
+        if (typeof showToast === 'function') showToast('Link berhasil disalin!', 'success', 2000);
+        setTimeout(() => { btn.textContent = '🔗'; }, 2000);
+      });
+    });
+
+    document.getElementById('skeletonWrap').style.display = 'none';
+    document.getElementById('detailWrap').style.display   = '';
+  }
+
+  function renderRelated(classes, currentId) {
+    const related = classes.filter(c => c.id !== currentId).slice(0, 3);
+    if (!related.length) return;
+    const grid = document.getElementById('relatedGrid');
+    grid.innerHTML = related.map(c => {
+      const bg    = c.bg_class || 'bg1';
+      const price = c.price ? fmt(c.price) : '—';
+      const imgEl = c.image_url
+        ? `<img src="${c.image_url}" alt="${esc(c.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+        : `<span style="font-size:3.5rem;">${c.emoji || '🎓'}</span>`;
+      const lvl = { pemula:'Pemula', menengah:'Menengah', lanjutan:'Lanjutan' }[c.level] || c.level;
+      return `
+        <a href="/kelas-detail/${slugify(c.title)}" class="kelas-card fade-in" style="text-decoration:none;color:inherit;">
+          <div class="kelas-img ${bg}" style="position:relative;overflow:hidden;">
+            ${imgEl}
+            <span class="level-badge level-${c.level}" style="position:absolute;top:1rem;right:1rem;">${lvl}</span>
+          </div>
+          <div class="kelas-body">
+            <h3>${esc(c.title)}</h3>
+            <div class="kelas-footer">
+              <div class="kelas-price">${price}</div>
+              <span class="btn btn-outline btn-sm">Lihat</span>
+            </div>
+          </div>
+        </a>`;
+    }).join('');
+    document.getElementById('relatedSection').style.display = '';
+    grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+  }
+
+  function slugify(text) {
+    return String(text || '').toLowerCase()
+      .replace(/[àáâãäå]/g,'a').replace(/[èéêë]/g,'e')
+      .replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o')
+      .replace(/[ùúûü]/g,'u').replace(/[ñ]/g,'n')
+      .replace(/[^a-z0-9\s-]/g,'').trim()
+      .replace(/[\s]+/g,'-').replace(/-+/g,'-');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const parts    = window.location.pathname.split('/').filter(Boolean);
+    const filtered = parts.filter(p => p !== 'kelas-detail' && p !== 'kelas-detail.html');
+    const rawSlug  = filtered[filtered.length - 1] || null;
+    const slug     = (rawSlug && /^[0-9a-f]{8}-[0-9a-f]{4}/.test(rawSlug)) ? null : rawSlug;
+    const idParam  = new URLSearchParams(window.location.search).get('id');
+
+    if (!slug && !idParam) { window.location.replace('/kelas'); return; }
+    if (typeof isConfigured !== 'function' || !isConfigured()) {
+      document.getElementById('skeletonWrap').style.display = 'none';
+      document.getElementById('notFoundWrap').style.display = '';
+      return;
+    }
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+
+    db.from('classes').select('*').eq('is_active', true)
+      .then(({ data: all, error }) => {
+        if (error || !all) throw new Error('fetch failed');
+        const kelas = slug
+          ? all.find(c => slugify(c.title) === slug)
+          : all.find(c => c.id === idParam);
+        if (!kelas) {
+          document.getElementById('skeletonWrap').style.display = 'none';
+          document.getElementById('notFoundWrap').style.display = '';
+          return;
+        }
+        renderDetail(kelas);
+        const related = all.filter(c => c.id !== kelas.id && c.level === kelas.level).slice(0, 3);
+        if (related.length) renderRelated(related, kelas.id);
+      })
+      .catch(() => {
+        document.getElementById('skeletonWrap').style.display = 'none';
+        document.getElementById('notFoundWrap').style.display = '';
+      });
+  });
+})();
+</script>
+</body>
+</html>

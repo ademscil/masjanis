@@ -1,0 +1,3769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — MasJanis</title>
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --green-dark: #2d6a4f;
+      --green-mid: #40916c;
+      --green-light: #74c69d;
+      --green-pale: #d8f3dc;
+      --white: #ffffff;
+      --off-white: #f8f9fa;
+      --gold: #d4a017;
+      --text-dark: #1a1a2e;
+      --text-mid: #4a4a6a;
+      --text-light: #7a7a9a;
+      --border: #e0e0e0;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.3s ease;
+      --sidebar-width: 220px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      background: var(--off-white);
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ===== LOGIN VIEW ===== */
+    #loginView {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo .logo-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin: 0 auto 0.75rem;
+    }
+
+    .login-logo h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--green-dark);
+    }
+
+    .login-logo p {
+      color: var(--text-light);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      font-size: 0.875rem;
+      color: var(--text-dark);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: var(--transition);
+      outline: none;
+      background: var(--white);
+      color: var(--text-dark);
+    }
+
+    .form-group input:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(64,145,108,0.1);
+    }
+
+    #loginError {
+      background: #fee2e2;
+      color: #842029;
+      border: 1px solid #fca5a5;
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+
+    #loginError.visible { display: block; }
+
+    .btn-login {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--green-dark);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-login:hover { background: var(--green-mid); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ===== DASHBOARD VIEW ===== */
+    #dashboardView {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    #dashboardView[hidden] { display: none !important; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--green-dark);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-brand .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-brand .brand-name span {
+      color: #f0c040;
+    }
+    .sidebar-brand p {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 0.2rem;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      color: rgba(255,255,255,0.75);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      color: var(--white);
+      background: rgba(255,255,255,0.1);
+      border-left-color: #74c69d;
+    }
+
+    .sidebar-nav a .nav-icon {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .admin-main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .admin-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+
+    .admin-header h2 {
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-mid);
+    }
+
+    .admin-user .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--green-pale);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--green-dark);
+      font-weight: 600;
+    }
+
+    #adminName {
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .btn-logout {
+      padding: 0.45rem 1rem;
+      background: transparent;
+      color: #842029;
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-logout:hover {
+      background: #fee2e2;
+    }
+
+    /* CONTENT AREA */
+    .admin-content {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    /* PANELS */
+    .admin-panel {
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .panel-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--green-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .panel-header p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .panel-placeholder {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 2px dashed var(--border);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-light);
+    }
+
+    .panel-placeholder .placeholder-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .panel-placeholder p {
+      font-size: 0.95rem;
+    }
+
+    /* ===== STATS GRID ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      transition: var(--transition);
+      border-left: 4px solid var(--green-light);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+    }
+
+    .stat-icon {
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== CRUD TABLE ===== */
+    .crud-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn-add {
+      padding: 0.55rem 1.25rem;
+      background: var(--green-dark);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-add:hover { background: var(--green-mid); }
+
+    .table-wrap {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .admin-table thead th {
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-weight: 600;
+      padding: 0.85rem 1rem;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--green-light);
+    }
+
+    .admin-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    .admin-table tbody tr:last-child { border-bottom: none; }
+    .admin-table tbody tr:hover { background: #f6fdf8; }
+
+    .admin-table td {
+      padding: 0.8rem 1rem;
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .badge-active {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-active.on  { background: #d1fae5; color: #065f46; }
+    .badge-active.off { background: #fee2e2; color: #842029; }
+
+    .action-btns {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: nowrap;
+    }
+
+    .btn-sm {
+      padding: 0.3rem 0.7rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-edit   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .btn-edit:hover { background: #dbeafe; }
+
+    .btn-delete { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+    .btn-delete:hover { background: #ffe4e6; }
+
+    .btn-toggle-on  { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+    .btn-toggle-on:hover  { background: #dcfce7; }
+
+    .btn-toggle-off { background: #fefce8; color: #a16207; border-color: #fde68a; }
+    .btn-toggle-off:hover { background: #fef9c3; }
+
+    .table-empty {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    /* ===== CRUD FORM ===== */
+    .crud-form-wrap {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      margin-top: 1.5rem;
+      border-top: 3px solid var(--green-mid);
+    }
+
+    .crud-form-wrap h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-grid .full-width { grid-column: 1 / -1; }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-field label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-mid);
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      padding: 0.65rem 0.85rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      background: var(--white);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(64,145,108,0.1);
+    }
+
+    .form-field textarea { resize: vertical; min-height: 80px; }
+
+    /* ===== QUILL EDITOR ===== */
+    .ql-container { font-family: 'Inter', sans-serif; font-size: 0.95rem; }
+    .ql-editor { min-height: 380px; line-height: 1.7; }
+    .ql-editor.small { min-height: 120px; }
+    .ql-toolbar { border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: #fafafa; }
+    .ql-container { border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+    .ql-editor ul, .ql-editor ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    .ql-editor li { margin-bottom: 0.25rem; line-height: 1.6; }
+    /* Font size dropdown */
+    .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item::before { content: attr(data-value) !important; }
+    .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item::before { content: attr(data-value) !important; }
+
+    .form-field.checkbox-field {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .form-field.checkbox-field label {
+      font-size: 0.875rem;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .form-field.checkbox-field input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      cursor: pointer;
+      accent-color: var(--green-mid);
+    }
+
+    .form-error {
+      background: #fee2e2;
+      color: #842029;
+      border: 1px solid #fca5a5;
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .form-error.visible { display: block; }
+
+    .form-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-save {
+      padding: 0.6rem 1.5rem;
+      background: var(--green-dark);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-save:hover { background: var(--green-mid); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-cancel {
+      padding: 0.6rem 1.25rem;
+      background: transparent;
+      color: var(--text-mid);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-cancel:hover { background: var(--off-white); }
+
+    /* ===== TOAST NOTIFICATIONS ===== */
+    #toastContainer {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      pointer-events: none;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      pointer-events: all;
+      animation: toastIn 0.25s ease;
+      max-width: 340px;
+      line-height: 1.4;
+    }
+    .toast.success { background: #2d6a4f; }
+    .toast.error   { background: #be123c; }
+    .toast.info    { background: #1d4ed8; }
+    .toast.warning { background: #b45309; }
+    .toast.out     { animation: toastOut 0.25s ease forwards; }
+    @keyframes toastIn  { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(40px); } }
+
+    /* ===== CUSTOM CONFIRM DIALOG ===== */
+    #confirmOverlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 9998;
+      align-items: center;
+      justify-content: center;
+    }
+    #confirmOverlay.open { display: flex; }
+    #confirmBox {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    #confirmBox .confirm-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    #confirmBox h3 { font-size: 1.1rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+    #confirmBox p  { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 1.5rem; line-height: 1.6; }
+    #confirmBox .confirm-btns { display: flex; gap: 0.75rem; justify-content: center; }
+    #confirmBox .btn-confirm-ok {
+      padding: 0.6rem 1.5rem;
+      background: #be123c; color: #fff;
+      border: none; border-radius: var(--radius-sm);
+      font-size: 0.9rem; font-weight: 600;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      transition: var(--transition);
+    }
+    #confirmBox .btn-confirm-ok:hover { background: #9f1239; }
+    #confirmBox .btn-confirm-cancel {
+      padding: 0.6rem 1.25rem;
+      background: transparent; color: var(--text-mid);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem; font-weight: 500;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      transition: var(--transition);
+    }
+    #confirmBox .btn-confirm-cancel:hover { background: var(--off-white); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      :root { --sidebar-width: 180px; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --sidebar-width: 0px; }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 0.5rem;
+      }
+
+      .sidebar-brand { display: none; }
+
+      .sidebar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        gap: 0.25rem;
+      }
+
+      .sidebar-nav a {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.78rem;
+        border-left: none;
+        border-radius: var(--radius-sm);
+        border-bottom: 2px solid transparent;
+      }
+
+      .sidebar-nav a.active,
+      .sidebar-nav a:hover {
+        border-left-color: transparent;
+        border-bottom-color: #74c69d;
+      }
+
+      #dashboardView { flex-direction: column; }
+      .admin-main { margin-left: 0; }
+      .admin-content { padding: 1rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-header { padding: 0 1rem; }
+      .admin-header h2 { font-size: 0.95rem; }
+      .table-wrap { overflow-x: auto; }
+      .admin-table { min-width: 500px; }
+      .crud-panel-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar-nav a .nav-icon { display: none; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ===== CONTACTS ===== */
+    .contact-unread td { font-weight: 600; }
+
+    .badge-unread {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: #fef9c3;
+      color: #a16207;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-read {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .contact-detail-wrap {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      margin-top: 1.5rem;
+      border-top: 3px solid var(--green-mid);
+    }
+
+    .contact-detail-row {
+      display: flex;
+      gap: 1rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+
+    .contact-detail-row:last-of-type { border-bottom: none; }
+
+    .contact-detail-label {
+      min-width: 90px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-top: 0.1rem;
+    }
+
+    .contact-detail-value {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      flex: 1;
+    }
+
+    .contact-detail-message .contact-detail-value {
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .btn-view {
+      background: #f0fdf4;
+      color: #15803d;
+      border-color: #bbf7d0;
+    }
+    .btn-view:hover { background: #dcfce7; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== LOGIN VIEW ===== -->
+  <div id="loginView">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:90px;width:auto;object-fit:contain;margin-bottom:0.5rem;" />
+        <p>Admin Panel — Masuk untuk melanjutkan</p>
+      </div>
+
+      <div id="loginError" role="alert"></div>
+
+      <form id="loginForm" novalidate onsubmit="return false;">
+        <div class="form-group">
+          <label for="emailInput">Email</label>
+          <input
+            type="email"
+            id="emailInput"
+            name="email"
+            placeholder="admin@masjanis.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="passwordInput">Password</label>
+          <input
+            type="password"
+            id="passwordInput"
+            name="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-login" id="loginBtn">Masuk</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD VIEW ===== -->
+  <div id="dashboardView" hidden>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:52px;width:auto;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:0.25rem;" />
+        <p>Admin Panel</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-link active" data-panel="panelDashboard" onclick="showPanel('panelDashboard')">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a class="nav-link" data-panel="panelProducts" onclick="showPanel('panelProducts')">
+          <span class="nav-icon">🛍️</span> Produk
+        </a>
+        <a class="nav-link" data-panel="panelArticles" onclick="showPanel('panelArticles')">
+          <span class="nav-icon">📝</span> Artikel
+        </a>
+        <a class="nav-link" data-panel="panelClasses" onclick="showPanel('panelClasses')">
+          <span class="nav-icon">🎓</span> Kelas
+        </a>
+        <a class="nav-link" data-panel="panelDownloads" onclick="showPanel('panelDownloads')">
+          <span class="nav-icon">📥</span> Download
+        </a>
+        <a class="nav-link" data-panel="panelContacts" onclick="showPanel('panelContacts')">
+          <span class="nav-icon">✉️</span> Pesan
+        </a>
+        <a class="nav-link" data-panel="panelSettings" onclick="showPanel('panelSettings')">
+          <span class="nav-icon">⚙️</span> Pengaturan
+        </a>
+        <a class="nav-link" data-panel="panelTestimonials" onclick="showPanel('panelTestimonials')">
+          <span class="nav-icon">💬</span> Testimoni
+        </a>
+        <a class="nav-link" data-panel="panelFeatures" onclick="showPanel('panelFeatures')">
+          <span class="nav-icon">⭐</span> Fitur
+        </a>
+        <a class="nav-link" data-panel="panelInfo" onclick="showPanel('panelInfo')">
+          <span class="nav-icon">📋</span> Informasi
+        </a>
+        <a class="nav-link" data-panel="panelUsers" onclick="showPanel('panelUsers')">
+          <span class="nav-icon">👥</span> Pengguna
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="admin-main">
+
+      <!-- Header -->
+      <header class="admin-header">
+        <h2 id="panelTitle">Dashboard</h2>
+        <div class="header-right">
+          <div class="admin-user">
+            <div class="user-avatar">A</div>
+            <span id="adminName">Admin</span>
+          </div>
+          <button class="btn-logout" id="logoutBtn" onclick="handleLogout()">Keluar</button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="admin-content">
+
+        <!-- Panel: Dashboard -->
+        <section id="panelDashboard" class="admin-panel">
+          <div class="panel-header">
+            <h3>Dashboard</h3>
+            <p>Ringkasan konten website MasJanis</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card" id="statProducts">
+              <div class="stat-icon">🛍️</div>
+              <div class="stat-number">—</div>
+              <div class="stat-label">Produk Aktif</div>
+            </div>
+            <div class="stat-card" id="statArticles">
+              <div class="stat-icon">📝</div>
+              <div class="stat-number">—</div>
+              <div class="stat-label">Artikel Aktif</div>
+            </div>
+            <div class="stat-card" id="statClasses">
+              <div class="stat-icon">🎓</div>
+              <div class="stat-number">—</div>
+              <div class="stat-label">Kelas Aktif</div>
+            </div>
+            <div class="stat-card" id="statDownloads">
+              <div class="stat-icon">📥</div>
+              <div class="stat-number">—</div>
+              <div class="stat-label">Download Aktif</div>
+            </div>
+            <div class="stat-card" id="statUnread">
+              <div class="stat-icon">✉️</div>
+              <div class="stat-number">—</div>
+              <div class="stat-label">Pesan Belum Dibaca</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Produk -->
+        <section id="panelProducts" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Produk</h3>
+            <p>Kelola produk yang ditampilkan di toko</p>
+          </div>
+
+          <!-- List -->
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showProductForm()">＋ Tambah Produk</button>
+          </div>
+          <div id="productsList" class="table-wrap">
+            <div class="table-empty">Memuat data produk…</div>
+          </div>
+
+          <!-- Form (hidden by default) -->
+          <div id="productForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="productFormTitle">Tambah Produk</h4>
+            <input type="hidden" id="productId" />
+
+            <div id="productError" class="form-error" role="alert"></div>
+
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="productName">Nama Produk <span style="color:#be123c">*</span></label>
+                <input type="text" id="productName" placeholder="Nama produk" required />
+              </div>
+              <div class="form-field full-width">
+                <label>Foto Produk</label>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                  <button type="button" onclick="switchUploadTab('product','file')" id="tabFile_product" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
+                  <button type="button" onclick="switchUploadTab('product','url')" id="tabUrl_product" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
+                </div>
+                <div id="tabFileArea_product">
+                  <input type="file" id="uploadProductImage" accept="image/*" style="width:100%;" onchange="previewProductImage(this)" />
+                </div>
+                <div id="tabUrlArea_product" style="display:none;">
+                  <input type="url" id="productImageUrl" placeholder="https://..." style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                </div>
+                <img id="previewProductImg" src="" alt="" style="display:none;margin-top:0.5rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;" />
+              </div>
+              <div class="form-field full-width">
+                <label for="productDesc">Deskripsi</label>
+                <div id="productDescEditor" style="min-height:120px;"></div>
+                <textarea id="productDesc" style="display:none;"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="productPrice">Harga (Rp) <span style="color:#be123c">*</span></label>
+                <input type="number" id="productPrice" placeholder="50000" min="0" required />
+              </div>
+              <div class="form-field">
+                <label for="productOriginalPrice">Harga Asli (Rp)</label>
+                <input type="number" id="productOriginalPrice" placeholder="75000" min="0" />
+              </div>
+              <div class="form-field">
+                <label for="productCategory">Kategori <span style="color:#be123c">*</span></label>
+                <select id="productCategory">
+                  <option value="suplemen">Suplemen</option>
+                  <option value="minuman">Minuman</option>
+                  <option value="perawatan">Perawatan</option>
+                  <option value="paket">Paket</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="productEmoji">Emoji</label>
+                <input type="text" id="productEmoji" placeholder="🌿" maxlength="8" />
+              </div>
+              <div class="form-field">
+                <label for="productBadge">Badge Label</label>
+                <input type="text" id="productBadge" placeholder="Terlaris" />
+              </div>
+              <div class="form-field">
+                <label for="productPaymentUrl">URL Pembayaran</label>
+                <input type="url" id="productPaymentUrl" placeholder="https://..." />
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="productActive" checked />
+                <label for="productActive">Aktif (tampilkan di toko)</label>
+              </div>
+
+              <!-- Tab Content -->
+              <div class="form-field full-width" style="margin-top:0.5rem;">
+                <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);">
+                  📋 Konten Tab Halaman Detail
+                </div>
+              </div>
+              <div class="form-field full-width">
+                <label for="productManfaat">Manfaat Utama</label>
+                <div id="productManfaatEditor" style="min-height:120px;"></div>
+                <textarea id="productManfaat" style="display:none;"></textarea>
+              </div>
+              <div class="form-field full-width">
+                <label for="productCaraPakai">Cara Penggunaan</label>
+                <div id="productCaraPakaiEditor" style="min-height:120px;"></div>
+                <textarea id="productCaraPakai" style="display:none;"></textarea>
+              </div>
+              <div class="form-field full-width">
+                <label for="productPeringatan">Peringatan &amp; Keamanan</label>
+                <div id="productPeringatanEditor" style="min-height:100px;"></div>
+                <textarea id="productPeringatan" style="display:none;"></textarea>
+              </div>
+              <div class="form-field full-width">
+                <label for="productSpesifikasi">Spesifikasi Produk</label>
+                <div id="productSpesifikasiEditor" style="min-height:100px;"></div>
+                <textarea id="productSpesifikasi" style="display:none;"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-save" id="productSaveBtn" onclick="saveProduct()">Simpan</button>
+              <button class="btn-cancel" onclick="hideProductForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Artikel -->
+        <section id="panelArticles" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Artikel</h3>
+            <p>Kelola artikel teori herbal</p>
+          </div>
+
+          <!-- List -->
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showArticleForm()">＋ Tambah Artikel</button>
+          </div>
+          <div id="articlesList" class="table-wrap">
+            <div class="table-empty">Memuat data artikel…</div>
+          </div>
+
+          <!-- Form (hidden by default) -->
+          <div id="articleForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="articleFormTitle">Tambah Artikel</h4>
+            <input type="hidden" id="articleId" />
+
+            <div id="articleError" class="form-error" role="alert"></div>
+
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="articleTitle">Judul Artikel <span style="color:#be123c">*</span></label>
+                <input type="text" id="articleTitle" placeholder="Judul artikel" required />
+              </div>
+              <div class="form-field full-width">
+                <label>Gambar Artikel</label>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                  <button type="button" onclick="switchUploadTab('article','file')" id="tabFile_article" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
+                  <button type="button" onclick="switchUploadTab('article','url')" id="tabUrl_article" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
+                </div>
+                <div id="tabFileArea_article">
+                  <input type="file" id="uploadArticleImage" accept="image/*" style="width:100%;" onchange="previewGenericImage(this,'previewArticleImg','articleImageUrl')" />
+                </div>
+                <div id="tabUrlArea_article" style="display:none;">
+                  <input type="url" id="articleImageUrl" placeholder="https://..." style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                </div>
+                <img id="previewArticleImg" src="" alt="" style="display:none;margin-top:0.5rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;" />
+              </div>
+              <div class="form-field full-width">
+                <label for="articleExcerpt">Konten / Excerpt</label>
+                <div id="articleExcerptEditor" style="min-height:120px;"></div>
+                <textarea id="articleExcerpt" style="display:none;"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="articleCategory">Kategori <span style="color:#be123c">*</span></label>
+                <select id="articleCategory">
+                  <option value="tanaman-obat">Tanaman Obat</option>
+                  <option value="ramuan">Ramuan</option>
+                  <option value="fitokimia">Fitokimia</option>
+                  <option value="holistik">Holistik</option>
+                  <option value="jamu">Jamu</option>
+                  <option value="modern">Modern</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="articleReadTime">Waktu Baca (menit)</label>
+                <input type="number" id="articleReadTime" placeholder="5" min="1" />
+              </div>
+              <div class="form-field">
+                <label for="articlePublishedDate">Tanggal Terbit</label>
+                <input type="date" id="articlePublishedDate" />
+              </div>
+              <div class="form-field">
+                <label for="articleEmoji">Emoji</label>
+                <input type="text" id="articleEmoji" placeholder="🌿" maxlength="8" />
+              </div>
+              <div class="form-field">
+                <label for="articleBgClass">Background Class</label>
+                <select id="articleBgClass">
+                  <option value="">— Pilih —</option>
+                  <option value="bg1">bg1</option>
+                  <option value="bg2">bg2</option>
+                  <option value="bg3">bg3</option>
+                  <option value="bg4">bg4</option>
+                  <option value="bg5">bg5</option>
+                  <option value="bg6">bg6</option>
+                </select>
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="articleActive" checked />
+                <label for="articleActive">Aktif (tampilkan di halaman teori)</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-save" id="articleSaveBtn" onclick="saveArticle()">Simpan</button>
+              <button class="btn-cancel" onclick="hideArticleForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Kelas -->
+        <section id="panelClasses" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Kelas</h3>
+            <p>Kelola kelas online herbal</p>
+          </div>
+
+          <!-- List -->
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showClassForm()">＋ Tambah Kelas</button>
+          </div>
+          <div id="classesList" class="table-wrap">
+            <div class="table-empty">Memuat data kelas…</div>
+          </div>
+
+          <!-- Form (hidden by default) -->
+          <div id="classForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="classFormTitle">Tambah Kelas</h4>
+            <input type="hidden" id="classId" />
+
+            <div id="classError" class="form-error" role="alert"></div>
+
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="classTitle">Judul Kelas <span style="color:#be123c">*</span></label>
+                <input type="text" id="classTitle" placeholder="Judul kelas" required />
+              </div>
+              <div class="form-field full-width">
+                <label>Gambar Kelas</label>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                  <button type="button" onclick="switchUploadTab('class','file')" id="tabFile_class" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
+                  <button type="button" onclick="switchUploadTab('class','url')" id="tabUrl_class" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
+                </div>
+                <div id="tabFileArea_class">
+                  <input type="file" id="uploadClassImage" accept="image/*" style="width:100%;" onchange="previewGenericImage(this,'previewClassImg','classImageUrl')" />
+                </div>
+                <div id="tabUrlArea_class" style="display:none;">
+                  <input type="url" id="classImageUrl" placeholder="https://..." style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                </div>
+                <img id="previewClassImg" src="" alt="" style="display:none;margin-top:0.5rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;" />
+              </div>
+              <div class="form-field full-width">
+                <label for="classDesc">Deskripsi</label>
+                <div id="classDescEditor" style="min-height:120px;"></div>
+                <textarea id="classDesc" style="display:none;"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="classInstructor">Instruktur</label>
+                <input type="text" id="classInstructor" placeholder="Nama instruktur" />
+              </div>
+              <div class="form-field">
+                <label for="classDuration">Durasi (jam)</label>
+                <input type="number" id="classDuration" placeholder="10" min="0" />
+              </div>
+              <div class="form-field">
+                <label for="classVideoCount">Jumlah Video</label>
+                <input type="number" id="classVideoCount" placeholder="20" min="0" />
+              </div>
+              <div class="form-field">
+                <label for="classLevel">Level <span style="color:#be123c">*</span></label>
+                <select id="classLevel" required>
+                  <option value="pemula">Pemula</option>
+                  <option value="menengah">Menengah</option>
+                  <option value="lanjutan">Lanjutan</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="classPrice">Harga (Rp) <span style="color:#be123c">*</span></label>
+                <input type="number" id="classPrice" placeholder="299000" min="0" required />
+              </div>
+              <div class="form-field">
+                <label for="classOriginalPrice">Harga Asli (Rp)</label>
+                <input type="number" id="classOriginalPrice" placeholder="499000" min="0" />
+              </div>
+              <div class="form-field">
+                <label for="classEmoji">Emoji</label>
+                <input type="text" id="classEmoji" placeholder="🌿" maxlength="8" />
+              </div>
+              <div class="form-field">
+                <label for="classBgClass">Background Class</label>
+                <select id="classBgClass">
+                  <option value="">— Pilih —</option>
+                  <option value="bg1">bg1</option>
+                  <option value="bg2">bg2</option>
+                  <option value="bg3">bg3</option>
+                  <option value="bg4">bg4</option>
+                  <option value="bg5">bg5</option>
+                  <option value="bg6">bg6</option>
+                </select>
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="classActive" checked />
+                <label for="classActive">Aktif (tampilkan di halaman kelas)</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-save" id="classSaveBtn" onclick="saveClass()">Simpan</button>
+              <button class="btn-cancel" onclick="hideClassForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Download -->
+        <section id="panelDownloads" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Download</h3>
+            <p>Kelola materi yang dapat diunduh</p>
+          </div>
+
+          <!-- List -->
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showDownloadForm()">＋ Tambah Download</button>
+          </div>
+          <div id="downloadsList" class="table-wrap">
+            <div class="table-empty">Memuat data download…</div>
+          </div>
+
+          <!-- Form (hidden by default) -->
+          <div id="downloadForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="downloadFormTitle">Tambah Download</h4>
+            <input type="hidden" id="downloadId" />
+
+            <div id="downloadError" class="form-error" role="alert"></div>
+
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="downloadTitle">Judul <span style="color:#be123c">*</span></label>
+                <input type="text" id="downloadTitle" placeholder="Judul materi download" required />
+              </div>
+              <div class="form-field full-width">
+                <label>Gambar Thumbnail</label>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                  <button type="button" onclick="switchUploadTab('dlimg','file')" id="tabFile_dlimg" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
+                  <button type="button" onclick="switchUploadTab('dlimg','url')" id="tabUrl_dlimg" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
+                </div>
+                <div id="tabFileArea_dlimg">
+                  <input type="file" id="uploadDownloadImage" accept="image/*" style="width:100%;" onchange="previewGenericImage(this,'previewDownloadImg','downloadImageUrl')" />
+                </div>
+                <div id="tabUrlArea_dlimg" style="display:none;">
+                  <input type="url" id="downloadImageUrl" placeholder="https://..." style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                </div>
+                <img id="previewDownloadImg" src="" alt="" style="display:none;margin-top:0.5rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;" />
+              </div>
+              <div class="form-field full-width">
+                <label for="downloadDesc">Deskripsi</label>
+                <textarea id="downloadDesc" placeholder="Deskripsi singkat materi"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="downloadCategory">Kategori <span style="color:#be123c">*</span></label>
+                <select id="downloadCategory" required>
+                  <option value="ebook">Ebook</option>
+                  <option value="panduan">Panduan</option>
+                  <option value="infografis">Infografis</option>
+                  <option value="video">Video</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="downloadFileSize">Ukuran File</label>
+                <input type="text" id="downloadFileSize" placeholder="2.5 MB" />
+              </div>
+              <div class="form-field full-width">
+                <label for="downloadFileUrl">File <span style="color:#be123c">*</span></label>
+                <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:0.4rem;">
+                  <input type="file" id="uploadDownloadFile" accept="*/*" style="flex:1;min-width:200px;" onchange="previewDownloadFile(this)" />
+                  <span style="color:var(--text-light);font-size:0.8rem;">atau URL langsung:</span>
+                </div>
+                <input type="url" id="downloadFileUrl" placeholder="https://..." />
+                <span id="downloadFileStatus" style="font-size:0.78rem;color:var(--text-light);margin-top:0.25rem;display:block;"></span>
+              </div>
+              <div class="form-field">
+                <label for="downloadEmoji">Emoji</label>
+                <input type="text" id="downloadEmoji" placeholder="📄" maxlength="8" />
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="downloadActive" checked />
+                <label for="downloadActive">Aktif (tampilkan di halaman download)</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-save" id="downloadSaveBtn" onclick="saveDownload()">Simpan</button>
+              <button class="btn-cancel" onclick="hideDownloadForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Pesan -->
+        <section id="panelContacts" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Pesan</h3>
+            <p>Pesan masuk dari form kontak</p>
+          </div>
+
+          <!-- List -->
+          <div id="contactsList" class="table-wrap">
+            <div class="table-empty">Memuat data pesan…</div>
+          </div>
+
+          <!-- Detail view (hidden by default) -->
+          <div id="contactDetail" class="contact-detail-wrap" style="display:none;">
+            <div class="contact-detail-row"><span class="contact-detail-label">Nama</span><span id="cdName" class="contact-detail-value"></span></div>
+            <div class="contact-detail-row"><span class="contact-detail-label">Email</span><span id="cdEmail" class="contact-detail-value"></span></div>
+            <div class="contact-detail-row"><span class="contact-detail-label">Telepon</span><span id="cdPhone" class="contact-detail-value"></span></div>
+            <div class="contact-detail-row"><span class="contact-detail-label">Subjek</span><span id="cdSubject" class="contact-detail-value"></span></div>
+            <div class="contact-detail-row contact-detail-message"><span class="contact-detail-label">Pesan</span><span id="cdMessage" class="contact-detail-value"></span></div>
+            <div class="form-actions" style="margin-top:1.25rem;">
+              <button class="btn-cancel" onclick="closeContactDetail()">← Kembali ke Daftar</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Pengaturan -->
+        <section id="panelSettings" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Pengaturan</h3>
+            <p>Konfigurasi tampilan website — upload gambar atau gunakan URL</p>
+          </div>
+
+          <div id="settingsError" class="form-error" role="alert"></div>
+          <div id="settingsSuccess" style="display:none;background:#d1fae5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.75rem 1rem;color:#065f46;font-size:0.875rem;margin-bottom:1rem;">
+            ✅ Pengaturan berhasil disimpan!
+          </div>
+
+          <!-- Hero Beranda -->
+          <div class="crud-form-wrap">
+            <h4>🏠 Hero — Beranda (index.html)</h4>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label>Gambar Hero</label>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                  <button type="button" onclick="switchUploadTab('hero','file')" id="tabFile_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                  <button type="button" onclick="switchUploadTab('hero','url')" id="tabUrl_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                </div>
+                <div id="tabFileArea_hero">
+                  <input type="file" id="uploadHeroImage" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHero','settingHeroImage')" />
+                </div>
+                <div id="tabUrlArea_hero" style="display:none;">
+                  <input type="url" id="settingHeroImage" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                </div>
+                <img id="previewHero" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+              </div>
+              <div class="form-field full-width">
+                <label for="settingHeroTitle">Judul Hero</label>
+                <input type="text" id="settingHeroTitle" placeholder="Temukan Kekuatan Alam..." />
+              </div>
+              <div class="form-field full-width">
+                <label for="settingHeroSubtitle">Subtitle Hero</label>
+                <textarea id="settingHeroSubtitle" placeholder="Deskripsi singkat..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page Headers -->
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
+            <h4>🖼️ Gambar Page Header (tiap halaman)</h4>
+            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1.25rem;">Gambar latar belakang untuk banner di bagian atas tiap halaman</p>
+
+            <!-- shop -->
+            <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">🛍️ Toko (shop.html)</div>
+              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                <button type="button" class="tab-upload-btn active" onclick="switchUploadTab('shop','file')" id="tabFile_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                <button type="button" class="tab-upload-btn" onclick="switchUploadTab('shop','url')" id="tabUrl_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              </div>
+              <div id="tabFileArea_shop">
+                <input type="file" id="uploadHeader_shop" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_shop','settingHeader_shop')" />
+              </div>
+              <div id="tabUrlArea_shop" style="display:none;">
+                <input type="url" id="settingHeader_shop" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+              </div>
+              <img id="previewHeader_shop" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+            </div>
+
+            <!-- teori -->
+            <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">📖 Teori (teori.html)</div>
+              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                <button type="button" onclick="switchUploadTab('teori','file')" id="tabFile_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                <button type="button" onclick="switchUploadTab('teori','url')" id="tabUrl_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              </div>
+              <div id="tabFileArea_teori">
+                <input type="file" id="uploadHeader_teori" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_teori','settingHeader_teori')" />
+              </div>
+              <div id="tabUrlArea_teori" style="display:none;">
+                <input type="url" id="settingHeader_teori" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+              </div>
+              <img id="previewHeader_teori" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+            </div>
+
+            <!-- kelas -->
+            <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">🎓 Kelas (kelas.html)</div>
+              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                <button type="button" onclick="switchUploadTab('kelas','file')" id="tabFile_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                <button type="button" onclick="switchUploadTab('kelas','url')" id="tabUrl_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              </div>
+              <div id="tabFileArea_kelas">
+                <input type="file" id="uploadHeader_kelas" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_kelas','settingHeader_kelas')" />
+              </div>
+              <div id="tabUrlArea_kelas" style="display:none;">
+                <input type="url" id="settingHeader_kelas" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+              </div>
+              <img id="previewHeader_kelas" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+            </div>
+
+            <!-- download -->
+            <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">📥 Download (download.html)</div>
+              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                <button type="button" onclick="switchUploadTab('download','file')" id="tabFile_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                <button type="button" onclick="switchUploadTab('download','url')" id="tabUrl_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              </div>
+              <div id="tabFileArea_download">
+                <input type="file" id="uploadHeader_download" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_download','settingHeader_download')" />
+              </div>
+              <div id="tabUrlArea_download" style="display:none;">
+                <input type="url" id="settingHeader_download" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+              </div>
+              <img id="previewHeader_download" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+            </div>
+
+            <!-- kontak -->
+            <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;">
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">✉️ Kontak (kontak.html)</div>
+              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                <button type="button" onclick="switchUploadTab('kontak','file')" id="tabFile_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                <button type="button" onclick="switchUploadTab('kontak','url')" id="tabUrl_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              </div>
+              <div id="tabFileArea_kontak">
+                <input type="file" id="uploadHeader_kontak" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_kontak','settingHeader_kontak')" />
+              </div>
+              <div id="tabUrlArea_kontak" style="display:none;">
+                <input type="url" id="settingHeader_kontak" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+              </div>
+              <img id="previewHeader_kontak" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+            </div>
+
+          </div>
+
+          <div class="form-actions" style="margin-top:1.5rem;">
+            <button class="btn-save" onclick="saveSettings()">💾 Simpan Semua Pengaturan</button>
+          </div>
+        </section>
+
+        <!-- Panel: Testimoni -->
+        <section id="panelTestimonials" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Testimoni</h3>
+            <p>Kelola ulasan pelanggan yang tampil di beranda</p>
+          </div>
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showTestimonialForm()">＋ Tambah Testimoni</button>
+          </div>
+          <div id="testimonialsList" class="table-wrap">
+            <div class="table-empty">Memuat data testimoni…</div>
+          </div>
+          <div id="testimonialForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="testimonialFormTitle">Tambah Testimoni</h4>
+            <input type="hidden" id="testimonialId" />
+            <div id="testimonialError" class="form-error" role="alert"></div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="testimonialName">Nama <span style="color:#be123c">*</span></label>
+                <input type="text" id="testimonialName" placeholder="Nama pelanggan" required />
+              </div>
+              <div class="form-field">
+                <label for="testimonialLocation">Lokasi</label>
+                <input type="text" id="testimonialLocation" placeholder="Jakarta, Indonesia" />
+              </div>
+              <div class="form-field">
+                <label for="testimonialRating">Rating</label>
+                <select id="testimonialRating">
+                  <option value="5">★★★★★ (5)</option>
+                  <option value="4">★★★★☆ (4)</option>
+                  <option value="3">★★★☆☆ (3)</option>
+                  <option value="2">★★☆☆☆ (2)</option>
+                  <option value="1">★☆☆☆☆ (1)</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="testimonialOrder">Urutan</label>
+                <input type="number" id="testimonialOrder" placeholder="0" min="0" />
+              </div>
+              <div class="form-field full-width">
+                <label for="testimonialContent">Isi Testimoni <span style="color:#be123c">*</span></label>
+                <textarea id="testimonialContent" placeholder="Tuliskan testimoni pelanggan..." style="min-height:100px;" required></textarea>
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="testimonialActive" checked />
+                <label for="testimonialActive">Aktif (tampilkan di beranda)</label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-save" id="testimonialSaveBtn" onclick="saveTestimonial()">Simpan</button>
+              <button class="btn-cancel" onclick="hideTestimonialForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Fitur -->
+        <section id="panelFeatures" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Fitur / Keunggulan</h3>
+            <p>Kelola kartu keunggulan yang tampil di beranda</p>
+          </div>
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showFeatureForm()">＋ Tambah Fitur</button>
+          </div>
+          <div id="featuresList" class="table-wrap">
+            <div class="table-empty">Memuat data fitur…</div>
+          </div>
+          <div id="featureForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="featureFormTitle">Tambah Fitur</h4>
+            <input type="hidden" id="featureId" />
+            <div id="featureError" class="form-error" role="alert"></div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="featureIcon">Icon (emoji)</label>
+                <input type="text" id="featureIcon" placeholder="🌱" maxlength="8" />
+              </div>
+              <div class="form-field">
+                <label for="featureOrder">Urutan</label>
+                <input type="number" id="featureOrder" placeholder="0" min="0" />
+              </div>
+              <div class="form-field full-width">
+                <label for="featureTitle">Judul <span style="color:#be123c">*</span></label>
+                <input type="text" id="featureTitle" placeholder="Judul fitur" required />
+              </div>
+              <div class="form-field full-width">
+                <label for="featureDesc">Deskripsi <span style="color:#be123c">*</span></label>
+                <textarea id="featureDesc" placeholder="Deskripsi singkat fitur..." style="min-height:80px;" required></textarea>
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="featureActive" checked />
+                <label for="featureActive">Aktif (tampilkan di beranda)</label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-save" id="featureSaveBtn" onclick="saveFeature()">Simpan</button>
+              <button class="btn-cancel" onclick="hideFeatureForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Informasi -->
+        <section id="panelInfo" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Informasi</h3>
+            <p>Kelola informasi kontak dan media sosial yang tampil di website</p>
+          </div>
+          <div id="infoError" class="form-error" role="alert"></div>
+          <div id="infoSuccess" style="display:none;background:#d1fae5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.75rem 1rem;color:#065f46;font-size:0.875rem;margin-bottom:1rem;">✅ Informasi berhasil disimpan!</div>
+
+          <div class="crud-form-wrap">
+            <h4>📍 Kontak & Operasional</h4>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="infoAddress">Alamat Kantor</label>
+                <input type="text" id="infoAddress" placeholder="Jakarta, Indonesia" />
+              </div>
+              <div class="form-field">
+                <label for="infoPhone">Nomor Telepon</label>
+                <input type="text" id="infoPhone" placeholder="+62 812-3456-7890" />
+              </div>
+              <div class="form-field">
+                <label for="infoEmail">Email</label>
+                <input type="email" id="infoEmail" placeholder="info@masjanis.com" />
+              </div>
+              <div class="form-field full-width">
+                <label for="infoHours">Jam Operasional</label>
+                <input type="text" id="infoHours" placeholder="Sen–Sab, 08.00–17.00" />
+              </div>
+            </div>
+          </div>
+
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
+            <h4>📱 Media Sosial</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="infoInstagram">Instagram (URL)</label>
+                <input type="url" id="infoInstagram" placeholder="https://instagram.com/masjanis" />
+              </div>
+              <div class="form-field">
+                <label for="infoYoutube">YouTube (URL)</label>
+                <input type="url" id="infoYoutube" placeholder="https://youtube.com/@masjanis" />
+              </div>
+              <div class="form-field">
+                <label for="infoFacebook">Facebook (URL)</label>
+                <input type="url" id="infoFacebook" placeholder="https://facebook.com/masjanis" />
+              </div>
+              <div class="form-field">
+                <label for="infoTiktok">TikTok (URL)</label>
+                <input type="url" id="infoTiktok" placeholder="https://tiktok.com/@masjanis" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions" style="margin-top:1.5rem;">
+            <button class="btn-save" onclick="saveInfo()">💾 Simpan Informasi</button>
+          </div>
+        </section>
+
+        <!-- Panel: Pengguna -->
+        <section id="panelUsers" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>Pengguna Admin</h3>
+            <p>Kelola akun admin yang dapat mengakses panel ini</p>
+          </div>
+
+          <!-- Invite form -->
+          <div class="crud-form-wrap">
+            <h4>➕ Undang Admin Baru</h4>
+            <div id="userInviteError" class="form-error" role="alert"></div>
+            <div id="userInviteSuccess" style="display:none;background:#d1fae5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.75rem 1rem;color:#065f46;font-size:0.875rem;margin-bottom:1rem;"></div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="inviteEmail">Email Admin Baru <span style="color:#be123c">*</span></label>
+                <input type="email" id="inviteEmail" placeholder="admin@masjanis.com" />
+              </div>
+              <div class="form-field">
+                <label for="invitePassword">Password Sementara <span style="color:#be123c">*</span></label>
+                <input type="password" id="invitePassword" placeholder="Min. 8 karakter" minlength="8" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-save" id="inviteBtn" onclick="inviteUser()">Buat Akun Admin</button>
+            </div>
+          </div>
+
+          <!-- Change own password -->
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
+            <h4>🔑 Ganti Password Saya</h4>
+            <div id="changePwError" class="form-error" role="alert"></div>
+            <div id="changePwSuccess" style="display:none;background:#d1fae5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:0.75rem 1rem;color:#065f46;font-size:0.875rem;margin-bottom:1rem;"></div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="newPassword">Password Baru <span style="color:#be123c">*</span></label>
+                <input type="password" id="newPassword" placeholder="Min. 8 karakter" minlength="8" />
+              </div>
+              <div class="form-field">
+                <label for="confirmPassword">Konfirmasi Password <span style="color:#be123c">*</span></label>
+                <input type="password" id="confirmPassword" placeholder="Ulangi password baru" minlength="8" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-save" id="changePwBtn" onclick="changePassword()">Simpan Password Baru</button>
+            </div>
+          </div>
+
+          <!-- User list -->
+          <div style="margin-top:1.5rem;">
+            <div class="crud-panel-header">
+              <h4 style="font-size:1rem;font-weight:600;color:var(--green-dark);">Daftar Admin</h4>
+              <button class="btn-add" onclick="loadUsers()">🔄 Refresh</button>
+            </div>
+            <div id="usersList" class="table-wrap">
+              <div class="table-empty">Memuat daftar admin…</div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+  <script>
+    // ===== SUPABASE ADMIN CLIENT =====
+    // NOTE: service_role key — NEVER load this on public pages
+    const SUPABASE_URL = 'https://xauxhkzuadhdeddbcsdl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdXhoa3p1YWRoZGVkZGJjc2RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MDk3MDIsImV4cCI6MjA5MTI4NTcwMn0.TImpvJ0O9K3opSyVeHK4CoKDsBFjhEk118RoC0pWUwo';
+    const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhdXhoa3p1YWRoZGVkZGJjc2RsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTcwOTcwMiwiZXhwIjoyMDkxMjg1NzAyfQ.l_thALoHhzPjB7drDTDnZOUWejt6KDKmBpBhUSOpi9s';
+
+    // Auth client (anon key) — untuk login/logout
+    const authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: false
+      }
+    });
+
+    // Data client (service_role key) — untuk CRUD tanpa RLS
+    const dataClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+        storageKey: 'masjanis-admin-data',
+      }
+    });
+
+    // supabase = alias untuk data operations
+    // Gunakan dataClient langsung untuk semua operasi DB
+    // eslint-disable-next-line no-var
+    var supabase = dataClient;
+
+    // ===== PANEL TITLES =====
+    const PANEL_TITLES = {
+      panelDashboard: 'Dashboard',
+      panelProducts:  'Produk',
+      panelArticles:  'Artikel',
+      panelClasses:   'Kelas',
+      panelDownloads: 'Download',
+      panelContacts:  'Pesan',
+      panelSettings:      'Pengaturan',
+      panelTestimonials:  'Testimoni',
+      panelFeatures:      'Fitur / Keunggulan',
+      panelInfo:          'Informasi',
+      panelUsers:         'Pengguna',
+    };
+
+    // ===== SHOW / HIDE VIEWS =====
+    function showLoginView() {
+      document.getElementById('loginView').style.display = 'flex';
+      document.getElementById('dashboardView').hidden = true;
+    }
+
+    function showDashboardView(user) {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('dashboardView').hidden = false;
+
+      // Display admin name/email
+      const name = user?.user_metadata?.full_name || user?.email || 'Admin';
+      document.getElementById('adminName').textContent = name;
+
+      // Update avatar initial
+      const avatar = document.querySelector('.user-avatar');
+      if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+
+      // Hanya show dashboard jika belum ada panel aktif
+      const activePanel = document.querySelector('.admin-panel:not([hidden])');
+      if (!activePanel) {
+        showPanel('panelDashboard');
+      } else {
+        // Panel sudah aktif (misal setelah tab switch) — reload stats jika di dashboard
+        const dashPanel = document.getElementById('panelDashboard');
+        if (dashPanel && !dashPanel.hidden) {
+          setTimeout(loadDashboardStats, 100);
+        }
+      }
+    }
+
+    // ===== PANEL NAVIGATION =====
+    function showPanel(panelId) {
+      // Hide all panels
+      document.querySelectorAll('.admin-panel').forEach(p => { p.hidden = true; });
+
+      // Show target panel
+      const target = document.getElementById(panelId);
+      if (target) target.hidden = false;
+
+      // Update header title
+      const titleEl = document.getElementById('panelTitle');
+      if (titleEl) titleEl.textContent = PANEL_TITLES[panelId] || '';
+
+      // Update active nav link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.panel === panelId);
+      });
+
+      // Hook for future panel data loading (subsequent tasks)
+      loadPanelData(panelId);
+    }
+
+    // Placeholder — will be implemented in subsequent tasks
+    function loadPanelData(panelId) {
+      if (panelId === 'panelDashboard') setTimeout(loadDashboardStats, 50);
+      if (panelId === 'panelProducts')  loadProducts();
+      if (panelId === 'panelArticles')  loadArticles();
+      if (panelId === 'panelClasses')   loadClasses();
+      if (panelId === 'panelDownloads') loadDownloads();
+      if (panelId === 'panelContacts')  loadContacts();
+      if (panelId === 'panelSettings')     loadSettings();
+      if (panelId === 'panelTestimonials') loadTestimonials();
+      if (panelId === 'panelFeatures')     loadFeatures();
+      if (panelId === 'panelInfo')         loadInfo();
+      if (panelId === 'panelUsers')        loadUsers();
+    }
+
+    // ===== DASHBOARD STATS =====
+    async function loadDashboardStats() {
+      const configs = [
+        { id: 'statProducts',  table: 'products',  filter: { col: 'is_active', val: true  } },
+        { id: 'statArticles',  table: 'articles',  filter: { col: 'is_active', val: true  } },
+        { id: 'statClasses',   table: 'classes',   filter: { col: 'is_active', val: true  } },
+        { id: 'statDownloads', table: 'downloads', filter: { col: 'is_active', val: true  } },
+        { id: 'statUnread',    table: 'contacts',  filter: { col: 'is_read',   val: false } },
+      ];
+
+      let allZero = true;
+      for (const { id, table, filter } of configs) {
+        const el = document.getElementById(id)?.querySelector('.stat-number');
+        if (!el) continue;
+        try {
+          const { data, error } = await supabase
+            .from(table)
+            .select('id', { count: 'exact' })
+            .eq(filter.col, filter.val);
+          if (error) {
+            console.warn(`[dashboard] ${table}:`, error.message);
+            el.textContent = '0';
+          } else {
+            const count = data?.length ?? 0;
+            el.textContent = count;
+            if (count > 0) allZero = false;
+          }
+        } catch (e) {
+          console.warn(`[dashboard] ${table} exception:`, e);
+          el.textContent = '0';
+        }
+      }
+
+      // Jika semua 0 dan ini pertama kali load, retry sekali setelah 800ms
+      // (koneksi pertama ke Supabase kadang butuh waktu)
+      if (allZero && !loadDashboardStats._retried) {
+        loadDashboardStats._retried = true;
+        setTimeout(() => {
+          loadDashboardStats._retried = false;
+          loadDashboardStats();
+        }, 800);
+      }
+    }
+
+    // ===== AUTH: LOGIN =====
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email    = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const errorEl  = document.getElementById('loginError');
+      const loginBtn = document.getElementById('loginBtn');
+
+      // Clear previous error
+      errorEl.textContent = '';
+      errorEl.classList.remove('visible');
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Memproses...';
+
+      const { data, error } = await authClient.auth.signInWithPassword({ email, password });
+
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Masuk';
+
+      if (error) {
+        // Show error WITHOUT resetting email field (Requirement 3.3)
+        errorEl.textContent = error.message || 'Login gagal. Periksa email dan password Anda.';
+        errorEl.classList.add('visible');
+        return;
+      }
+
+      if (data?.user) {
+        showDashboardView(data.user);
+      }
+    });
+
+    // ===== AUTH: LOGOUT =====
+    async function handleLogout() {
+      await authClient.auth.signOut();
+      showLoginView();
+    }
+
+    // ===== AUTH: SESSION PERSISTENCE =====
+    // Listen for auth state changes (handles refresh, tab restore, etc.)
+    authClient.auth.onAuthStateChange((event, session) => {
+      // TOKEN_REFRESHED = hanya refresh token di background, jangan reset UI
+      if (event === 'TOKEN_REFRESHED') return;
+
+      if (session?.user) {
+        showDashboardView(session.user);
+      } else {
+        showLoginView();
+      }
+    });
+
+    // ===== AUTH: CHECK SESSION ON LOAD =====
+    (async () => {
+      const { data: { session } } = await authClient.auth.getSession();
+      if (session?.user) {
+        showDashboardView(session.user);
+      } else {
+        showLoginView();
+      }
+    })();
+
+    // ===== PRODUCTS CRUD =====
+
+    function formatRupiah(amount) {
+      if (!amount && amount !== 0) return '—';
+      return 'Rp ' + Number(amount).toLocaleString('id-ID');
+    }
+
+    async function loadProducts() {
+      const container = document.getElementById('productsList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat data produk…</div>';
+
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name, description, price, original_price, category, emoji, badge_label, image_url, is_active, payment_url, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal memuat produk: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="table-empty">Belum ada produk. Klik "Tambah Produk" untuk memulai.</div>';
+        return;
+      }
+
+      const rows = data.map(p => `
+        <tr>
+          <td>
+            ${p.image_url
+              ? `<img src="${p.image_url}" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px;">`
+              : `<span style="font-size:1.4rem;vertical-align:middle;margin-right:6px;">${p.emoji || '🌿'}</span>`
+            }${escHtml(p.name)}
+          </td>
+          <td>${escHtml(p.category)}</td>
+          <td>${formatRupiah(p.price)}</td>
+          <td>
+            <span class="badge-active ${p.is_active ? 'on' : 'off'}">
+              ${p.is_active ? 'Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-edit"   onclick="editProduct('${p.id}')">Edit</button>
+              <button class="btn-sm btn-delete" onclick="deleteProduct('${p.id}', '${escHtml(p.name).replace(/'/g, "\\'")}')">Hapus</button>
+              <button class="btn-sm ${p.is_active ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                      onclick="toggleProductActive('${p.id}', ${p.is_active})">
+                ${p.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Aktif</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function showProductForm(product = null) {
+      document.getElementById('productId').value           = product?.id || '';
+      document.getElementById('productName').value         = product?.name || '';
+      document.getElementById('productDesc').value         = product?.description || '';
+      document.getElementById('productPrice').value        = product?.price ?? '';
+      document.getElementById('productOriginalPrice').value = product?.original_price ?? '';
+      document.getElementById('productCategory').value     = product?.category || 'suplemen';
+      document.getElementById('productEmoji').value        = product?.emoji || '';
+      document.getElementById('productBadge').value        = product?.badge_label || '';
+      document.getElementById('productPaymentUrl').value   = product?.payment_url || '';
+      document.getElementById('productActive').checked     = product ? product.is_active : true;
+
+      // Tab content fields
+      document.getElementById('productManfaat').value     = product?.manfaat     || '';
+      document.getElementById('productCaraPakai').value   = product?.cara_pakai  || '';
+      document.getElementById('productPeringatan').value  = product?.peringatan  || '';
+      document.getElementById('productSpesifikasi').value = product?.spesifikasi || '';
+
+      // Init CKEditor untuk tab content
+      const tabFields = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
+      const tabValues = {
+        productManfaat:     product?.manfaat     || '',
+        productCaraPakai:   product?.cara_pakai  || '',
+        productPeringatan:  product?.peringatan  || '',
+        productSpesifikasi: product?.spesifikasi || '',
+      };
+      tabFields.forEach(f => {
+        initEditor(f).then(() => setEditorData(f, tabValues[f]));
+      });
+
+      // Reset image fields
+      document.getElementById('uploadProductImage').value = '';
+      document.getElementById('productImageUrl').value = product?.image_url || '';
+      const prevImg = document.getElementById('previewProductImg');
+      if (product?.image_url) {
+        prevImg.src = product.image_url;
+        prevImg.style.display = 'block';
+      } else {
+        prevImg.src = '';
+        prevImg.style.display = 'none';
+      }
+      // Default ke tab URL jika sudah ada gambar, file jika belum
+      switchUploadTab('product', product?.image_url ? 'url' : 'file');
+
+      document.getElementById('productFormTitle').textContent = product ? 'Edit Produk' : 'Tambah Produk';
+
+      const errEl = document.getElementById('productError');
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+
+      document.getElementById('productForm').style.display = 'block';
+      document.getElementById('productForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Init CKEditor
+      initEditor('productDesc').then(() => setEditorData('productDesc', product?.description || ''));
+    }
+
+    function previewProductImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById('previewProductImg');
+        if (img) { img.src = e.target.result; img.style.display = 'block'; }
+      };
+      reader.readAsDataURL(file);
+      // Clear URL field
+      document.getElementById('productImageUrl').value = '';
+    }
+
+    // Generic image preview untuk artikel, kelas, download
+    function previewGenericImage(input, previewId, urlInputId) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById(previewId);
+        if (img) { img.src = e.target.result; img.style.display = 'block'; }
+      };
+      reader.readAsDataURL(file);
+      const urlEl = document.getElementById(urlInputId);
+      if (urlEl) urlEl.value = '';
+    }
+
+    function hideProductForm() {
+      document.getElementById('productForm').style.display = 'none';
+      document.getElementById('productId').value = '';
+    }
+
+    async function saveProduct() {
+      const id          = document.getElementById('productId').value.trim();
+      const name        = document.getElementById('productName').value.trim();
+      const description = getEditorData('productDesc');
+      const price       = parseInt(document.getElementById('productPrice').value, 10);
+      const origPrice   = document.getElementById('productOriginalPrice').value;
+      const category    = document.getElementById('productCategory').value;
+      const emoji       = document.getElementById('productEmoji').value.trim();
+      const badge_label = document.getElementById('productBadge').value.trim();
+      const payment_url = document.getElementById('productPaymentUrl').value.trim();
+      const is_active   = document.getElementById('productActive').checked;
+      let   image_url   = document.getElementById('productImageUrl').value.trim();
+
+      const errEl  = document.getElementById('productError');
+      const saveBtn = document.getElementById('productSaveBtn');
+
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+
+      if (!name) {
+        errEl.textContent = 'Nama produk wajib diisi.';
+        errEl.classList.add('visible');
+        return;
+      }
+      if (isNaN(price) || price < 0) {
+        errEl.textContent = 'Harga harus berupa angka yang valid.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Menyimpan…';
+
+      try {
+        // Upload foto produk jika ada file baru
+        const imgFile = document.getElementById('uploadProductImage')?.files[0];
+        if (imgFile) {
+          const ext  = imgFile.name.split('.').pop();
+          const path = `products/${Date.now()}_${imgFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          image_url  = await uploadImage(imgFile, path);
+          const prevImg = document.getElementById('previewProductImg');
+          if (prevImg) { prevImg.src = image_url; prevImg.style.display = 'block'; }
+        }
+
+        const payload = {
+          name,
+          description: description || null,
+          price,
+          original_price: origPrice !== '' ? parseInt(origPrice, 10) : null,
+          category,
+          emoji: emoji || null,
+          badge_label: badge_label || null,
+          payment_url: payment_url || null,
+          is_active,
+          manfaat:     getEditorData('productManfaat')     || null,
+          cara_pakai:  getEditorData('productCaraPakai')   || null,
+          peringatan:  getEditorData('productPeringatan')  || null,
+          spesifikasi: getEditorData('productSpesifikasi') || null,
+        };
+        if (image_url) payload.image_url = image_url;
+
+        let error;
+        if (id) {
+          ({ error } = await supabase.from('products').update(payload).eq('id', id));
+        } else {
+          ({ error } = await supabase.from('products').insert(payload));
+        }
+
+        if (error) throw error;
+
+        hideProductForm();
+        showToast('Produk berhasil disimpan ✓', 'success');
+        await loadProducts();
+
+      } catch (err) {
+        errEl.textContent = 'Gagal menyimpan produk: ' + err.message;
+        errEl.classList.add('visible');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Simpan';
+      }
+    }
+
+    async function editProduct(id) {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        showToast('Gagal memuat data produk: ' + (error?.message || 'Data tidak ditemukan'), 'error');
+        return;
+      }
+
+      showProductForm(data);
+    }
+
+    async function deleteProduct(id, name) {
+      await new Promise(resolve => showConfirm('Hapus Produk', `Hapus produk "${name}"? Tindakan ini tidak dapat dibatalkan.`, resolve));
+      // confirmed
+
+      const { error } = await supabase.from('products').delete().eq('id', id);
+
+      if (error) {
+        showToast('Gagal menghapus produk: ' + error.message, 'error');
+        return;
+      }
+
+      showToast('Produk berhasil dihapus', 'success');
+      await loadProducts();
+    }
+
+    async function toggleProductActive(id, currentValue) {
+      const { error } = await supabase
+        .from('products')
+        .update({ is_active: !currentValue })
+        .eq('id', id);
+
+      if (error) {
+        showToast('Gagal mengubah status produk: ' + error.message, 'error');
+        return;
+      }
+
+      await loadProducts();
+    }
+
+    // Utility: escape HTML to prevent XSS in table rendering
+    function escHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // ===== ARTICLES CRUD =====
+
+    async function loadArticles() {
+      const container = document.getElementById('articlesList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat data artikel…</div>';
+
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal memuat artikel: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="table-empty">Belum ada artikel. Klik "Tambah Artikel" untuk memulai.</div>';
+        return;
+      }
+
+      const rows = data.map(a => `
+        <tr>
+          <td>${a.emoji ? a.emoji + ' ' : ''}${escHtml(a.title)}</td>
+          <td>${escHtml(a.category)}</td>
+          <td>${a.published_date || '—'}</td>
+          <td>
+            <span class="badge-active ${a.is_active ? 'on' : 'off'}">
+              ${a.is_active ? 'Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-edit"   onclick="editArticle('${a.id}')">Edit</button>
+              <button class="btn-sm btn-delete" onclick="deleteArticle('${a.id}', '${escHtml(a.title).replace(/'/g, "\\'")}')">Hapus</button>
+              <button class="btn-sm ${a.is_active ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                      onclick="toggleArticleActive('${a.id}', ${a.is_active})">
+                ${a.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Judul</th>
+              <th>Kategori</th>
+              <th>Tanggal Terbit</th>
+              <th>Aktif</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function showArticleForm(article = null) {
+      document.getElementById('articleId').value            = article?.id || '';
+      document.getElementById('articleTitle').value         = article?.title || '';
+      document.getElementById('articleExcerpt').value       = article?.excerpt || '';
+      document.getElementById('articleCategory').value      = article?.category || 'tanaman-obat';
+      document.getElementById('articleReadTime').value      = article?.read_time ?? '';
+      document.getElementById('articlePublishedDate').value = article?.published_date || '';
+      document.getElementById('articleEmoji').value         = article?.emoji || '';
+      document.getElementById('articleBgClass').value       = article?.bg_class || '';
+      document.getElementById('articleActive').checked      = article ? article.is_active : true;
+
+      document.getElementById('uploadArticleImage').value = '';
+      document.getElementById('articleImageUrl').value = article?.image_url || '';
+      const prevImg = document.getElementById('previewArticleImg');
+      if (article?.image_url) { prevImg.src = article.image_url; prevImg.style.display = 'block'; }
+      else { prevImg.src = ''; prevImg.style.display = 'none'; }
+      switchUploadTab('article', article?.image_url ? 'url' : 'file');
+
+      document.getElementById('articleFormTitle').textContent = article ? 'Edit Artikel' : 'Tambah Artikel';
+      const errEl = document.getElementById('articleError');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      document.getElementById('articleForm').style.display = 'block';
+      document.getElementById('articleForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Init CKEditor
+      initEditor('articleExcerpt').then(() => setEditorData('articleExcerpt', article?.excerpt || ''));
+    }
+
+    function hideArticleForm() {
+      document.getElementById('articleForm').style.display = 'none';
+      document.getElementById('articleId').value = '';
+    }
+
+    async function saveArticle() {
+      const id            = document.getElementById('articleId').value.trim();
+      const title         = document.getElementById('articleTitle').value.trim();
+      const excerpt       = getEditorData('articleExcerpt');
+      const category      = document.getElementById('articleCategory').value;
+      const readTimeRaw   = document.getElementById('articleReadTime').value;
+      const publishedDate = document.getElementById('articlePublishedDate').value;
+      const emoji         = document.getElementById('articleEmoji').value.trim();
+      const bg_class      = document.getElementById('articleBgClass').value;
+      const is_active     = document.getElementById('articleActive').checked;
+
+      const errEl   = document.getElementById('articleError');
+      const saveBtn = document.getElementById('articleSaveBtn');
+
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+
+      if (!title) {
+        errEl.textContent = 'Judul artikel wajib diisi.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      const payload = {
+        title,
+        excerpt: excerpt || null,
+        category,
+        read_time: readTimeRaw !== '' ? parseInt(readTimeRaw, 10) : null,
+        published_date: publishedDate || null,
+        emoji: emoji || null,
+        bg_class: bg_class || null,
+        is_active,
+      };
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Menyimpan…';
+
+      try {
+        const imgFile = document.getElementById('uploadArticleImage')?.files[0];
+        let image_url = document.getElementById('articleImageUrl').value.trim();
+        if (imgFile) {
+          image_url = await uploadImage(imgFile, `articles/${Date.now()}_${imgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
+        }
+
+        const payload = {
+          title,
+          excerpt: excerpt || null,
+          category,
+          read_time: readTimeRaw !== '' ? parseInt(readTimeRaw, 10) : null,
+          published_date: publishedDate || null,
+          emoji: emoji || null,
+          bg_class: bg_class || null,
+          is_active,
+        };
+        if (image_url) payload.image_url = image_url;
+
+        let error;
+        if (id) {
+          ({ error } = await supabase.from('articles').update(payload).eq('id', id));
+        } else {
+          ({ error } = await supabase.from('articles').insert(payload));
+        }
+        if (error) throw error;
+        hideArticleForm();
+        showToast('Artikel berhasil disimpan ✓', 'success');
+        await loadArticles();
+      } catch (err) {
+        errEl.textContent = 'Gagal menyimpan artikel: ' + err.message;
+        errEl.classList.add('visible');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Simpan';
+      }
+    }
+
+    async function editArticle(id) {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        showToast('Gagal memuat data artikel: ' + (error?.message || 'Data tidak ditemukan'), 'error');
+        return;
+      }
+
+      showArticleForm(data);
+    }
+
+    async function deleteArticle(id, title) {
+      await new Promise(resolve => showConfirm('Hapus Artikel', `Hapus artikel "${title}"? Tindakan ini tidak dapat dibatalkan.`, resolve));
+      // confirmed
+
+      const { error } = await supabase.from('articles').delete().eq('id', id);
+
+      if (error) {
+        showToast('Gagal menghapus artikel: ' + error.message, 'error');
+        return;
+      }
+
+      showToast('Artikel berhasil dihapus', 'success');
+      await loadArticles();
+    }
+
+    async function toggleArticleActive(id, currentValue) {
+      const { error } = await supabase
+        .from('articles')
+        .update({ is_active: !currentValue })
+        .eq('id', id);
+
+      if (error) {
+        showToast('Gagal mengubah status artikel: ' + error.message, 'error');
+        return;
+      }
+
+      await loadArticles();
+    }
+
+    // ===== CLASSES CRUD =====
+
+    async function loadClasses() {
+      const container = document.getElementById('classesList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat data kelas…</div>';
+
+      const { data, error } = await supabase
+        .from('classes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal memuat kelas: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="table-empty">Belum ada kelas. Klik "Tambah Kelas" untuk memulai.</div>';
+        return;
+      }
+
+      const rows = data.map(c => `
+        <tr>
+          <td>${c.emoji ? c.emoji + ' ' : ''}${escHtml(c.title)}</td>
+          <td>${escHtml(c.instructor || '—')}</td>
+          <td>${escHtml(c.level)}</td>
+          <td>${formatRupiah(c.price)}</td>
+          <td>
+            <span class="badge-active ${c.is_active ? 'on' : 'off'}">
+              ${c.is_active ? 'Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-edit"   onclick="editClass('${c.id}')">Edit</button>
+              <button class="btn-sm btn-delete" onclick="deleteClass('${c.id}', '${escHtml(c.title).replace(/'/g, "\\'")}')">Hapus</button>
+              <button class="btn-sm ${c.is_active ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                      onclick="toggleClassActive('${c.id}', ${c.is_active})">
+                ${c.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Judul</th>
+              <th>Instruktur</th>
+              <th>Level</th>
+              <th>Harga</th>
+              <th>Aktif</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function showClassForm(cls = null) {
+      document.getElementById('classId').value            = cls?.id || '';
+      document.getElementById('classTitle').value         = cls?.title || '';
+      document.getElementById('classDesc').value          = cls?.description || '';
+      document.getElementById('classInstructor').value    = cls?.instructor || '';
+      document.getElementById('classDuration').value      = cls?.duration_hours ?? '';
+      document.getElementById('classVideoCount').value    = cls?.video_count ?? '';
+      document.getElementById('classLevel').value         = cls?.level || 'pemula';
+      document.getElementById('classPrice').value         = cls?.price ?? '';
+      document.getElementById('classOriginalPrice').value = cls?.original_price ?? '';
+      document.getElementById('classEmoji').value         = cls?.emoji || '';
+      document.getElementById('classBgClass').value       = cls?.bg_class || '';
+      document.getElementById('classActive').checked      = cls ? cls.is_active : true;
+
+      document.getElementById('uploadClassImage').value = '';
+      document.getElementById('classImageUrl').value = cls?.image_url || '';
+      const prevImg = document.getElementById('previewClassImg');
+      if (cls?.image_url) { prevImg.src = cls.image_url; prevImg.style.display = 'block'; }
+      else { prevImg.src = ''; prevImg.style.display = 'none'; }
+      switchUploadTab('class', cls?.image_url ? 'url' : 'file');
+
+      document.getElementById('classFormTitle').textContent = cls ? 'Edit Kelas' : 'Tambah Kelas';
+      const errEl = document.getElementById('classError');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      document.getElementById('classForm').style.display = 'block';
+      document.getElementById('classForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Init CKEditor
+      initEditor('classDesc').then(() => setEditorData('classDesc', cls?.description || ''));
+    }
+
+    function hideClassForm() {
+      document.getElementById('classForm').style.display = 'none';
+      document.getElementById('classId').value = '';
+    }
+
+    async function saveClass() {
+      const id            = document.getElementById('classId').value.trim();
+      const title         = document.getElementById('classTitle').value.trim();
+      const description   = getEditorData('classDesc');
+      const instructor    = document.getElementById('classInstructor').value.trim();
+      const durationRaw   = document.getElementById('classDuration').value;
+      const videoCountRaw = document.getElementById('classVideoCount').value;
+      const level         = document.getElementById('classLevel').value;
+      const price         = parseInt(document.getElementById('classPrice').value, 10);
+      const origPriceRaw  = document.getElementById('classOriginalPrice').value;
+      const emoji         = document.getElementById('classEmoji').value.trim();
+      const bg_class      = document.getElementById('classBgClass').value;
+      const is_active     = document.getElementById('classActive').checked;
+
+      const errEl   = document.getElementById('classError');
+      const saveBtn = document.getElementById('classSaveBtn');
+
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+
+      if (!title) {
+        errEl.textContent = 'Judul kelas wajib diisi.';
+        errEl.classList.add('visible');
+        return;
+      }
+      if (isNaN(price) || price < 0) {
+        errEl.textContent = 'Harga harus berupa angka yang valid.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      const payload = {
+        title,
+        description: description || null,
+        instructor: instructor || null,
+        duration_hours: durationRaw !== '' ? parseInt(durationRaw, 10) : null,
+        video_count: videoCountRaw !== '' ? parseInt(videoCountRaw, 10) : null,
+        level,
+        price,
+        original_price: origPriceRaw !== '' ? parseInt(origPriceRaw, 10) : null,
+        emoji: emoji || null,
+        bg_class: bg_class || null,
+        is_active,
+      };
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Menyimpan…';
+
+      try {
+        const imgFile = document.getElementById('uploadClassImage')?.files[0];
+        let image_url = document.getElementById('classImageUrl').value.trim();
+        if (imgFile) {
+          image_url = await uploadImage(imgFile, `classes/${Date.now()}_${imgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
+        }
+        if (image_url) payload.image_url = image_url;
+
+        let error;
+        if (id) { ({ error } = await supabase.from('classes').update(payload).eq('id', id)); }
+        else    { ({ error } = await supabase.from('classes').insert(payload)); }        if (error) throw error;
+        hideClassForm();
+        showToast('Kelas berhasil disimpan ✓', 'success');
+        await loadClasses();
+      } catch (err) {
+        errEl.textContent = 'Gagal menyimpan kelas: ' + err.message;
+        errEl.classList.add('visible');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Simpan';
+      }
+    }
+
+    async function editClass(id) {
+      const { data, error } = await supabase
+        .from('classes')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        showToast('Gagal memuat data kelas: ' + (error?.message || 'Data tidak ditemukan'), 'error');
+        return;
+      }
+
+      showClassForm(data);
+    }
+
+    async function deleteClass(id, title) {
+      await new Promise(resolve => showConfirm('Hapus Kelas', `Hapus kelas "${title}"? Tindakan ini tidak dapat dibatalkan.`, resolve));
+      // confirmed
+
+      const { error } = await supabase.from('classes').delete().eq('id', id);
+
+      if (error) {
+        showToast('Gagal menghapus kelas: ' + error.message, 'error');
+        return;
+      }
+
+      showToast('Kelas berhasil dihapus', 'success');
+      await loadClasses();
+    }
+
+    async function toggleClassActive(id, currentValue) {
+      const { error } = await supabase
+        .from('classes')
+        .update({ is_active: !currentValue })
+        .eq('id', id);
+
+      if (error) {
+        showToast('Gagal mengubah status kelas: ' + error.message, 'error');
+        return;
+      }
+
+      await loadClasses();
+    }
+
+    // ===== DOWNLOADS CRUD =====
+
+    // Preview nama file yang dipilih untuk upload
+    function previewDownloadFile(input) {
+      const file = input.files[0];
+      const statusEl = document.getElementById('downloadFileStatus');
+      if (!file) { if (statusEl) statusEl.textContent = ''; return; }
+      if (statusEl) statusEl.textContent = `📎 File dipilih: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      // Clear URL field saat file dipilih
+      document.getElementById('downloadFileUrl').value = '';
+    }
+
+    async function loadDownloads() {
+      const container = document.getElementById('downloadsList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat data download…</div>';
+
+      const { data, error } = await supabase
+        .from('downloads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal memuat download: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="table-empty">Belum ada download. Klik "Tambah Download" untuk memulai.</div>';
+        return;
+      }
+
+      const rows = data.map(dl => `
+        <tr>
+          <td>${dl.emoji ? dl.emoji + ' ' : ''}${escHtml(dl.title)}</td>
+          <td>${escHtml(dl.category)}</td>
+          <td>${escHtml(dl.file_size || '—')}</td>
+          <td>
+            <span class="badge-active ${dl.is_active ? 'on' : 'off'}">
+              ${dl.is_active ? 'Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-edit"   onclick="editDownload('${dl.id}')">Edit</button>
+              <button class="btn-sm btn-delete" onclick="deleteDownload('${dl.id}', '${escHtml(dl.title).replace(/'/g, "\\'")}')">Hapus</button>
+              <button class="btn-sm ${dl.is_active ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                      onclick="toggleDownloadActive('${dl.id}', ${dl.is_active})">
+                ${dl.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Judul</th>
+              <th>Kategori</th>
+              <th>Ukuran File</th>
+              <th>Aktif</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function showDownloadForm(dl = null) {
+      document.getElementById('downloadId').value       = dl?.id || '';
+      document.getElementById('downloadTitle').value    = dl?.title || '';
+      document.getElementById('downloadDesc').value     = dl?.description || '';
+      document.getElementById('downloadCategory').value = dl?.category || 'ebook';
+      document.getElementById('downloadFileSize').value = dl?.file_size || '';
+      document.getElementById('downloadFileUrl').value  = dl?.file_url || '';
+      document.getElementById('downloadEmoji').value    = dl?.emoji || '';
+      document.getElementById('downloadActive').checked = dl ? dl.is_active : true;
+
+      document.getElementById('uploadDownloadFile').value = '';
+      const statusEl = document.getElementById('downloadFileStatus');
+      if (statusEl) statusEl.textContent = '';
+      document.getElementById('uploadDownloadImage').value = '';
+      document.getElementById('downloadImageUrl').value = dl?.image_url || '';
+      const prevImg = document.getElementById('previewDownloadImg');
+      if (dl?.image_url) { prevImg.src = dl.image_url; prevImg.style.display = 'block'; }
+      else { prevImg.src = ''; prevImg.style.display = 'none'; }
+      switchUploadTab('dlimg', dl?.image_url ? 'url' : 'file');
+
+      document.getElementById('downloadFormTitle').textContent = dl ? 'Edit Download' : 'Tambah Download';
+      const errEl = document.getElementById('downloadError');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      document.getElementById('downloadForm').style.display = 'block';
+      document.getElementById('downloadForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideDownloadForm() {
+      document.getElementById('downloadForm').style.display = 'none';
+      document.getElementById('downloadId').value = '';
+      const uploadInput = document.getElementById('uploadDownloadFile');
+      if (uploadInput) uploadInput.value = '';
+      const statusEl = document.getElementById('downloadFileStatus');
+      if (statusEl) statusEl.textContent = '';
+    }
+
+    async function saveDownload() {
+      const id          = document.getElementById('downloadId').value.trim();
+      const title       = document.getElementById('downloadTitle').value.trim();
+      const description = document.getElementById('downloadDesc').value.trim();
+      const category    = document.getElementById('downloadCategory').value;
+      const file_size   = document.getElementById('downloadFileSize').value.trim();
+      let   file_url    = document.getElementById('downloadFileUrl').value.trim();
+      const emoji       = document.getElementById('downloadEmoji').value.trim();
+      const is_active   = document.getElementById('downloadActive').checked;
+
+      const errEl   = document.getElementById('downloadError');
+      const saveBtn = document.getElementById('downloadSaveBtn');
+
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+
+      if (!title) {
+        errEl.textContent = 'Judul download wajib diisi.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Menyimpan…';
+
+      try {
+        // Upload file jika ada
+        const uploadInput = document.getElementById('uploadDownloadFile');
+        const uploadFile  = uploadInput?.files[0];
+        if (uploadFile) {
+          const ext  = uploadFile.name.split('.').pop();
+          const path = `downloads/${Date.now()}_${uploadFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          file_url   = await uploadImage(uploadFile, path);
+          // Auto-fill ukuran file
+          if (!file_size) {
+            const kb = uploadFile.size / 1024;
+            document.getElementById('downloadFileSize').value =
+              kb >= 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb.toFixed(0) + ' KB';
+          }
+          const statusEl = document.getElementById('downloadFileStatus');
+          if (statusEl) statusEl.textContent = '✅ File berhasil diupload';
+        }
+
+        const payload = {
+          title,
+          description: description || null,
+          category,
+          file_size: document.getElementById('downloadFileSize').value.trim() || null,
+          file_url: file_url || null,
+          emoji: emoji || null,
+          is_active,
+        };
+
+        // Upload thumbnail image jika ada (hanya jika kolom image_url sudah ada di DB)
+        const imgFile = document.getElementById('uploadDownloadImage')?.files[0];
+        let image_url = document.getElementById('downloadImageUrl').value.trim();
+        if (imgFile) {
+          image_url = await uploadImage(imgFile, `downloads/thumb_${Date.now()}_${imgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
+        }
+        if (image_url) payload.image_url = image_url;
+
+        let error;
+        if (id) {
+          ({ error } = await supabase.from('downloads').update(payload).eq('id', id));
+        } else {
+          ({ error } = await supabase.from('downloads').insert(payload));
+        }
+
+        if (error) throw error;
+
+        hideDownloadForm();
+        await loadDownloads();
+
+      } catch (err) {
+        errEl.textContent = 'Gagal menyimpan download: ' + err.message;
+        errEl.classList.add('visible');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Simpan';
+      }
+    }
+
+    async function editDownload(id) {
+      const { data, error } = await supabase
+        .from('downloads')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        showToast('Gagal memuat data download: ' + (error?.message || 'Data tidak ditemukan'), 'error');
+        return;
+      }
+
+      showDownloadForm(data);
+    }
+
+    async function deleteDownload(id, title) {
+      await new Promise(resolve => showConfirm('Hapus Download', `Hapus download "${title}"? Tindakan ini tidak dapat dibatalkan.`, resolve));
+      // confirmed
+
+      const { error } = await supabase.from('downloads').delete().eq('id', id);
+
+      if (error) {
+        showToast('Gagal menghapus download: ' + error.message, 'error');
+        return;
+      }
+
+      showToast('Download berhasil dihapus', 'success');
+      await loadDownloads();
+    }
+
+    async function toggleDownloadActive(id, currentValue) {
+      const { error } = await supabase
+        .from('downloads')
+        .update({ is_active: !currentValue })
+        .eq('id', id);
+
+      if (error) {
+        showToast('Gagal mengubah status download: ' + error.message, 'error');
+        return;
+      }
+
+      await loadDownloads();
+    }
+
+    // ===== CONTACTS =====
+
+    function formatDate(isoStr) {
+      if (!isoStr) return '—';
+      const d = new Date(isoStr);
+      return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    async function loadContacts() {
+      const container = document.getElementById('contactsList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat data pesan…</div>';
+
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal memuat pesan: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="table-empty">Belum ada pesan masuk.</div>';
+        return;
+      }
+
+      const rows = data.map(c => `
+        <tr class="${c.is_read ? '' : 'contact-unread'}">
+          <td>${escHtml(c.name)}</td>
+          <td>${escHtml(c.email)}</td>
+          <td>${escHtml(c.subject || '—')}</td>
+          <td>${formatDate(c.created_at)}</td>
+          <td>
+            <span class="${c.is_read ? 'badge-read' : 'badge-unread'}">
+              ${c.is_read ? 'Dibaca' : 'Belum Dibaca'}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-view"   onclick="viewContact('${c.id}')">Lihat</button>
+              <button class="btn-sm btn-delete" onclick="deleteContact('${c.id}', '${escHtml(c.name).replace(/'/g, "\\'")}')">Hapus</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>Subjek</th>
+              <th>Tanggal</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    async function viewContact(id) {
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
+        showToast('Gagal memuat pesan: ' + (error?.message || 'Data tidak ditemukan'), 'error');
+        return;
+      }
+
+      // Populate detail view
+      document.getElementById('cdName').textContent    = data.name || '—';
+      document.getElementById('cdEmail').textContent   = data.email || '—';
+      document.getElementById('cdPhone').textContent   = data.phone || '—';
+      document.getElementById('cdSubject').textContent = data.subject || '—';
+      document.getElementById('cdMessage').textContent = data.message || '—';
+
+      // Show detail, hide list
+      document.getElementById('contactsList').style.display  = 'none';
+      document.getElementById('contactDetail').style.display = 'block';
+
+      // Auto-mark as read if not yet read
+      if (!data.is_read) {
+        await supabase.from('contacts').update({ is_read: true }).eq('id', id);
+        // Refresh list in background so unread count updates
+        loadContacts();
+        loadDashboardStats();
+      }
+    }
+
+    async function deleteContact(id, name) {
+      await new Promise(resolve => showConfirm('Hapus Pesan', `Hapus pesan dari "${name}"? Tindakan ini tidak dapat dibatalkan.`, resolve));
+      // confirmed
+
+      const { error } = await supabase.from('contacts').delete().eq('id', id);
+
+      if (error) {
+        showToast('Gagal menghapus pesan: ' + error.message, 'error');
+        return;
+      }
+
+      await loadContacts();
+    }
+
+    function closeContactDetail() {
+      document.getElementById('contactDetail').style.display = 'none';
+      document.getElementById('contactsList').style.display  = 'block';
+    }
+
+    // ===== SETTINGS =====
+
+    const PAGES = ['shop', 'teori', 'kelas', 'download', 'kontak'];
+
+    // Preview gambar sebelum upload
+    function previewUpload(input, previewId, urlInputId) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById(previewId);
+        if (img) { img.src = e.target.result; img.style.display = 'block'; }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Toggle antara tab Upload File dan Pakai URL
+    function switchUploadTab(key, mode) {
+      const fileArea = document.getElementById(`tabFileArea_${key}`);
+      const urlArea  = document.getElementById(`tabUrlArea_${key}`);
+      const fileBtn  = document.getElementById(`tabFile_${key}`);
+      const urlBtn   = document.getElementById(`tabUrl_${key}`);
+      if (!fileArea || !urlArea) return;
+
+      const activeStyle   = `padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;`;
+      const inactiveStyle = `padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;`;
+
+      if (mode === 'file') {
+        fileArea.style.display = 'block';
+        urlArea.style.display  = 'none';
+        if (fileBtn) fileBtn.style.cssText = activeStyle;
+        if (urlBtn)  urlBtn.style.cssText  = inactiveStyle;
+      } else {
+        fileArea.style.display = 'none';
+        urlArea.style.display  = 'block';
+        if (fileBtn) fileBtn.style.cssText = inactiveStyle;
+        if (urlBtn)  urlBtn.style.cssText  = activeStyle;
+        // Jika ada URL tersimpan, tampilkan preview
+        const urlInput = document.getElementById(`settingHeader_${key}`) || document.getElementById(`settingHeroImage`);
+        const previewId = key === 'hero' ? 'previewHero' : `previewHeader_${key}`;
+        const img = document.getElementById(previewId);
+        if (urlInput?.value && img) { img.src = urlInput.value; img.style.display = 'block'; }
+      }
+    }
+
+    // Upload file ke Supabase Storage pakai dataClient (service_role — bypass RLS)
+    async function uploadImage(file, path) {
+      const { data, error } = await dataClient.storage
+        .from('masjanis')
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data: urlData } = dataClient.storage.from('masjanis').getPublicUrl(data.path);
+      return urlData.publicUrl;
+    }
+
+    async function loadSettings() {
+      const { data } = await dataClient.from('site_settings').select('key, value');
+      if (!data) return;
+      const map = Object.fromEntries(data.map(s => [s.key, s.value]));
+
+      if (map.hero_image_url) document.getElementById('settingHeroImage').value = map.hero_image_url;
+      if (map.hero_title)     document.getElementById('settingHeroTitle').value = map.hero_title;
+      if (map.hero_subtitle)  document.getElementById('settingHeroSubtitle').value = map.hero_subtitle;
+
+      PAGES.forEach(page => {
+        const val = map[`page_header_${page}`];
+        const el = document.getElementById(`settingHeader_${page}`);
+        if (el && val) {
+          el.value = val;
+          const img = document.getElementById(`previewHeader_${page}`);
+          if (img) { img.src = val; img.style.display = 'block'; }
+        }
+      });
+    }
+
+    async function saveSettings() {
+      const errEl     = document.getElementById('settingsError');
+      const successEl = document.getElementById('settingsSuccess');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      successEl.style.display = 'none';
+
+      const saveBtn = document.querySelector('#panelSettings .btn-save');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Menyimpan...'; }
+
+      try {
+        // Upload hero image jika ada file baru
+        const heroFile = document.getElementById('uploadHeroImage')?.files[0];
+        if (heroFile) {
+          const url = await uploadImage(heroFile, `hero/hero_${Date.now()}.${heroFile.name.split('.').pop()}`);
+          document.getElementById('settingHeroImage').value = url;
+          const img = document.getElementById('previewHero');
+          if (img) { img.src = url; img.style.display = 'block'; }
+        }
+
+        // Upload page header images jika ada file baru
+        for (const page of PAGES) {
+          const file = document.getElementById(`uploadHeader_${page}`)?.files[0];
+          if (file) {
+            const url = await uploadImage(file, `headers/${page}_${Date.now()}.${file.name.split('.').pop()}`);
+            document.getElementById(`settingHeader_${page}`).value = url;
+            const img = document.getElementById(`previewHeader_${page}`);
+            if (img) { img.src = url; img.style.display = 'block'; }
+          }
+        }
+
+        // Kumpulkan semua nilai untuk disimpan
+        const updates = [
+          { key: 'hero_image_url', value: document.getElementById('settingHeroImage').value.trim() },
+          { key: 'hero_title',     value: document.getElementById('settingHeroTitle').value.trim() },
+          { key: 'hero_subtitle',  value: document.getElementById('settingHeroSubtitle').value.trim() },
+          ...PAGES.map(page => ({
+            key: `page_header_${page}`,
+            value: document.getElementById(`settingHeader_${page}`)?.value?.trim() || ''
+          }))
+        ].filter(u => u.value);
+
+        for (const item of updates) {
+          const { error } = await dataClient
+            .from('site_settings')
+            .upsert({ key: item.key, value: item.value }, { onConflict: 'key' });
+          if (error) throw error;
+        }
+
+        successEl.style.display = 'block';
+        setTimeout(() => { successEl.style.display = 'none'; }, 3000);
+
+      } catch (err) {
+        errEl.textContent = 'Gagal menyimpan: ' + err.message;
+        errEl.classList.add('visible');
+      } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Simpan Semua Pengaturan'; }
+      }
+    }
+    // ===== INFORMASI =====
+
+    const INFO_KEYS = ['address','phone','email','hours','instagram','youtube','facebook','tiktok'];
+
+    async function loadInfo() {
+      const { data } = await dataClient.from('site_settings').select('key,value');
+      if (!data) return;
+      const map = Object.fromEntries(data.map(s => [s.key, s.value]));
+      document.getElementById('infoAddress').value   = map.address   || '';
+      document.getElementById('infoPhone').value     = map.phone     || '';
+      document.getElementById('infoEmail').value     = map.email     || '';
+      document.getElementById('infoHours').value     = map.hours     || '';
+      document.getElementById('infoInstagram').value = map.instagram || '';
+      document.getElementById('infoYoutube').value   = map.youtube   || '';
+      document.getElementById('infoFacebook').value  = map.facebook  || '';
+      document.getElementById('infoTiktok').value    = map.tiktok    || '';
+    }
+
+    async function saveInfo() {
+      const errEl  = document.getElementById('infoError');
+      const succEl = document.getElementById('infoSuccess');
+      const btn    = document.querySelector('#panelInfo .btn-save');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      succEl.style.display = 'none';
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
+
+      const vals = {
+        address:   document.getElementById('infoAddress').value.trim(),
+        phone:     document.getElementById('infoPhone').value.trim(),
+        email:     document.getElementById('infoEmail').value.trim(),
+        hours:     document.getElementById('infoHours').value.trim(),
+        instagram: document.getElementById('infoInstagram').value.trim(),
+        youtube:   document.getElementById('infoYoutube').value.trim(),
+        facebook:  document.getElementById('infoFacebook').value.trim(),
+        tiktok:    document.getElementById('infoTiktok').value.trim(),
+      };
+
+      try {
+        for (const [key, value] of Object.entries(vals)) {
+          if (!value) continue;
+          const { error } = await dataClient.from('site_settings')
+            .upsert({ key, value }, { onConflict: 'key' });
+          if (error) throw error;
+        }
+        succEl.style.display = 'block';
+        setTimeout(() => { succEl.style.display = 'none'; }, 3000);
+      } catch (err) {
+        errEl.textContent = 'Gagal menyimpan: ' + err.message;
+        errEl.classList.add('visible');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
+      }
+    }
+
+    // ===== TESTIMONI =====
+
+    async function loadTestimonials() {
+      const container = document.getElementById('testimonialsList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat…</div>';
+      const { data, error } = await supabase.from('testimonials').select('*').order('sort_order');
+      if (error) { container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal: ${error.message}</div>`; return; }
+      if (!data?.length) { container.innerHTML = '<div class="table-empty">Belum ada testimoni. Klik "Tambah Testimoni".</div>'; return; }
+      const rows = data.map(t => `<tr>
+        <td>${escHtml(t.name)}</td>
+        <td>${escHtml(t.location || '—')}</td>
+        <td>${'★'.repeat(t.rating)}</td>
+        <td><span class="badge-active ${t.is_active ? 'on' : 'off'}">${t.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+        <td><div class="action-btns">
+          <button class="btn-sm btn-edit" onclick="editTestimonial('${t.id}')">Edit</button>
+          <button class="btn-sm btn-delete" onclick="deleteTestimonial('${t.id}','${escHtml(t.name).replace(/'/g,"\\'")}')">Hapus</button>
+          <button class="btn-sm ${t.is_active ? 'btn-toggle-on' : 'btn-toggle-off'}" onclick="toggleTestimonialActive('${t.id}',${t.is_active})">${t.is_active ? 'Nonaktifkan' : 'Aktifkan'}</button>
+        </div></td></tr>`).join('');
+      container.innerHTML = `<table class="admin-table"><thead><tr><th>Nama</th><th>Lokasi</th><th>Rating</th><th>Aktif</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    function showTestimonialForm(t = null) {
+      document.getElementById('testimonialId').value       = t?.id || '';
+      document.getElementById('testimonialName').value     = t?.name || '';
+      document.getElementById('testimonialLocation').value = t?.location || '';
+      document.getElementById('testimonialRating').value   = t?.rating || 5;
+      document.getElementById('testimonialOrder').value    = t?.sort_order ?? 0;
+      document.getElementById('testimonialContent').value  = t?.content || '';
+      document.getElementById('testimonialActive').checked = t ? t.is_active : true;
+      document.getElementById('testimonialFormTitle').textContent = t ? 'Edit Testimoni' : 'Tambah Testimoni';
+      const errEl = document.getElementById('testimonialError');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      document.getElementById('testimonialForm').style.display = 'block';
+      document.getElementById('testimonialForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideTestimonialForm() { document.getElementById('testimonialForm').style.display = 'none'; }
+
+    async function saveTestimonial() {
+      const id       = document.getElementById('testimonialId').value.trim();
+      const name     = document.getElementById('testimonialName').value.trim();
+      const location = document.getElementById('testimonialLocation').value.trim();
+      const rating   = parseInt(document.getElementById('testimonialRating').value);
+      const order    = parseInt(document.getElementById('testimonialOrder').value) || 0;
+      const content  = document.getElementById('testimonialContent').value.trim();
+      const is_active = document.getElementById('testimonialActive').checked;
+      const errEl = document.getElementById('testimonialError');
+      const saveBtn = document.getElementById('testimonialSaveBtn');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      if (!name || !content) { errEl.textContent = 'Nama dan isi testimoni wajib diisi.'; errEl.classList.add('visible'); return; }
+      saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
+      const payload = { name, location: location || null, rating, sort_order: order, content, is_active };
+      const { error } = id
+        ? await supabase.from('testimonials').update(payload).eq('id', id)
+        : await supabase.from('testimonials').insert(payload);
+      saveBtn.disabled = false; saveBtn.textContent = 'Simpan';
+      if (error) { errEl.textContent = 'Gagal: ' + error.message; errEl.classList.add('visible'); return; }
+      hideTestimonialForm(); showToast('Testimoni berhasil disimpan ✓', 'success'); await loadTestimonials();
+    }
+
+    async function editTestimonial(id) {
+      const { data, error } = await supabase.from('testimonials').select('*').eq('id', id).single();
+      if (error || !data) { showToast('Gagal memuat data', 'error'); return; }
+      showTestimonialForm(data);
+    }
+
+    async function deleteTestimonial(id, name) {
+      await new Promise(resolve => showConfirm('Hapus Testimoni', `Hapus testimoni dari "${name}"?`, resolve));
+      // confirmed
+      await supabase.from('testimonials').delete().eq('id', id);
+      await loadTestimonials();
+    }
+
+    async function toggleTestimonialActive(id, current) {
+      await supabase.from('testimonials').update({ is_active: !current }).eq('id', id);
+      await loadTestimonials();
+    }
+
+    // ===== FITUR / KEUNGGULAN =====
+
+    async function loadFeatures() {
+      const container = document.getElementById('featuresList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat…</div>';
+      const { data, error } = await supabase.from('features').select('*').order('sort_order');
+      if (error) { container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal: ${error.message}</div>`; return; }
+      if (!data?.length) { container.innerHTML = '<div class="table-empty">Belum ada fitur. Klik "Tambah Fitur".</div>'; return; }
+      const rows = data.map(f => `<tr>
+        <td>${f.icon} ${escHtml(f.title)}</td>
+        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(f.description)}</td>
+        <td><span class="badge-active ${f.is_active ? 'on' : 'off'}">${f.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+        <td><div class="action-btns">
+          <button class="btn-sm btn-edit" onclick="editFeature('${f.id}')">Edit</button>
+          <button class="btn-sm btn-delete" onclick="deleteFeature('${f.id}','${escHtml(f.title).replace(/'/g,"\\'")}')">Hapus</button>
+          <button class="btn-sm ${f.is_active ? 'btn-toggle-on' : 'btn-toggle-off'}" onclick="toggleFeatureActive('${f.id}',${f.is_active})">${f.is_active ? 'Nonaktifkan' : 'Aktifkan'}</button>
+        </div></td></tr>`).join('');
+      container.innerHTML = `<table class="admin-table"><thead><tr><th>Judul</th><th>Deskripsi</th><th>Aktif</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    function showFeatureForm(f = null) {
+      document.getElementById('featureId').value    = f?.id || '';
+      document.getElementById('featureIcon').value  = f?.icon || '🌿';
+      document.getElementById('featureTitle').value = f?.title || '';
+      document.getElementById('featureDesc').value  = f?.description || '';
+      document.getElementById('featureOrder').value = f?.sort_order ?? 0;
+      document.getElementById('featureActive').checked = f ? f.is_active : true;
+      document.getElementById('featureFormTitle').textContent = f ? 'Edit Fitur' : 'Tambah Fitur';
+      const errEl = document.getElementById('featureError');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      document.getElementById('featureForm').style.display = 'block';
+      document.getElementById('featureForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideFeatureForm() { document.getElementById('featureForm').style.display = 'none'; }
+
+    async function saveFeature() {
+      const id    = document.getElementById('featureId').value.trim();
+      const icon  = document.getElementById('featureIcon').value.trim() || '🌿';
+      const title = document.getElementById('featureTitle').value.trim();
+      const desc  = document.getElementById('featureDesc').value.trim();
+      const order = parseInt(document.getElementById('featureOrder').value) || 0;
+      const is_active = document.getElementById('featureActive').checked;
+      const errEl = document.getElementById('featureError');
+      const saveBtn = document.getElementById('featureSaveBtn');
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      if (!title || !desc) { errEl.textContent = 'Judul dan deskripsi wajib diisi.'; errEl.classList.add('visible'); return; }
+      saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
+      const payload = { icon, title, description: desc, sort_order: order, is_active };
+      const { error } = id
+        ? await supabase.from('features').update(payload).eq('id', id)
+        : await supabase.from('features').insert(payload);
+      saveBtn.disabled = false; saveBtn.textContent = 'Simpan';
+      if (error) { errEl.textContent = 'Gagal: ' + error.message; errEl.classList.add('visible'); return; }
+      hideFeatureForm(); showToast('Fitur berhasil disimpan ✓', 'success'); await loadFeatures();
+    }
+
+    async function editFeature(id) {
+      const { data, error } = await supabase.from('features').select('*').eq('id', id).single();
+      if (error || !data) { showToast('Gagal memuat data', 'error'); return; }
+      showFeatureForm(data);
+    }
+
+    async function deleteFeature(id, title) {
+      await new Promise(resolve => showConfirm('Hapus Fitur', `Hapus fitur "${title}"?`, resolve));
+      // confirmed
+      await supabase.from('features').delete().eq('id', id);
+      await loadFeatures();
+    }
+
+    async function toggleFeatureActive(id, current) {
+      await supabase.from('features').update({ is_active: !current }).eq('id', id);
+      await loadFeatures();
+    }
+
+    // ===== QUILL EDITOR SETUP =====
+    const editors = {};
+
+    // Font families (Google Fonts, bebas copyright)
+    const FONTS = ['Inter','Open Sans','Roboto','Lato','Nunito','Playfair Display','Merriweather','Georgia','Arial','Courier New'];
+    const SIZES = ['10px','12px','14px','16px','18px','20px','24px','28px','32px'];
+
+    // Register font & size ke Quill
+    const Font = Quill.import('formats/font');
+    Font.whitelist = FONTS.map(f => f.replace(/\s+/g, '-').toLowerCase());
+    Quill.register(Font, true);
+
+    const Size = Quill.import('attributors/style/size');
+    Size.whitelist = SIZES;
+    Quill.register(Size, true);
+
+    // Tambah CSS font ke head agar font tampil di editor
+    (function() {
+      const style = document.createElement('style');
+      style.textContent = FONTS.map(f => {
+        const cls = f.replace(/\s+/g, '-').toLowerCase();
+        return `.ql-font-${cls} { font-family: '${f}', sans-serif; }`;
+      }).join('\n') + '\n' +
+      SIZES.map(s => `.ql-size-${s} { font-size: ${s}; }`).join('\n');
+      document.head.appendChild(style);
+    })();
+
+    const TOOLBAR = [
+      [{ 'font': Font.whitelist }],
+      [{ 'size': SIZES }],
+      [{ 'header': [1, 2, 3, 4, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
+      ['link', 'blockquote'],
+      ['clean'],
+    ];
+
+    const TOOLBAR_SMALL = [
+      [{ 'font': Font.whitelist }],
+      [{ 'size': SIZES }],
+      ['bold', 'italic', 'underline'],
+      [{ 'color': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link'],
+      ['clean'],
+    ];
+
+    // ID editor yang pakai toolbar kecil
+    const SMALL_EDITORS = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
+
+    function initEditor(id) {
+      if (editors[id]) return Promise.resolve();
+      return new Promise((resolve) => {
+        try {
+          const container = document.getElementById(id + 'Editor');
+          if (!container) { resolve(); return; }
+          const isSmall = SMALL_EDITORS.includes(id);
+          const quill = new Quill(container, {
+            theme: 'snow',
+            modules: { toolbar: isSmall ? TOOLBAR_SMALL : TOOLBAR },
+            placeholder: '',
+          });
+          // Ukuran editor
+          const qlEditor = container.querySelector('.ql-editor');
+          if (qlEditor && isSmall) qlEditor.classList.add('small');
+          // Sync ke textarea
+          quill.on('text-change', () => {
+            const ta = document.getElementById(id);
+            if (ta) ta.value = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
+          });
+          editors[id] = quill;
+          resolve();
+        } catch(e) {
+          console.warn('Quill init failed for', id, ':', e.message);
+          resolve();
+        }
+      });
+    }
+
+    function setEditorData(id, html) {
+      if (editors[id]) {
+        editors[id].root.innerHTML = html || '';
+        // Sync textarea
+        const ta = document.getElementById(id);
+        if (ta) ta.value = html || '';
+      } else {
+        const ta = document.getElementById(id);
+        if (ta) ta.value = html || '';
+      }
+    }
+
+    function getEditorData(id) {
+      if (editors[id]) {
+        const html = editors[id].root.innerHTML;
+        return html === '<p><br></p>' ? '' : html;
+      }
+      const ta = document.getElementById(id);
+      return ta ? ta.value : '';
+    }
+
+    // Init semua editor saat halaman load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Editor di-init saat form pertama kali dibuka (lazy)
+    });
+
+    // Override showProductForm untuk init editor
+    const _origShowProductForm = showProductForm;
+    // Patch: init editor saat form produk dibuka
+    const _patchProductForm = () => {
+      initEditor('productDesc').then(() => {
+        const val = document.getElementById('productDesc').value;
+        setEditorData('productDesc', val);
+      });
+    };
+
+    const _origShowArticleForm = showArticleForm;
+    const _patchArticleForm = () => {
+      initEditor('articleExcerpt').then(() => {
+        const val = document.getElementById('articleExcerpt').value;
+        setEditorData('articleExcerpt', val);
+      });
+    };
+
+    const _origShowClassForm = showClassForm;
+    const _patchClassForm = () => {
+      initEditor('classDesc').then(() => {
+        const val = document.getElementById('classDesc').value;
+        setEditorData('classDesc', val);
+      });
+    };
+
+    // ===== USERS / ADMIN MANAGEMENT =====
+    async function loadUsers() {
+      const container = document.getElementById('usersList');
+      if (!container) return;
+      container.innerHTML = '<div class="table-empty">Memuat daftar admin…</div>';
+
+      try {
+        // Gunakan Admin API via service_role
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?per_page=50`, {
+          headers: {
+            'apikey': SUPABASE_SERVICE_KEY,
+            'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          }
+        });
+        const json = await res.json();
+        const users = json.users || [];
+
+        if (!users.length) {
+          container.innerHTML = '<div class="table-empty">Belum ada pengguna terdaftar.</div>';
+          return;
+        }
+
+        // Dapatkan email user yang sedang login untuk proteksi
+        const { data: { user: me } } = await authClient.auth.getUser();
+
+        const rows = users.map(u => {
+          const isMe = u.id === me?.id;
+          return `
+            <tr>
+              <td>${escHtml(u.email)}</td>
+              <td>${u.last_sign_in_at ? formatDate(u.last_sign_in_at) : '—'}</td>
+              <td>${formatDate(u.created_at)}</td>
+              <td>
+                <div class="action-btns">
+                  ${isMe
+                    ? '<span style="font-size:0.78rem;color:var(--text-light);">Akun Anda</span>'
+                    : `<button class="btn-sm btn-delete" onclick="deleteUser('${u.id}','${escHtml(u.email).replace(/'/g,"\\'")}')">Hapus</button>`
+                  }
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Login Terakhir</th>
+                <th>Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal memuat pengguna: ${err.message}</div>`;
+      }
+    }
+
+    async function inviteUser() {
+      const email    = document.getElementById('inviteEmail').value.trim();
+      const password = document.getElementById('invitePassword').value;
+      const errEl    = document.getElementById('userInviteError');
+      const succEl   = document.getElementById('userInviteSuccess');
+      const btn      = document.getElementById('inviteBtn');
+
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      succEl.style.display = 'none';
+
+      if (!email) { errEl.textContent = 'Email wajib diisi.'; errEl.classList.add('visible'); return; }
+      if (password.length < 8) { errEl.textContent = 'Password minimal 8 karakter.'; errEl.classList.add('visible'); return; }
+
+      btn.disabled = true; btn.textContent = 'Membuat akun…';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_SERVICE_KEY,
+            'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password, email_confirm: true })
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.message || json.msg || 'Gagal membuat akun');
+
+        succEl.textContent = `✅ Akun admin untuk ${email} berhasil dibuat!`;
+        succEl.style.display = 'block';
+        document.getElementById('inviteEmail').value = '';
+        document.getElementById('invitePassword').value = '';
+        await loadUsers();
+        setTimeout(() => { succEl.style.display = 'none'; }, 4000);
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.classList.add('visible');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Buat Akun Admin';
+      }
+    }
+
+    async function deleteUser(id, email) {
+      await new Promise(resolve => showConfirm('Konfirmasi Hapus', `Hapus akun admin "${email}"? Tindakan ini tidak dapat dibatalkan.`, resolve));
+      // confirmed
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_SERVICE_KEY,
+            'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          }
+        });
+        if (!res.ok) {
+          const json = await res.json();
+          throw new Error(json.message || 'Gagal menghapus akun');
+        }
+        await loadUsers();
+      } catch (err) {
+        showToast('Gagal menghapus akun: ' + err.message, 'error');
+      }
+    }
+
+    async function changePassword() {
+      const newPw  = document.getElementById('newPassword').value;
+      const confPw = document.getElementById('confirmPassword').value;
+      const errEl  = document.getElementById('changePwError');
+      const succEl = document.getElementById('changePwSuccess');
+      const btn    = document.getElementById('changePwBtn');
+
+      errEl.textContent = ''; errEl.classList.remove('visible');
+      succEl.style.display = 'none';
+
+      if (newPw.length < 8) { errEl.textContent = 'Password minimal 8 karakter.'; errEl.classList.add('visible'); return; }
+      if (newPw !== confPw) { errEl.textContent = 'Konfirmasi password tidak cocok.'; errEl.classList.add('visible'); return; }
+
+      btn.disabled = true; btn.textContent = 'Menyimpan…';
+
+      const { error } = await authClient.auth.updateUser({ password: newPw });
+
+      btn.disabled = false; btn.textContent = 'Simpan Password Baru';
+
+      if (error) {
+        errEl.textContent = error.message;
+        errEl.classList.add('visible');
+        return;
+      }
+
+      succEl.textContent = '✅ Password berhasil diubah!';
+      succEl.style.display = 'block';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      setTimeout(() => { succEl.style.display = 'none'; }, 4000);
+    }
+
+    // ===== TOAST SYSTEM =====
+    function showToast(message, type = 'success', duration = 3000) {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+      }
+      const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span>${icons[type] || '✅'}</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('out');
+        setTimeout(() => toast.remove(), 260);
+      }, duration);
+    }
+
+    // ===== CUSTOM CONFIRM DIALOG =====
+    function showConfirm(title, message, onConfirm, icon = '🗑️') {
+      const overlay = document.getElementById('confirmOverlay');
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      document.getElementById('confirmIcon').textContent = icon;
+      overlay.classList.add('open');
+
+      const okBtn     = document.getElementById('confirmOkBtn');
+      const cancelBtn = document.getElementById('confirmCancelBtn');
+
+      const close = () => overlay.classList.remove('open');
+      const newOk = okBtn.cloneNode(true);
+      okBtn.parentNode.replaceChild(newOk, okBtn);
+      newOk.addEventListener('click', () => { close(); onConfirm(); });
+      cancelBtn.onclick = close;
+      overlay.onclick = (e) => { if (e.target === overlay) close(); };
+    }
+  </script>
+
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Custom Confirm Dialog -->
+  <div id="confirmOverlay">
+    <div id="confirmBox">
+      <div class="confirm-icon" id="confirmIcon">🗑️</div>
+      <h3 id="confirmTitle">Konfirmasi</h3>
+      <p id="confirmMessage">Apakah Anda yakin?</p>
+      <div class="confirm-btns">
+        <button class="btn-confirm-cancel" id="confirmCancelBtn">Batal</button>
+        <button class="btn-confirm-ok" id="confirmOkBtn">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

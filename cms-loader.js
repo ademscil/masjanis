@@ -1,0 +1,420 @@
+/**
+ * cms-loader.js — MasJanis
+ * Loader terpusat untuk semua halaman customer.
+ * Satu Supabase client (window._mjClient) dipakai bersama semua modul.
+ */
+(function () {
+  'use strict';
+
+  // ── Supabase client (singleton) ───────────────────────────────
+  function getClient() {
+    if (!window._mjClient && typeof isConfigured === 'function' && isConfigured()) {
+      window._mjClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      });
+    }
+    return window._mjClient || null;
+  }
+
+  // ── HTML helpers ──────────────────────────────────────────────
+  function esc(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ── Slug helper ───────────────────────────────────────────────
+  function slugify(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(/[àáâãäå]/g, 'a').replace(/[èéêë]/g, 'e')
+      .replace(/[ìíîï]/g, 'i').replace(/[òóôõö]/g, 'o')
+      .replace(/[ùúûü]/g, 'u').replace(/[ñ]/g, 'n')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/[\s]+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  // Expose globally so detail pages can use it
+  window._mjSlugify = slugify;
+
+  function loadingHtml() {
+    return `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-light);">⏳ Memuat data...</div>`;
+  }
+
+  function emptyHtml(msg) {
+    return `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-light);">🌿 ${esc(msg)}</div>`;
+  }
+
+  function errHtml(msg, retryFn) {
+    return `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#be123c;">
+      ⚠️ ${esc(msg)}<br>
+      <button class="btn btn-outline btn-sm" onclick="${retryFn}" style="margin-top:1rem;">Coba Lagi</button>
+    </div>`;
+  }
+
+  function reattachFilters(grid) {
+    const tabGroup = document.querySelector('.filter-tabs');
+    if (!tabGroup || !grid) return;
+    tabGroup.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabGroup.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const f = tab.dataset.filter;
+        grid.querySelectorAll('[data-category]').forEach(el => {
+          el.style.display = (f === 'semua' || el.dataset.category === f) ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  // ── Fetch wrapper ─────────────────────────────────────────────
+  function loadGrid(gridId, queryFn, renderFn, retryFnName) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    const db = getClient();
+    if (!db) { grid.innerHTML = emptyHtml('Database belum dikonfigurasi.'); return; }
+
+    grid.innerHTML = loadingHtml();
+    queryFn(db)
+      .then(({ data, error }) => {
+        if (error) throw error;
+        if (!data?.length) { grid.innerHTML = emptyHtml('Belum ada konten tersedia.'); return; }
+        grid.innerHTML = data.map(renderFn).join('');
+        reattachFilters(grid);
+        grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+      })
+      .catch(e => {
+        console.error(gridId, e);
+        grid.innerHTML = errHtml(e.message, retryFnName + '()');
+      });
+  }
+
+  // ── Featured Products (index.html) ───────────────────────────
+  function initFeaturedProducts() {
+    loadGrid(
+      'featuredProductsGrid',
+      db => db.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }).limit(4),
+      renderProduct,
+      'initFeaturedProducts'
+    );
+  }
+
+  // ── Shop ──────────────────────────────────────────────────────
+  function initShop() {
+    loadGrid(
+      'productsGrid',
+      db => db.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }),
+      renderProduct,
+      'initShop'
+    );
+  }
+
+  function renderProduct(p) {
+    const price  = p.price ? 'Rp ' + Number(p.price).toLocaleString('id-ID') : '';
+    const orig   = p.original_price ? 'Rp ' + Number(p.original_price).toLocaleString('id-ID') : '';
+    const badge  = p.badge_label ? `<span class="product-badge">${esc(p.badge_label)}</span>` : '';
+    const bgMap  = { suplemen: 'bg1', minuman: 'bg2', perawatan: 'bg5', paket: 'bg3' };
+    const bg     = bgMap[p.category] || 'bg1';
+    const imgEl  = p.image_url
+      ? `<img src="${p.image_url}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+      : `<span style="font-size:3.5rem;">${p.emoji || '🌿'}</span>`;
+    const detailUrl = `/product-detail/${slugify(p.name)}`;
+
+    return `
+      <a href="${detailUrl}" class="product-card fade-in" data-category="${p.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
+        <div class="product-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}${badge}</div>
+        <div class="product-body">
+          <h3>${esc(p.name)}</h3>
+          <p>${esc(p.description || '')}</p>
+          <div class="product-footer">
+            <div class="product-price">
+              ${orig ? `<span class="original">${orig}</span>` : ''}${price}
+            </div>
+            <span class="btn btn-primary btn-sm">Lihat Detail</span>
+          </div>
+        </div>
+      </a>`;
+  }
+
+  window.openPaymentModal = function (p) {
+    const modal  = document.getElementById('paymentModal');
+    const nameEl = document.getElementById('modalProductName');
+    const wrap   = document.getElementById('modalIframeWrap');
+    if (nameEl) nameEl.textContent = (p.emoji || '') + ' ' + p.name;
+    if (wrap) wrap.innerHTML = p.payment_url
+      ? `<iframe src="${p.payment_url}" width="100%" height="380" frameborder="0" style="border:none;border-radius:8px;"></iframe>`
+      : `<div style="text-align:center;padding:2rem;color:var(--text-light);">Link pembayaran belum tersedia.</div>`;
+    if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  };
+
+  // ── Teori ─────────────────────────────────────────────────────
+  function initTeori() {
+    loadGrid(
+      'articlesGrid',
+      db => db.from('articles').select('*').eq('is_active', true).order('published_date', { ascending: false, nullsFirst: false }),
+      renderArticle,
+      'initTeori'
+    );
+  }
+
+  function renderArticle(a) {
+    const bg   = a.bg_class || 'bg1';
+    const time = a.read_time ? `<span>⏱ ${a.read_time} menit baca</span>` : '';
+    const date = a.published_date
+      ? `<span>📅 ${new Date(a.published_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>`
+      : '';
+    const imgEl = a.image_url
+      ? `<img src="${a.image_url}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+      : `<span style="font-size:3.5rem;">${a.emoji || '🌿'}</span>`;
+
+    return `
+      <a href="/teori-detail/${slugify(a.title)}" class="article-card searchable-card fade-in visible" data-category="${a.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
+        <div class="article-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}</div>
+        <div class="article-body">
+          <span class="badge badge-green">${a.category}</span>
+          <h3>${esc(a.title)}</h3>
+          <p>${esc(a.excerpt || '')}</p>
+          <div class="article-meta">${time}${date}</div>
+          <span class="btn btn-outline btn-sm" style="margin-top:auto;">Baca Selengkapnya</span>
+        </div>
+      </a>`;
+  }
+
+  // ── Kelas ─────────────────────────────────────────────────────
+  function initKelas() {
+    loadGrid(
+      'classesGrid',
+      db => db.from('classes').select('*').eq('is_active', true).order('created_at', { ascending: false }),
+      renderKelas,
+      'initKelas'
+    );
+  }
+
+  function renderKelas(c) {
+    const bg    = c.bg_class || 'bg1';
+    const price = c.price ? 'Rp ' + Number(c.price).toLocaleString('id-ID') : '';
+    const orig  = c.original_price ? 'Rp ' + Number(c.original_price).toLocaleString('id-ID') : '';
+    const lvl   = { pemula: 'Pemula', menengah: 'Menengah', lanjutan: 'Lanjutan' }[c.level] || c.level;
+    const imgEl = c.image_url
+      ? `<img src="${c.image_url}" alt="${esc(c.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+      : `<span style="font-size:4rem;">${c.emoji || '🎓'}</span>`;
+
+    return `
+      <a href="/kelas-detail/${slugify(c.title)}" class="kelas-card fade-in" data-category="${c.level}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
+        <div class="kelas-img ${bg}" style="position:relative;overflow:hidden;">
+          ${imgEl}
+          <span class="level-badge level-${c.level}">${lvl}</span>
+        </div>
+        <div class="kelas-body">
+          <h3>${esc(c.title)}</h3>
+          <div class="kelas-meta">
+            ${c.instructor ? `<span>👤 ${esc(c.instructor)}</span>` : ''}
+            ${c.duration_hours ? `<span>⏱ ${c.duration_hours} jam</span>` : ''}
+            ${c.video_count ? `<span>🎬 ${c.video_count} video</span>` : ''}
+          </div>
+          <p class="kelas-desc">${esc(c.description || '')}</p>
+          <div class="kelas-footer">
+            <div class="kelas-price">
+              ${orig ? `<span class="original">${orig}</span>` : ''}${price}
+            </div>
+            <span class="btn btn-primary btn-sm">Lihat Detail</span>
+          </div>
+        </div>
+      </a>`;
+  }
+
+  // ── Download ──────────────────────────────────────────────────
+  function initDownload() {
+    loadGrid(
+      'downloadsGrid',
+      db => db.from('downloads').select('*').eq('is_active', true).order('created_at', { ascending: false }),
+      renderDownload,
+      'initDownload'
+    );
+  }
+
+  function renderDownload(d) {
+    const btn = d.file_url
+      ? `<a href="${d.file_url}" target="_blank" rel="noopener noreferrer" class="btn-download">⬇ Unduh</a>`
+      : `<button class="btn-download" disabled style="opacity:.5;cursor:not-allowed;">Segera Hadir</button>`;
+
+    return `
+      <div class="download-card ${d.category} fade-in" data-category="${d.category}">
+        <div class="download-icon">${d.emoji || '📄'}</div>
+        <h3>${esc(d.title)}</h3>
+        <p>${esc(d.description || '')}</p>
+        <div class="download-meta">
+          ${d.file_size ? `<span class="size">📦 ${d.file_size}</span>` : '<span></span>'}
+          ${btn}
+        </div>
+      </div>`;
+  }
+
+  // ── Site info (footer dinamis) ────────────────────────────────
+  function initSiteInfo() {
+    const db = getClient();
+    if (!db) return;
+
+    db.from('site_settings').select('key,value')
+      .then(({ data }) => {
+        if (!data) return;
+        const s = Object.fromEntries(data.map(r => [r.key, r.value]));
+
+        const set = (attr, text, href) => {
+          // Sanitasi href: ganti relative .html ke clean path
+          if (href && !href.startsWith('http') && !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('tel:') && !href.startsWith('mailto:')) {
+            href = '/' + href.replace(/\.html$/, '');
+          }
+          document.querySelectorAll(`[data-site="${attr}"]`).forEach(el => {
+            if (el.tagName === 'A') {
+              if (href) el.href = href;
+              if (text) el.textContent = text;
+            } else {
+              if (text) el.textContent = text;
+            }
+          });
+        };
+
+        // Kontak & footer
+        if (s.address)   set('address',   '📍 ' + s.address);
+        if (s.phone)     set('phone',     '📞 ' + s.phone,     'tel:' + s.phone.replace(/\s/g, ''));
+        if (s.email)     set('email',     '✉️ ' + s.email,     'mailto:' + s.email);
+        if (s.hours)     set('hours',     '⏰ ' + s.hours);
+        if (s.instagram) set('instagram', null, s.instagram);
+        if (s.youtube)   set('youtube',   null, s.youtube);
+        if (s.facebook)  set('facebook',  null, s.facebook);
+        if (s.tiktok)    set('tiktok',    null, s.tiktok);
+
+        // Stats bar (index)
+        ['stat1_num','stat1_label','stat2_num','stat2_label',
+         'stat3_num','stat3_label','stat4_num','stat4_label'].forEach(k => {
+          if (s[k]) set(k, s[k]);
+        });
+
+        // Download stats
+        ['dl_stat1_num','dl_stat1_label','dl_stat2_num','dl_stat2_label',
+         'dl_stat3_num','dl_stat3_label','dl_stat4_num','dl_stat4_label'].forEach(k => {
+          if (s[k]) set(k, s[k]);
+        });
+
+        // Hero text
+        if (s.hero_tag)      set('hero_tag',      s.hero_tag);
+        if (s.hero_title)    set('hero_title',     s.hero_title);
+        if (s.hero_subtitle) set('hero_subtitle',  s.hero_subtitle);
+        if (s.hero_btn1_text) set('hero_btn1_text', s.hero_btn1_text, s.hero_btn1_url);
+        if (s.hero_btn2_text) set('hero_btn2_text', s.hero_btn2_text, s.hero_btn2_url);
+
+        // Features section title
+        if (s.features_title)    set('features_title',    s.features_title);
+        if (s.features_subtitle) set('features_subtitle', s.features_subtitle);
+
+        // Testimonials section title
+        if (s.testimonials_title)    set('testimonials_title',    s.testimonials_title);
+        if (s.testimonials_subtitle) set('testimonials_subtitle', s.testimonials_subtitle);
+
+        // CTA banner
+        if (s.cta_title)    set('cta_title',    s.cta_title);
+        if (s.cta_subtitle) set('cta_subtitle', s.cta_subtitle);
+        if (s.cta_btn1_text) set('cta_btn1_text', s.cta_btn1_text, s.cta_btn1_url);
+        if (s.cta_btn2_text) set('cta_btn2_text', s.cta_btn2_text, s.cta_btn2_url);
+
+        // Promo banner (kelas.html)
+        const promoBanner = document.getElementById('promoBanner');
+        if (promoBanner) {
+          if (s.promo_active === 'false') promoBanner.style.display = 'none';
+          if (s.promo_title)    set('promo_title',    s.promo_title);
+          if (s.promo_subtitle) set('promo_subtitle', s.promo_subtitle);
+        }
+
+        // Map embed (kontak.html)
+        const mapWrap = document.getElementById('mapEmbed');
+        if (mapWrap && s.map_embed_url) {
+          mapWrap.innerHTML = `<iframe src="${s.map_embed_url}" width="100%" height="380" style="border:0;border-radius:var(--radius);" allowfullscreen loading="lazy"></iframe>`;
+        }
+
+        // Footer tagline
+        if (s.footer_tagline) {
+          document.querySelectorAll('[data-site="footer_tagline"]').forEach(el => {
+            el.textContent = s.footer_tagline;
+          });
+        }
+      });
+  }
+
+  // ── Testimonials ──────────────────────────────────────────────
+  function initTestimonials() {
+    const grid = document.getElementById('testimonialsGrid');
+    if (!grid) return;
+    const db = getClient();
+    if (!db) return;
+
+    db.from('testimonials').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => {
+        if (!data?.length) return; // fallback ke hardcode
+        grid.innerHTML = data.map(t => {
+          const stars = '★'.repeat(t.rating) + '☆'.repeat(5 - t.rating);
+          const initials = t.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+          const avatar = t.avatar
+            ? `<img src="${t.avatar}" alt="${esc(t.name)}" style="width:46px;height:46px;border-radius:50%;object-fit:cover;">`
+            : `<div class="author-avatar">${initials}</div>`;
+          return `
+            <div class="testimonial-card fade-in visible">
+              <div class="stars">${stars}</div>
+              <p class="testimonial-text">${esc(t.content)}</p>
+              <div class="testimonial-author">
+                ${avatar}
+                <div class="author-info">
+                  <strong>${esc(t.name)}</strong>
+                  <span>${esc(t.location || '')}</span>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      });
+  }
+
+  // ── Features ──────────────────────────────────────────────────
+  function initFeatures() {
+    const grid = document.getElementById('featuresGrid');
+    if (!grid) return;
+    const db = getClient();
+    if (!db) return;
+
+    db.from('features').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => {
+        if (!data?.length) return; // fallback ke hardcode
+        grid.innerHTML = data.map(f => `
+          <div class="feature-card fade-in visible">
+            <div class="feature-icon">${f.icon}</div>
+            <h3>${esc(f.title)}</h3>
+            <p>${esc(f.description)}</p>
+          </div>`).join('');
+      });
+  }
+
+  // ── Active nav ────────────────────────────────────────────────
+  function setActiveNav() {
+    const pageName = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+    document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(link => {
+      const href = (link.getAttribute('href') || '').replace('.html', '').replace(/^\//, '') || 'index';
+      if (href === pageName) link.classList.add('active');
+    });
+  }
+
+  // ── Auto-init ─────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    setActiveNav();
+    initSiteInfo();
+    initFeaturedProducts();
+    initShop();
+    initTeori();
+    initKelas();
+    initDownload();
+    initTestimonials();
+    initFeatures();
+  });
+
+})();

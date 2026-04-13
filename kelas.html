@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List Kelas – MasJanis</title>
+  <meta name="description" content="Ikuti kelas online herbal bersama instruktur berpengalaman. Dari pemula hingga lanjutan — fitokimia, meracik jamu, TOGA, aromaterapi, dan lebih banyak lagi." />
+  <meta name="keywords" content="kelas herbal online, belajar herbal, kursus jamu, fitokimia, tanaman obat kelas" />
+  <meta property="og:title" content="List Kelas – MasJanis" />
+  <meta property="og:description" content="Kelas online herbal dari pemula hingga lanjutan bersama instruktur berpengalaman." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .kelas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .kelas-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .kelas-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .kelas-img {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+    }
+
+    .kelas-img.bg1 { background: linear-gradient(135deg, #d8f3dc, #52b788); }
+    .kelas-img.bg2 { background: linear-gradient(135deg, #fef3cd, #e9a800); }
+    .kelas-img.bg3 { background: linear-gradient(135deg, #cfe2ff, #3d8bcd); }
+    .kelas-img.bg4 { background: linear-gradient(135deg, #f8d7da, #dc3545); }
+    .kelas-img.bg5 { background: linear-gradient(135deg, #e2d9f3, #7c3aed); }
+    .kelas-img.bg6 { background: linear-gradient(135deg, #d1ecf1, #0dcaf0); }
+
+    .level-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .level-pemula { background: #d1fae5; color: #065f46; }
+    .level-menengah { background: #fef3cd; color: #92400e; }
+    .level-lanjutan { background: #fee2e2; color: #991b1b; }
+
+    .kelas-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kelas-body h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .kelas-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      color: var(--text-light);
+    }
+
+    .kelas-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    .kelas-desc {
+      color: var(--text-mid);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      flex: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    .kelas-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .kelas-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .kelas-price .original {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      text-decoration: line-through;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      display: block;
+    }
+
+    .kelas-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.85rem;
+      color: var(--text-mid);
+    }
+
+    .kelas-rating .stars { color: var(--gold); }
+
+    .promo-banner {
+      background: linear-gradient(135deg, var(--gold), #e8b820);
+      padding: 1.5rem 2rem;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .promo-banner .text { color: var(--white); }
+    .promo-banner .text strong { font-size: 1.1rem; display: block; margin-bottom: 0.25rem; }
+    .promo-banner .text span { font-size: 0.9rem; opacity: 0.9; }
+
+    @media (max-width: 1024px) {
+      .kelas-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .kelas-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-page="kelas">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+  <h1>List Kelas</h1>
+  <p>Tingkatkan pengetahuan herbal Anda bersama instruktur berpengalaman. Belajar kapan saja, di mana saja.</p>
+</div>
+
+<!-- ===== KELAS SECTION ===== -->
+<section class="section">
+  <div class="container">
+
+    <!-- Promo banner -->
+    <div class="promo-banner fade-in" id="promoBanner">
+      <div class="text">
+        <strong data-site="promo_title">🎉 Promo Spesial! Diskon hingga 50%</strong>
+        <span data-site="promo_subtitle">Berlaku untuk semua kelas. Gunakan kode: HERBAL50</span>
+      </div>
+      <a href="#classesGrid" class="btn btn-white btn-sm">Lihat Kelas</a>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" data-target="#classesGrid">
+      <button class="filter-tab active" data-filter="semua">Semua Kelas</button>
+      <button class="filter-tab" data-filter="pemula">Pemula</button>
+      <button class="filter-tab" data-filter="menengah">Menengah</button>
+      <button class="filter-tab" data-filter="lanjutan">Lanjutan</button>
+    </div>
+
+    <!-- Kelas grid (dynamic) -->
+    <div class="kelas-grid" id="classesGrid"></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Level Kelas</h4>
+      <ul>
+        <li><a href="#">Pemula</a></li>
+        <li><a href="#">Menengah</a></li>
+        <li><a href="#">Lanjutan</a></li>
+        <li><a href="#">Paket Bundling</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script src="page-header-loader.js"></script>
+<script src="cms-loader.js"></script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Download Center – MasJanis</title>
+  <meta name="description" content="Unduh gratis e-book, panduan, infografis, dan video herbal. Materi lengkap tentang tanaman obat, jamu, dan gaya hidup sehat berbasis herbal." />
+  <meta name="keywords" content="download ebook herbal, panduan herbal gratis, infografis tanaman obat, video jamu" />
+  <meta property="og:title" content="Download Center – MasJanis" />
+  <meta property="og:description" content="Unduh gratis e-book, panduan, infografis, dan video herbal." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.75rem;
+    }
+
+    .download-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem 1.5rem;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .download-card.ebook::before { background: linear-gradient(90deg, var(--green-dark), var(--green-light)); }
+    .download-card.panduan::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+    .download-card.infografis::before { background: linear-gradient(90deg, #6ea8fe, #0d6efd); }
+    .download-card.video::before { background: linear-gradient(90deg, #f1aeb5, #dc3545); }
+
+    .download-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .download-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+    }
+
+    .download-card.ebook .download-icon { background: var(--green-pale); }
+    .download-card.panduan .download-icon { background: #fef3cd; }
+    .download-card.infografis .download-icon { background: #cfe2ff; }
+    .download-card.video .download-icon { background: #f8d7da; }
+
+    .download-card h3 {
+      font-size: 1rem;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .download-card p {
+      color: var(--text-mid);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .download-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .download-meta .size {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+    }
+
+    .download-card.ebook .btn-download {
+      background: var(--green-pale);
+      color: var(--green-dark);
+    }
+    .download-card.ebook .btn-download:hover {
+      background: var(--green-dark);
+      color: var(--white);
+    }
+
+    .download-card.panduan .btn-download {
+      background: #fef3cd;
+      color: #92400e;
+    }
+    .download-card.panduan .btn-download:hover {
+      background: var(--gold);
+      color: var(--white);
+    }
+
+    .download-card.infografis .btn-download {
+      background: #cfe2ff;
+      color: #084298;
+    }
+    .download-card.infografis .btn-download:hover {
+      background: #0d6efd;
+      color: var(--white);
+    }
+
+    .download-card.video .btn-download {
+      background: #f8d7da;
+      color: #842029;
+    }
+    .download-card.video .btn-download:hover {
+      background: #dc3545;
+      color: var(--white);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      display: block;
+    }
+
+    .stat-card span:last-child {
+      font-size: 0.85rem;
+      color: var(--text-mid);
+    }
+
+    @media (max-width: 1200px) {
+      .download-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .download-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .download-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 480px) {
+      .newsletter-form { flex-direction: column; }
+      .newsletter-form input { width: 100%; }
+      .newsletter-form .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body data-page="download">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+  <h1>Download Center</h1>
+  <p>Unduh e-book, panduan, infografis, dan materi video herbal secara gratis untuk mendukung perjalanan sehat Anda.</p>
+</div>
+
+<!-- ===== DOWNLOAD SECTION ===== -->
+<section class="section">
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="stats-row fade-in">
+      <div class="stat-card">
+        <span class="num" data-site="dl_stat1_num">48+</span>
+        <span data-site="dl_stat1_label">Total Materi</span>
+      </div>
+      <div class="stat-card">
+        <span class="num" data-site="dl_stat2_num">12K+</span>
+        <span data-site="dl_stat2_label">Total Unduhan</span>
+      </div>
+      <div class="stat-card">
+        <span class="num" data-site="dl_stat3_num">100%</span>
+        <span data-site="dl_stat3_label">Gratis</span>
+      </div>
+      <div class="stat-card">
+        <span class="num" data-site="dl_stat4_num">4</span>
+        <span data-site="dl_stat4_label">Kategori</span>
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" data-target=".download-grid">
+      <button class="filter-tab active" data-filter="semua">Semua</button>
+      <button class="filter-tab" data-filter="ebook">E-Book</button>
+      <button class="filter-tab" data-filter="panduan">Panduan</button>
+      <button class="filter-tab" data-filter="infografis">Infografis</button>
+      <button class="filter-tab" data-filter="video">Video</button>
+    </div>
+
+    <!-- Download grid -->
+    <div id="downloadsGrid" class="download-grid"></div>
+  </div>
+</section>
+
+<!-- ===== NEWSLETTER CTA ===== -->
+<section style="background: var(--green-dark); padding: 4rem 2rem; text-align: center;">
+  <div style="max-width: 550px; margin: 0 auto;">
+    <div class="section-tag" style="background: rgba(255,255,255,0.15); color: var(--white);">Newsletter</div>
+    <h2 style="color: var(--white); font-size: 1.9rem; margin: 0.75rem 0;">Dapatkan Materi Terbaru Langsung di Inbox Anda</h2>
+    <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.75rem;">Daftar newsletter kami dan dapatkan notifikasi setiap ada materi baru yang diunggah.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='✓ Terdaftar!';">
+      <input type="email" placeholder="Masukkan email Anda" required
+        style="flex:1; padding: 0.85rem 1rem; border-radius: var(--radius-sm); border: none; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none;" />
+      <button type="submit" class="btn btn-gold">Daftar</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kategori</h4>
+      <ul>
+        <li><a href="#">E-Book</a></li>
+        <li><a href="#">Panduan</a></li>
+        <li><a href="#">Infografis</a></li>
+        <li><a href="#">Video</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script src="page-header-loader.js"></script>
+<script src="cms-loader.js"></script>
+</body>
+</html>

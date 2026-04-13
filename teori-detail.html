@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artikel – MasJanis</title>
+  <meta name="description" content="" id="metaDesc" />
+  <meta property="og:title" content="" id="ogTitle" />
+  <meta property="og:description" content="" id="ogDesc" />
+  <meta property="og:image" content="" id="ogImage" />
+  <meta property="og:type" content="article" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js"></script>
+  <style>
+    .breadcrumb {
+      padding: 1rem 2rem;
+      max-width: 860px;
+      margin: 0 auto;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--green-mid); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--green-dark); }
+
+    /* Article layout */
+    .article-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+
+    /* Hero image */
+    .article-hero {
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      background: var(--off-white);
+      min-height: 200px;
+    }
+
+    .article-hero img {
+      width: 100%;
+      height: auto;
+      display: block;
+      position: static;
+      object-fit: unset;
+    }
+
+    .article-hero.bg1 { background: linear-gradient(135deg, #d8f3dc, #74c69d); }
+    .article-hero.bg2 { background: linear-gradient(135deg, #fef3cd, #f0c040); }
+    .article-hero.bg3 { background: linear-gradient(135deg, #cfe2ff, #6ea8fe); }
+    .article-hero.bg4 { background: linear-gradient(135deg, #f8d7da, #f1aeb5); }
+    .article-hero.bg5 { background: linear-gradient(135deg, #e2d9f3, #c29ffa); }
+    .article-hero.bg6 { background: linear-gradient(135deg, #d1ecf1, #6edff6); }
+
+    /* Article header */
+    .article-header { margin-bottom: 2rem; }
+
+    .article-header .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .article-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--text-dark);
+      line-height: 1.3;
+      margin-bottom: 1rem;
+    }
+
+    .article-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      flex-wrap: wrap;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-meta-row span { display: flex; align-items: center; gap: 0.35rem; }
+
+    /* Article body */
+    .article-body-content {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+    }
+
+    .article-body-content p { margin-bottom: 1.25rem; }
+
+    /* Share */
+    .article-share {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+
+    .share-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .share-btn:hover { background: var(--green-pale); border-color: var(--green-light); }
+
+    /* Related */
+    .related-section { background: var(--off-white); padding: 4rem 2rem; }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Skeleton */
+    .article-skeleton {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Not found */
+    .not-found {
+      text-align: center; padding: 6rem 2rem;
+      max-width: 480px; margin: 0 auto;
+    }
+    .not-found .icon { font-size: 4rem; margin-bottom: 1rem; }
+    .not-found h2 { font-size: 1.5rem; color: var(--text-dark); margin-bottom: 0.75rem; }
+    .not-found p { color: var(--text-mid); margin-bottom: 2rem; }
+
+    @media (max-width: 768px) {
+      .article-hero { height: 220px; font-size: 5rem; }
+      .article-header h1 { font-size: 1.6rem; }
+      .article-wrap { padding: 0 1rem 3rem; }
+      .breadcrumb { padding: 1rem; }
+      .related-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-page="teori">
+
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<div class="breadcrumb" id="breadcrumb">
+  <a href="/">Beranda</a><span>›</span>
+  <a href="/teori">Teori</a><span>›</span>
+  <span id="breadcrumbName">Memuat...</span>
+</div>
+
+<main id="mainContent">
+  <!-- Skeleton -->
+  <div class="article-skeleton" id="skeletonWrap">
+    <div class="skeleton" style="height:360px;border-radius:var(--radius);"></div>
+    <div class="skeleton skeleton-line short" style="width:20%;height:24px;"></div>
+    <div class="skeleton skeleton-line" style="height:40px;"></div>
+    <div class="skeleton skeleton-line medium" style="height:40px;"></div>
+    <div class="skeleton skeleton-line short" style="width:50%;height:16px;margin-top:0.5rem;"></div>
+    <div class="skeleton skeleton-line" style="height:14px;margin-top:1rem;"></div>
+    <div class="skeleton skeleton-line" style="height:14px;"></div>
+    <div class="skeleton skeleton-line medium" style="height:14px;"></div>
+    <div class="skeleton skeleton-line" style="height:14px;"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="article-wrap" id="articleWrap" style="display:none;">
+    <div class="article-hero bg1" id="articleHero"><span id="articleEmoji">🌿</span></div>
+
+    <div class="article-header">
+      <div class="badge-row">
+        <span class="badge badge-green" id="articleCategory">—</span>
+      </div>
+      <h1 id="articleTitle">—</h1>
+      <div class="article-meta-row">
+        <span id="metaDate"></span>
+        <span id="metaReadTime"></span>
+      </div>
+    </div>
+
+    <div class="article-body-content" id="articleBody"></div>
+
+    <div class="article-share">
+      <span>Bagikan:</span>
+      <a class="share-btn" id="shareWa" href="#" target="_blank" rel="noopener" title="WhatsApp">💬</a>
+      <a class="share-btn" id="shareFb" href="#" target="_blank" rel="noopener" title="Facebook">👥</a>
+      <button class="share-btn" id="shareCopy" title="Salin link">🔗</button>
+    </div>
+  </div>
+
+  <div class="not-found" id="notFoundWrap" style="display:none;">
+    <div class="icon">📄</div>
+    <h2>Artikel Tidak Ditemukan</h2>
+    <p>Artikel yang Anda cari tidak tersedia atau sudah tidak aktif.</p>
+    <a href="/teori" class="btn btn-primary">← Kembali ke Teori</a>
+  </div>
+</main>
+
+<!-- Related articles -->
+<section class="related-section" id="relatedSection" style="display:none;">
+  <div style="max-width:1100px;margin:0 auto 2rem;">
+    <div class="section-header fade-in">
+      <div class="section-tag">Artikel Lainnya</div>
+      <h2>Baca Juga</h2>
+    </div>
+  </div>
+  <div class="related-grid" id="relatedGrid"></div>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Topik</h4>
+      <ul>
+        <li><a href="/teori">Tanaman Obat</a></li>
+        <li><a href="/teori">Ramuan Tradisional</a></li>
+        <li><a href="/teori">Fitokimia</a></li>
+        <li><a href="/teori">Jamu Nusantara</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="/main.js"></script>
+<script src="/page-header-loader.js"></script>
+<script src="/cms-loader.js"></script>
+<script>
+(function () {
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderDetail(a) {
+    document.title = a.title + ' – MasJanis';
+    document.getElementById('metaDesc').content = a.excerpt || '';
+    document.getElementById('ogTitle').content  = a.title + ' – MasJanis';
+    document.getElementById('ogDesc').content   = a.excerpt || '';
+    if (a.image_url) document.getElementById('ogImage').content = a.image_url;
+
+    document.getElementById('breadcrumbName').textContent = a.title;
+
+    const hero = document.getElementById('articleHero');
+    hero.className = 'article-hero ' + (a.bg_class || 'bg1');
+    if (a.image_url) {
+      hero.innerHTML = `<img src="${a.image_url}" alt="${esc(a.title)}" />`;
+    } else {
+      document.getElementById('articleEmoji').textContent = a.emoji || '🌿';
+    }
+
+    const catLabels = {
+      'tanaman-obat': 'Tanaman Obat', 'ramuan': 'Ramuan Tradisional',
+      'fitokimia': 'Fitokimia', 'holistik': 'Pengobatan Holistik',
+      'jamu': 'Jamu Nusantara', 'modern': 'Herbal Modern'
+    };
+    document.getElementById('articleCategory').textContent = catLabels[a.category] || a.category;
+    document.getElementById('articleTitle').textContent = a.title;
+
+    if (a.published_date) {
+      document.getElementById('metaDate').textContent =
+        '📅 ' + new Date(a.published_date).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+    }
+    if (a.read_time) {
+      document.getElementById('metaReadTime').textContent = '⏱ ' + a.read_time + ' menit baca';
+    }
+
+    // Body: render sebagai HTML (support tag dari CMS)
+    const body = document.getElementById('articleBody');
+    body.innerHTML = a.excerpt
+      ? a.excerpt
+      : '<p style="color:var(--text-light);font-style:italic;">Konten lengkap belum tersedia.</p>';
+
+    // Share
+    const url  = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('Baca artikel ' + a.title + ' di MasJanis!');
+    document.getElementById('shareWa').href = 'https://wa.me/?text=' + text + '%20' + url;
+    document.getElementById('shareFb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
+    document.getElementById('shareCopy').addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const btn = document.getElementById('shareCopy');
+        btn.textContent = '✅';
+        if (typeof showToast === 'function') showToast('Link berhasil disalin!', 'success', 2000);
+        setTimeout(() => { btn.textContent = '🔗'; }, 2000);
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = window.location.href;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const btn = document.getElementById('shareCopy');
+        btn.textContent = '✅';
+        if (typeof showToast === 'function') showToast('Link berhasil disalin!', 'success', 2000);
+        setTimeout(() => { btn.textContent = '🔗'; }, 2000);
+      });
+    });
+
+    document.getElementById('skeletonWrap').style.display = 'none';
+    document.getElementById('articleWrap').style.display  = '';
+  }
+
+  function renderRelated(articles, currentId) {
+    const related = articles.filter(a => a.id !== currentId).slice(0, 3);
+    if (!related.length) return;
+    const grid = document.getElementById('relatedGrid');
+    grid.innerHTML = related.map(a => {
+      const bg = a.bg_class || 'bg1';
+      const imgEl = a.image_url
+        ? `<img src="${a.image_url}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+        : `<span style="font-size:3rem;">${a.emoji || '🌿'}</span>`;
+      const date = a.published_date
+        ? new Date(a.published_date).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' })
+        : '';
+      return `
+        <a href="/teori-detail/${slugify(a.title)}" class="article-card fade-in" style="text-decoration:none;color:inherit;">
+          <div class="article-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}</div>
+          <div class="article-body">
+            <span class="badge badge-green">${a.category}</span>
+            <h3>${esc(a.title)}</h3>
+            <p>${esc(a.excerpt || '')}</p>
+            <div class="article-meta">${date ? `<span>📅 ${date}</span>` : ''}</div>
+          </div>
+        </a>`;
+    }).join('');
+    document.getElementById('relatedSection').style.display = '';
+    grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+  }
+
+  function slugify(text) {
+    return String(text || '').toLowerCase()
+      .replace(/[àáâãäå]/g,'a').replace(/[èéêë]/g,'e')
+      .replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o')
+      .replace(/[ùúûü]/g,'u').replace(/[ñ]/g,'n')
+      .replace(/[^a-z0-9\s-]/g,'').trim()
+      .replace(/[\s]+/g,'-').replace(/-+/g,'-');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const parts    = window.location.pathname.split('/').filter(Boolean);
+    const filtered = parts.filter(p => p !== 'teori-detail' && p !== 'teori-detail.html');
+    const rawSlug  = filtered[filtered.length - 1] || null;
+    const slug     = (rawSlug && /^[0-9a-f]{8}-[0-9a-f]{4}/.test(rawSlug)) ? null : rawSlug;
+    const idParam  = new URLSearchParams(window.location.search).get('id');
+
+    if (!slug && !idParam) { window.location.replace('/teori'); return; }
+    if (typeof isConfigured !== 'function' || !isConfigured()) {
+      document.getElementById('skeletonWrap').style.display = 'none';
+      document.getElementById('notFoundWrap').style.display = '';
+      return;
+    }
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+
+    db.from('articles').select('*').eq('is_active', true)
+      .then(({ data: all, error }) => {
+        if (error || !all) throw new Error('fetch failed');
+        const article = slug
+          ? all.find(a => slugify(a.title) === slug)
+          : all.find(a => a.id === idParam);
+        if (!article) {
+          document.getElementById('skeletonWrap').style.display = 'none';
+          document.getElementById('notFoundWrap').style.display = '';
+          return;
+        }
+        renderDetail(article);
+        const related = all.filter(a => a.id !== article.id && a.category === article.category).slice(0, 3);
+        if (related.length) renderRelated(related, article.id);
+      })
+      .catch(() => {
+        document.getElementById('skeletonWrap').style.display = 'none';
+        document.getElementById('notFoundWrap').style.display = '';
+      });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+/beranda              /index.html              200
+/teori                /teori.html              200
+/kelas                /kelas.html              200
+/shop                 /shop.html               200
+/download             /download.html           200
+/kontak               /kontak.html             200
+/admin                /admin/index.html        200
+/product-detail/*     /product-detail.html     200
+/teori-detail/*       /teori-detail.html       200
+/kelas-detail/*       /kelas-detail.html       200
+/404                  /404.html                404
+/*                    /404.html                404

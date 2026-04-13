@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teori – MasJanis</title>
+  <meta name="description" content="Pelajari ilmu herbal nusantara: tanaman obat, ramuan tradisional, fitokimia, jamu, dan pengobatan holistik dari sumber terpercaya." />
+  <meta name="keywords" content="teori herbal, tanaman obat, fitokimia, jamu nusantara, pengobatan holistik, herbal modern" />
+  <meta property="og:title" content="Teori – MasJanis" />
+  <meta property="og:description" content="Pelajari ilmu herbal nusantara dari sumber terpercaya." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .article-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .article-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .article-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .article-img {
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .article-img.bg1 { background: linear-gradient(135deg, #d8f3dc, #74c69d); }
+    .article-img.bg2 { background: linear-gradient(135deg, #fef3cd, #f0c040); }
+    .article-img.bg3 { background: linear-gradient(135deg, #cfe2ff, #6ea8fe); }
+    .article-img.bg4 { background: linear-gradient(135deg, #f8d7da, #f1aeb5); }
+    .article-img.bg5 { background: linear-gradient(135deg, #e2d9f3, #c29ffa); }
+    .article-img.bg6 { background: linear-gradient(135deg, #d1ecf1, #6edff6); }
+
+    .article-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .article-body h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .article-body p {
+      color: var(--text-mid);
+      font-size: 0.88rem;
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .article-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+    .topics-section {
+      background: var(--green-dark);
+      padding: 3rem 2rem;
+    }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .topic-chip {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .topic-chip:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    .topic-chip .icon { font-size: 1.4rem; display: block; margin-bottom: 0.3rem; }
+
+    @media (max-width: 1024px) {
+      .article-grid { grid-template-columns: repeat(2, 1fr); }
+      .topics-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .article-grid { grid-template-columns: 1fr; }
+      .topics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body data-page="teori">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+  <h1>Teori Herbal</h1>
+  <p>Pelajari ilmu herbal nusantara dari sumber terpercaya — dari tanaman obat hingga fitokimia modern.</p>
+</div>
+
+<!-- ===== TOPICS ===== -->
+<div class="topics-section">
+  <div class="topics-grid">
+    <div class="topic-chip"><span class="icon">🌿</span>Tanaman Obat</div>
+    <div class="topic-chip"><span class="icon">🫙</span>Ramuan Tradisional</div>
+    <div class="topic-chip"><span class="icon">🔬</span>Fitokimia</div>
+    <div class="topic-chip"><span class="icon">☯️</span>Pengobatan Holistik</div>
+    <div class="topic-chip"><span class="icon">🏺</span>Jamu Nusantara</div>
+    <div class="topic-chip"><span class="icon">💊</span>Herbal Modern</div>
+  </div>
+</div>
+
+<!-- ===== ARTICLES ===== -->
+<section class="section">
+  <div class="container">
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="🔍  Cari artikel, topik, atau tanaman..." />
+      <button class="btn btn-primary btn-sm">Cari</button>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" data-target="#articlesGrid">
+      <button class="filter-tab active" data-filter="semua">Semua</button>
+      <button class="filter-tab" data-filter="tanaman-obat">Tanaman Obat</button>
+      <button class="filter-tab" data-filter="ramuan">Ramuan Tradisional</button>
+      <button class="filter-tab" data-filter="fitokimia">Fitokimia</button>
+      <button class="filter-tab" data-filter="holistik">Pengobatan Holistik</button>
+      <button class="filter-tab" data-filter="jamu">Jamu Nusantara</button>
+      <button class="filter-tab" data-filter="modern">Herbal Modern</button>
+    </div>
+
+    <!-- Articles grid -->
+    <div class="article-grid" id="articlesGrid"></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Topik</h4>
+      <ul>
+        <li><a href="#">Tanaman Obat</a></li>
+        <li><a href="#">Ramuan Tradisional</a></li>
+        <li><a href="#">Fitokimia</a></li>
+        <li><a href="#">Pengobatan Holistik</a></li>
+        <li><a href="#">Jamu Nusantara</a></li>
+        <li><a href="#">Herbal Modern</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script src="page-header-loader.js"></script>
+<script src="cms-loader.js"></script>
+</body>
+</html>

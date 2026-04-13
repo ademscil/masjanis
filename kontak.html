@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontak – MasJanis</title>
+  <meta name="description" content="Hubungi tim MasJanis untuk pertanyaan produk, informasi kelas, kerjasama, atau konsultasi herbal. Kami siap membantu Anda." />
+  <meta name="keywords" content="kontak masjanis, konsultasi herbal, hubungi kami, reseller herbal" />
+  <meta property="og:title" content="Kontak – MasJanis" />
+  <meta property="og:description" content="Hubungi tim MasJanis untuk pertanyaan, kerjasama, atau konsultasi herbal." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .kontak-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 3rem;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Info cards */
+    .info-cards { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .info-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .info-card:hover {
+      transform: translateX(4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .info-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-sm);
+      background: var(--green-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .info-text h4 {
+      font-size: 0.95rem;
+      color: var(--green-dark);
+      margin-bottom: 0.3rem;
+    }
+
+    .info-text p {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.6;
+    }
+
+    .info-text a {
+      color: var(--green-mid);
+      transition: var(--transition);
+    }
+
+    .info-text a:hover { color: var(--green-dark); }
+
+    /* Social section */
+    .social-section {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-top: 0.25rem;
+    }
+
+    .social-section h4 {
+      font-size: 0.95rem;
+      color: var(--green-dark);
+      margin-bottom: 1rem;
+    }
+
+    .social-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .social-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm);
+      background: var(--off-white);
+      font-size: 0.85rem;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+
+    .social-item:hover {
+      background: var(--green-pale);
+      color: var(--green-dark);
+      border-color: var(--green-light);
+    }
+
+    /* Contact form */
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .form-card h2 {
+      font-size: 1.6rem;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-card > p {
+      color: var(--text-mid);
+      font-size: 0.92rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-success {
+      display: none;
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      color: #065f46;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-success.show { display: flex; }
+
+    /* Map section */
+    .map-section {
+      padding: 0 2rem 5rem;
+    }
+
+    .map-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .map-container h2 {
+      font-size: 1.6rem;
+      color: var(--green-dark);
+      margin-bottom: 1.5rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .map-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      height: 380px;
+      background: var(--off-white);
+      border: 2px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .map-wrap .map-icon { font-size: 3rem; }
+    .map-wrap strong { color: var(--text-mid); font-size: 1rem; }
+    .map-wrap code {
+      background: var(--border);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: var(--green-dark);
+    }
+
+    /* FAQ */
+    .faq-section { background: var(--off-white); padding: 5rem 2rem; }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .faq-item h4 {
+      font-size: 0.95rem;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      font-size: 0.87rem;
+      color: var(--text-mid);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .kontak-layout { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .form-card { padding: 1.5rem; }
+      .social-grid { grid-template-columns: 1fr; }
+      .map-section { padding: 0 1rem 3rem; }
+      .map-wrap { height: 260px; }
+    }
+  </style>
+</head>
+<body data-page="kontak">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+  <h1>Hubungi Kami</h1>
+  <p>Ada pertanyaan, saran, atau ingin berkolaborasi? Tim kami siap membantu Anda.</p>
+</div>
+
+<!-- ===== CONTACT SECTION ===== -->
+<section class="section">
+  <div class="kontak-layout">
+
+    <!-- Left: Info -->
+    <div>
+      <div class="info-cards">
+        <div class="info-card fade-in">
+          <div class="info-icon">📍</div>
+          <div class="info-text">
+            <h4>Alamat Kantor</h4>
+            <p data-site="address">Jl. Raya Herbal No. 88, Kebayoran Baru<br>Jakarta Selatan, DKI Jakarta 12110</p>
+          </div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="info-icon">📞</div>
+          <div class="info-text">
+            <h4>Telepon & WhatsApp</h4>
+            <p><a href="tel:+6281234567890" data-site="phone">+62 812-3456-7890</a></p>
+          </div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="info-icon">✉️</div>
+          <div class="info-text">
+            <h4>Email</h4>
+            <p><a href="mailto:info@masjanis.com" data-site="email">info@masjanis.com</a></p>
+          </div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="info-icon">⏰</div>
+          <div class="info-text">
+            <h4>Jam Operasional</h4>
+            <p data-site="hours">Senin – Jumat: 08.00 – 17.00 WIB</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social media -->
+      <div class="social-section fade-in" style="margin-top: 1.25rem;">
+        <h4>Ikuti Kami di Media Sosial</h4>
+        <div class="social-grid">
+          <div class="social-item">📸 Instagram</div>
+          <div class="social-item">👥 Facebook</div>
+          <div class="social-item">▶️ YouTube</div>
+          <div class="social-item">🎵 TikTok</div>
+          <div class="social-item">💬 Telegram</div>
+          <div class="social-item">🐦 Twitter/X</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="form-card fade-in">
+      <h2>Kirim Pesan</h2>
+      <p>Isi formulir di bawah ini dan kami akan merespons dalam 1×24 jam kerja.</p>
+
+      <form id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nama">Nama Lengkap *</label>
+            <input type="text" id="nama" name="nama" placeholder="Nama Anda" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" placeholder="email@anda.com" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telepon">Nomor Telepon</label>
+            <input type="tel" id="telepon" name="telepon" placeholder="+62 812-xxxx-xxxx" />
+          </div>
+          <div class="form-group">
+            <label for="subjek">Subjek *</label>
+            <select id="subjek" name="subjek" required>
+              <option value="" disabled selected>Pilih subjek...</option>
+              <option value="produk">Pertanyaan Produk</option>
+              <option value="kelas">Informasi Kelas</option>
+              <option value="pesanan">Status Pesanan</option>
+              <option value="kerjasama">Kerjasama / Kolaborasi</option>
+              <option value="media">Liputan Media</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pesan">Pesan *</label>
+          <textarea id="pesan" name="pesan" placeholder="Tuliskan pesan Anda di sini..." required></textarea>
+        </div>
+        <div id="formError" style="display:none; background:#fee2e2; border:1px solid #fca5a5; border-radius:var(--radius-sm); padding:0.75rem 1rem; color:#991b1b; font-size:0.88rem; margin-bottom:0.75rem;"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+          📨 Kirim Pesan
+        </button>
+        <div class="form-success" id="formSuccess">
+          ✅ Pesan Anda berhasil terkirim! Kami akan menghubungi Anda segera.
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== MAP ===== -->
+<div class="map-section">
+  <div class="map-container">
+    <h2>📍 Lokasi Kami</h2>
+    <div class="map-wrap">
+      <!--
+        GANTI KOMENTAR INI DENGAN EMBED GOOGLE MAPS ANDA:
+        <iframe
+          src="https://www.google.com/maps/embed?pb=..."
+          width="100%" height="380" style="border:0;"
+          allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      -->
+      <div class="map-icon">🗺️</div>
+      <strong>Embed Google Maps</strong>
+      <p>Ganti komentar di atas dengan kode embed Google Maps Anda.</p>
+      <code>&lt;!-- GANTI DENGAN EMBED GOOGLE MAPS --&gt;</code>
+      <p style="font-size:0.8rem;margin-top:0.5rem;">Jl. Raya Herbal No. 88, Kebayoran Baru, Jakarta Selatan</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ ===== -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">FAQ</div>
+      <h2>Pertanyaan yang Sering Diajukan</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item fade-in">
+        <h4>Berapa lama pengiriman produk?</h4>
+        <p>Pengiriman ke seluruh Indonesia memakan waktu 2–5 hari kerja tergantung lokasi. Tersedia layanan ekspres untuk pengiriman lebih cepat.</p>
+      </div>
+      <div class="faq-item fade-in">
+        <h4>Apakah produk sudah tersertifikasi BPOM?</h4>
+        <p>Ya, seluruh produk MasJanis telah mendapatkan izin edar dari BPOM dan sertifikasi Halal dari MUI.</p>
+      </div>
+      <div class="faq-item fade-in">
+        <h4>Bagaimana cara mendaftar kelas online?</h4>
+        <p>Klik tombol "Daftar Sekarang" pada kelas yang diminati, lakukan pembayaran, dan akses materi langsung melalui platform kami.</p>
+      </div>
+      <div class="faq-item fade-in">
+        <h4>Apakah ada garansi uang kembali?</h4>
+        <p>Kami memberikan garansi kepuasan 30 hari untuk produk fisik. Untuk kelas online, berlaku garansi 7 hari setelah pembelian.</p>
+      </div>
+      <div class="faq-item fade-in">
+        <h4>Bisakah saya menjadi reseller produk MasJanis?</h4>
+        <p>Tentu! Kami membuka program reseller dan dropshipper. Hubungi kami melalui email kerjasama@masjanis.com untuk informasi lebih lanjut.</p>
+      </div>
+      <div class="faq-item fade-in">
+        <h4>Apakah konsultasi herbal tersedia?</h4>
+        <p>Ya, kami menyediakan layanan konsultasi herbal online dengan herbalis bersertifikat. Jadwalkan sesi melalui halaman kontak ini.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Layanan</h4>
+      <ul>
+        <li><a href="#">Konsultasi Herbal</a></li>
+        <li><a href="#">Program Reseller</a></li>
+        <li><a href="#">Kerjasama Media</a></li>
+        <li><a href="#">Pelatihan Korporat</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script src="page-header-loader.js"></script>
+<script src="cms-loader.js"></script>
+<script>
+  // Override the contact form handler to use Supabase
+  // Runs after main.js so we can rebind the form (Requirement 14.1–14.4)
+  document.addEventListener('DOMContentLoaded', () => {
+    const supabaseClient = isConfigured()
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    // Prevent main.js from binding its simulated handler
+    form.dataset.bound = 'supabase';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation(); // prevent any other submit listeners
+
+      const name    = document.getElementById('nama')?.value?.trim()    || '';
+      const email   = document.getElementById('email')?.value?.trim()   || '';
+      const phone   = document.getElementById('telepon')?.value?.trim() || '';
+      const subject = document.getElementById('subjek')?.value?.trim()  || '';
+      const message = document.getElementById('pesan')?.value?.trim()   || '';
+
+      const successMsg = document.getElementById('formSuccess');
+      const errorEl    = document.getElementById('formError');
+      const submitBtn  = form.querySelector('[type="submit"]');
+
+      // Clear previous messages
+      if (successMsg) successMsg.classList.remove('show');
+      if (errorEl)    { errorEl.textContent = ''; errorEl.style.display = 'none'; }
+
+      // Client-side validation — Requirement 14.4
+      if (!name)    { showFormError(errorEl, 'Nama tidak boleh kosong.'); return; }
+      if (!email)   { showFormError(errorEl, 'Email tidak boleh kosong.'); return; }
+      if (!message) { showFormError(errorEl, 'Pesan tidak boleh kosong.'); return; }
+
+      // Disable button while submitting
+      const originalHTML = submitBtn?.innerHTML;
+      if (submitBtn) { submitBtn.innerHTML = '⏳ Mengirim...'; submitBtn.disabled = true; }
+
+      if (!supabaseClient) {
+        if (submitBtn) { submitBtn.innerHTML = originalHTML; submitBtn.disabled = false; }
+        showFormError(errorEl, 'Konfigurasi Supabase belum diisi. Pesan tidak dapat dikirim.');
+        return;
+      }
+
+      // Submit to Supabase — Requirement 14.1
+      const { error } = await supabaseClient.from('contacts').insert({
+        name,
+        email,
+        phone:   phone   || null,
+        subject: subject || null,
+        message,
+      });
+
+      if (submitBtn) { submitBtn.innerHTML = originalHTML; submitBtn.disabled = false; }
+
+      if (error) {
+        // Show error WITHOUT resetting form — Requirement 14.3
+        showFormError(errorEl, 'Gagal mengirim pesan: ' + (error.message || 'Terjadi kesalahan.'));
+        return;
+      }
+
+      // Success: reset form and show success message — Requirement 14.2
+      form.reset();
+      if (successMsg) {
+        successMsg.classList.add('show');
+        setTimeout(() => successMsg.classList.remove('show'), 5000);
+      }
+    }, true); // capture phase — runs before main.js bubbling handler
+
+    function showFormError(el, msg) {
+      if (!el) { alert(msg); return; }
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>

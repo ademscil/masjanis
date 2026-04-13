@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MasJanis – Kekuatan Alam untuk Kesehatan Anda</title>
+  <meta name="description" content="MasJanis menghadirkan produk herbal nusantara berkualitas tinggi, tersertifikasi BPOM dan Halal MUI. Temukan suplemen, minuman, dan perawatan herbal terbaik." />
+  <meta name="keywords" content="herbal, jamu, obat herbal, suplemen herbal, tanaman obat, herbal nusantara, kesehatan alami" />
+  <meta name="author" content="MasJanis" />
+  <meta property="og:title" content="MasJanis – Kekuatan Alam untuk Kesehatan Anda" />
+  <meta property="og:description" content="Produk herbal nusantara berkualitas tinggi, tersertifikasi BPOM dan Halal MUI." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://masjanis.netlify.app/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://masjanis.netlify.app/" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: 92vh;
+      background:
+        linear-gradient(135deg, rgba(45,106,79,0.88) 0%, rgba(64,145,108,0.75) 60%, rgba(116,198,157,0.6) 100%),
+        url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to top, var(--white), transparent);
+    }
+
+    .hero-content { max-width: 780px; position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: var(--white);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(6px);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      color: var(--white);
+      margin-bottom: 1.25rem;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold-light);
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      animation: bounce 2s infinite;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .hero-scroll::after {
+      content: '↓';
+      font-size: 1.2rem;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      background: var(--green-dark);
+      padding: 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .stat-item { color: var(--white); }
+    .stat-item .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      display: block;
+    }
+    .stat-item span:last-child { font-size: 0.85rem; opacity: 0.8; }
+
+    /* ── Features ── */
+    .feature-card {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      border-radius: var(--radius);
+      background: var(--white);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+
+    .feature-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-pale), var(--green-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+    }
+
+    .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.6rem; color: var(--green-dark); }
+    .feature-card p { color: var(--text-mid); font-size: 0.92rem; }
+
+    /* ── About ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .about-img {
+      border-radius: var(--radius);
+      overflow: hidden;
+      height: 420px;
+      background: linear-gradient(135deg, var(--green-pale) 0%, var(--green-light) 50%, var(--green-mid) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6rem;
+      position: relative;
+    }
+
+    .about-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d6a4f' fill-opacity='0.08'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .about-text h2 { font-size: clamp(1.75rem, 3.5vw, 2.4rem); color: var(--green-dark); margin-bottom: 1rem; }
+    .about-text p { color: var(--text-mid); margin-bottom: 1rem; line-height: 1.8; }
+
+    .about-list { margin: 1.5rem 0; }
+    .about-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-mid);
+      font-size: 0.95rem;
+    }
+    .about-list li::before {
+      content: '✓';
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Testimonials ── */
+    .testimonial-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .testimonial-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+    .testimonial-card::before {
+      content: '"';
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: var(--green-pale);
+      position: absolute;
+      top: 0.5rem;
+      left: 1.25rem;
+      line-height: 1;
+    }
+
+    .stars { color: var(--gold); font-size: 1rem; margin-bottom: 0.75rem; }
+    .testimonial-text { color: var(--text-mid); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; }
+
+    .testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
+    .author-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .author-info strong { display: block; font-size: 0.95rem; color: var(--text-dark); }
+    .author-info span { font-size: 0.82rem; color: var(--text-light); }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(212,160,23,0.15) 0%, transparent 60%);
+    }
+
+    .cta-banner h2 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      color: var(--white);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .cta-banner p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .about-img { height: 260px; font-size: 4rem; }
+    }
+  </style>
+</head>
+<body data-page="index">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="heroSection">
+  <div class="hero-content">
+    <div class="hero-tag" data-site="hero_tag">🌿 Herbal Nusantara Terpercaya</div>
+    <h1 data-site="hero_title">Temukan Kekuatan <em>Alam</em> untuk Kesehatan Anda</h1>
+    <p data-site="hero_subtitle">Warisan leluhur yang telah teruji ribuan tahun, kini hadir dalam formula modern berbasis riset ilmiah untuk mendukung kesehatan optimal Anda.</p>
+    <div class="hero-btns">
+      <a href="/shop" class="btn btn-gold" data-site-href="hero_btn1_url" data-site="hero_btn1_text">🛒 Jelajahi Produk</a>
+      <a href="/teori" class="btn btn-white" data-site-href="hero_btn2_url" data-site="hero_btn2_text">📖 Pelajari Teori</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- ===== STATS BAR ===== -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-item fade-in">
+      <span class="num" data-site="stat1_num">500+</span>
+      <span data-site="stat1_label">Produk Herbal</span>
+    </div>
+    <div class="stat-item fade-in">
+      <span class="num" data-site="stat2_num">50K+</span>
+      <span data-site="stat2_label">Pelanggan Puas</span>
+    </div>
+    <div class="stat-item fade-in">
+      <span class="num" data-site="stat3_num">100+</span>
+      <span data-site="stat3_label">Artikel Riset</span>
+    </div>
+    <div class="stat-item fade-in">
+      <span class="num" data-site="stat4_num">15+</span>
+      <span data-site="stat4_label">Tahun Pengalaman</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Keunggulan Kami</div>
+      <h2 data-site="features_title">Mengapa Memilih MasJanis?</h2>
+      <p data-site="features_subtitle">Kami menggabungkan kearifan lokal dengan standar ilmiah modern untuk menghadirkan produk herbal terbaik.</p>
+    </div>
+    <div class="grid-3" id="featuresGrid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🌱</div>
+        <h3>Produk Alami</h3>
+        <p>Seluruh bahan baku dipilih dari tanaman herbal pilihan yang ditanam secara organik tanpa pestisida berbahaya.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🔬</div>
+        <h3>Berbasis Riset</h3>
+        <p>Setiap formula dikembangkan bersama para ahli fitokimia dan didukung oleh penelitian ilmiah yang tervalidasi.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏆</div>
+        <h3>Terpercaya</h3>
+        <p>Telah mendapatkan sertifikasi BPOM dan dipercaya oleh lebih dari 50.000 pelanggan di seluruh Indonesia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section section-alt">
+  <div class="about-grid">
+    <div class="about-img fade-in">🌿</div>
+    <div class="about-text fade-in">
+      <div class="section-tag">Tentang Kami</div>
+      <h2>Warisan Alam Nusantara dalam Setiap Tetes</h2>
+      <p>MasJanis lahir dari kecintaan mendalam terhadap kekayaan tanaman obat Indonesia. Kami percaya bahwa alam telah menyediakan semua yang dibutuhkan tubuh untuk tetap sehat dan seimbang.</p>
+      <p>Dengan menggabungkan pengetahuan tradisional yang telah diwariskan turun-temurun dan teknologi ekstraksi modern, kami menghadirkan produk herbal berkualitas tinggi yang aman dan efektif.</p>
+      <ul class="about-list">
+        <li>Bahan baku 100% dari tanaman herbal Indonesia</li>
+        <li>Proses produksi berstandar GMP (Good Manufacturing Practice)</li>
+        <li>Tersertifikasi BPOM dan Halal MUI</li>
+        <li>Tim ahli fitokimia dan herbalis berpengalaman</li>
+      </ul>
+      <a href="/teori" class="btn btn-primary">Pelajari Lebih Lanjut →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUK UNGGULAN ===== -->
+<section class="section" id="featuredSection">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Produk Unggulan</div>
+      <h2>Pilihan Terbaik untuk Kesehatan Anda</h2>
+      <p>Produk herbal pilihan yang paling diminati pelanggan kami.</p>
+    </div>
+    <div class="grid-4" id="featuredProductsGrid"></div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">Testimoni</div>
+      <h2 data-site="testimonials_title">Apa Kata Pelanggan Kami</h2>
+      <p data-site="testimonials_subtitle">Ribuan pelanggan telah merasakan manfaat nyata dari produk MasJanis.</p>
+    </div>
+    <div class="grid-3" id="testimonialsGrid">
+      <!-- Diisi dari Supabase, fallback ke hardcode jika kosong -->
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">Setelah rutin mengonsumsi Jamu Kunyit Asam MasJanis selama 3 bulan, stamina saya meningkat drastis. Produknya benar-benar alami dan tidak ada efek samping.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SR</div>
+          <div class="author-info">
+            <strong>Sari Rahayu</strong>
+            <span>Ibu Rumah Tangga, Jakarta</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">Kelas online Herbal Dasar sangat informatif. Saya jadi paham cara meracik jamu sendiri di rumah. Instrukturnya sangat berpengalaman dan sabar menjelaskan.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">BP</div>
+          <div class="author-info">
+            <strong>Budi Prasetyo</strong>
+            <span>Pengusaha, Surabaya</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">E-book Panduan Tanaman Obat Keluarga sangat lengkap dan mudah dipahami. Sekarang saya bisa memanfaatkan tanaman di kebun sendiri untuk kesehatan keluarga.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">DW</div>
+          <div class="author-info">
+            <strong>Dewi Wulandari</strong>
+            <span>Guru, Yogyakarta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA BANNER ===== -->
+<section class="cta-banner">
+  <h2 data-site="cta_title">Mulai Perjalanan Sehat Anda Hari Ini</h2>
+  <p data-site="cta_subtitle">Bergabunglah dengan ribuan orang yang telah merasakan manfaat herbal nusantara. Kesehatan optimal dimulai dari pilihan alami.</p>
+  <div class="cta-btns">
+    <a href="/shop" class="btn btn-gold" data-site-href="cta_btn1_url" data-site="cta_btn1_text">🛒 Belanja Sekarang</a>
+    <a href="/kelas" class="btn btn-white" data-site-href="cta_btn2_url" data-site="cta_btn2_text">📚 Lihat Kelas</a>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda. Dipercaya lebih dari 50.000 pelanggan di seluruh Indonesia.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener" title="Instagram">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener" title="Facebook">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener" title="YouTube">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener" title="TikTok">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Produk</h4>
+      <ul>
+        <li><a href="/shop">Suplemen Herbal</a></li>
+        <li><a href="/shop">Minuman Herbal</a></li>
+        <li><a href="/shop">Perawatan Tubuh</a></li>
+        <li><a href="/shop">Paket Kesehatan</a></li>
+        <li><a href="/kelas">Kelas Online</a></li>
+        <li><a href="/download">E-Book</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script src="cms-loader.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const db = window._mjClient || null;
+    if (!db) return;
+
+    // Hero settings
+    try {
+      const { data: settings } = await db.from('site_settings').select('key,value')
+        .in('key', ['hero_image_url','hero_title','hero_subtitle']);
+      if (settings) {
+        const map = Object.fromEntries(settings.map(s => [s.key, s.value]));
+        const hero = document.getElementById('heroSection');
+        if (hero && map.hero_image_url) {
+          hero.style.backgroundImage = `linear-gradient(135deg,rgba(45,106,79,0.88) 0%,rgba(64,145,108,0.75) 60%,rgba(116,198,157,0.6) 100%),url('${map.hero_image_url}')`;
+        }
+        if (map.hero_title) { const h1 = hero?.querySelector('h1'); if (h1) h1.innerHTML = map.hero_title; }
+        if (map.hero_subtitle) { const p = hero?.querySelector('p'); if (p) p.textContent = map.hero_subtitle; }
+      }
+    } catch(e) {}
+
+    // Featured products
+    const section = document.getElementById('featuredSection');
+    const grid    = document.getElementById('featuredProductsGrid');
+    if (!section || !grid) return;
+    try {
+      const { data, error } = await db.from('products').select('*').eq('is_active', true)
+        .order('created_at', { ascending: false }).limit(4);
+      if (error || !data?.length) { section.style.display = 'none'; return; }
+      grid.innerHTML = data.map(p => {
+        const price    = p.price ? 'Rp ' + Number(p.price).toLocaleString('id-ID') : '';
+        const origPrice = p.original_price ? 'Rp ' + Number(p.original_price).toLocaleString('id-ID') : '';
+        const badge    = p.badge_label ? `<span class="badge badge-gold">${p.badge_label}</span>` : '';
+        const img      = p.image_url
+          ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+          : `<span style="font-size:2.5rem;">${p.emoji||'🌿'}</span>`;
+        return `<div class="card fade-in">
+          <div class="card-img" style="position:relative;overflow:hidden;">${img}</div>
+          <div class="card-body">${badge}<h3>${p.name}</h3><p>${p.description||''}</p>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+              <strong style="color:var(--green-dark);">${price}</strong>
+              ${origPrice?`<span style="text-decoration:line-through;color:var(--text-light);font-size:0.85rem;">${origPrice}</span>`:''}
+            </div>
+            <a href="/shop" class="btn btn-outline btn-sm">Lihat di Toko →</a>
+          </div></div>`;
+      }).join('');
+      grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+    } catch(err) { section.style.display = 'none'; }
+  });
+</script>
+</body>
+</html>

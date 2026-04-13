@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toko – MasJanis</title>
+  <meta name="description" content="Belanja produk herbal pilihan: suplemen kunyit, wedang uwuh, lulur rempah, ekstrak sirsak, teh herbal, dan paket kesehatan. Tersertifikasi BPOM & Halal MUI." />
+  <meta name="keywords" content="beli herbal online, suplemen herbal, jamu online, produk herbal BPOM, toko herbal" />
+  <meta property="og:title" content="Toko – MasJanis" />
+  <meta property="og:description" content="Produk herbal pilihan berkualitas tinggi, tersertifikasi BPOM dan Halal MUI." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/gambarlogo-removebg-preview.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.75rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .product-img {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+    }
+
+    .product-img.bg1 { background: linear-gradient(135deg, #d8f3dc, #74c69d); }
+    .product-img.bg2 { background: linear-gradient(135deg, #fef3cd, #f0c040); }
+    .product-img.bg3 { background: linear-gradient(135deg, #cfe2ff, #6ea8fe); }
+    .product-img.bg4 { background: linear-gradient(135deg, #f8d7da, #f1aeb5); }
+    .product-img.bg5 { background: linear-gradient(135deg, #e2d9f3, #c29ffa); }
+    .product-img.bg6 { background: linear-gradient(135deg, #d1ecf1, #6edff6); }
+    .product-img.bg7 { background: linear-gradient(135deg, #fde8d8, #fd9843); }
+    .product-img.bg8 { background: linear-gradient(135deg, #d4edda, #28a745); }
+
+    .product-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: var(--gold);
+      color: var(--white);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 50px;
+      text-transform: uppercase;
+    }
+
+    .product-body {
+      padding: 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-body h3 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .product-body p {
+      color: var(--text-mid);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .product-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .product-price .original {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      text-decoration: line-through;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      display: block;
+    }
+
+    /* Payment modal */
+    .payment-modal .modal-body {
+      padding: 0;
+    }
+
+    .payment-info {
+      padding: 1rem 1.5rem;
+      background: var(--green-pale);
+      border-radius: 0 0 var(--radius) var(--radius);
+      font-size: 0.85rem;
+      color: var(--green-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .payment-iframe-wrap {
+      padding: 1.5rem;
+    }
+
+    .payment-iframe-placeholder {
+      width: 100%;
+      height: 380px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: var(--off-white);
+      color: var(--text-light);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .payment-iframe-placeholder .icon { font-size: 2.5rem; }
+    .payment-iframe-placeholder strong { color: var(--text-mid); font-size: 1rem; }
+    .payment-iframe-placeholder code {
+      background: var(--border);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: var(--green-dark);
+    }
+
+    @media (max-width: 1200px) {
+      .shop-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .shop-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-page="shop">
+
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/teori">Teori</a></li>
+    <li><a href="/kelas">List Kelas</a></li>
+    <li><a href="/shop">Shop</a></li>
+    <li><a href="/download">Download Center</a></li>
+    <li><a href="/kontak" class="nav-cta">Kontak</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="/">Beranda</a>
+  <a href="/teori">Teori</a>
+  <a href="/kelas">List Kelas</a>
+  <a href="/shop">Shop</a>
+  <a href="/download">Download Center</a>
+  <a href="/kontak">Kontak</a>
+</div>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+  <h1>Toko Herbal</h1>
+  <p>Produk herbal pilihan berkualitas tinggi, tersertifikasi BPOM dan Halal MUI, dikirim ke seluruh Indonesia.</p>
+</div>
+
+<!-- ===== SHOP SECTION ===== -->
+<section class="section">
+  <div class="container">
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" data-target="#productsGrid">
+      <button class="filter-tab active" data-filter="semua">Semua Produk</button>
+      <button class="filter-tab" data-filter="suplemen">Suplemen</button>
+      <button class="filter-tab" data-filter="minuman">Minuman</button>
+      <button class="filter-tab" data-filter="perawatan">Perawatan</button>
+      <button class="filter-tab" data-filter="paket">Paket</button>
+    </div>
+
+    <!-- Products grid (dynamic) -->
+    <div class="shop-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- ===== PAYMENT MODAL (reusable) ===== -->
+<div class="modal-overlay payment-modal" id="paymentModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <h3 id="modalProductName">Produk</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="payment-iframe-wrap" id="modalIframeWrap"></div>
+      <div class="payment-info">
+        🔒 Pembayaran diproses melalui platform pembayaran aman. Data Anda terlindungi.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
+      </a>
+      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.</p>
+      <div class="social-links">
+        <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
+        <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
+        <a class="social-link" href="#" data-site="youtube" target="_blank" rel="noopener">▶️</a>
+        <a class="social-link" href="#" data-site="tiktok" target="_blank" rel="noopener">🎵</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/teori">Teori Herbal</a></li>
+        <li><a href="/kelas">List Kelas</a></li>
+        <li><a href="/shop">Toko</a></li>
+        <li><a href="/download">Download Center</a></li>
+        <li><a href="/kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kategori</h4>
+      <ul>
+        <li><a href="#">Suplemen Herbal</a></li>
+        <li><a href="#">Minuman Herbal</a></li>
+        <li><a href="#">Perawatan Tubuh</a></li>
+        <li><a href="#">Paket Kesehatan</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontak</h4>
+      <ul>
+        <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
+        <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
+        <li><a href="mailto:info@masjanis.com" data-site="email">✉️ info@masjanis.com</a></li>
+        <li><a href="#" data-site="hours">⏰ Sen–Sab, 08.00–17.00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+<script src="page-header-loader.js"></script>
+<script src="cms-loader.js"></script>
+</body>
+</html>
