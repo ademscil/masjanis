@@ -76,6 +76,16 @@ async function loadSettings() {
       if (img) { img.src = val; img.style.display = 'block'; }
     }
   });
+
+  // Load promo banners
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val === 'true'; };
+  setChk('promoKelasActive',   map.promo_active);
+  setEl('promoKelasTitle',     map.promo_title);
+  setEl('promoKelasSubtitle',  map.promo_subtitle);
+  setChk('promoShopActive',    map.promo_shop_active);
+  setEl('promoShopTitle',      map.promo_shop_title);
+  setEl('promoShopSubtitle',   map.promo_shop_subtitle);
 }
 
 async function saveSettings() {
@@ -206,5 +216,43 @@ async function saveInfo() {
     errEl.classList.add('visible');
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
+  }
+}
+
+// ===== PROMO BANNER =====
+async function savePromo(type) {
+  const isKelas = type === 'kelas';
+  const prefix  = isKelas ? 'promoKelas' : 'promoShop';
+  const label   = isKelas ? 'Promo Kelas' : 'Promo Shop';
+
+  await new Promise(resolve => showConfirm(
+    `Simpan ${label}?`,
+    `Apakah Anda yakin ingin menyimpan pengaturan ${label.toLowerCase()} ini?`,
+    resolve, '💾', 'Ya, Simpan'
+  ));
+
+  const active   = document.getElementById(prefix + 'Active')?.checked;
+  const title    = document.getElementById(prefix + 'Title')?.value.trim();
+  const subtitle = document.getElementById(prefix + 'Subtitle')?.value.trim();
+
+  const keys = isKelas
+    ? [
+        { key: 'promo_active',   value: active ? 'true' : 'false' },
+        { key: 'promo_title',    value: title    || '' },
+        { key: 'promo_subtitle', value: subtitle || '' },
+      ]
+    : [
+        { key: 'promo_shop_active',   value: active ? 'true' : 'false' },
+        { key: 'promo_shop_title',    value: title    || '' },
+        { key: 'promo_shop_subtitle', value: subtitle || '' },
+      ];
+
+  try {
+    const { error } = await dataClient.from('site_settings')
+      .upsert(keys, { onConflict: 'key' });
+    if (error) throw error;
+    showToast(`${label} berhasil disimpan ✓`, 'success');
+  } catch(e) {
+    showToast('Gagal menyimpan: ' + e.message, 'error');
   }
 }

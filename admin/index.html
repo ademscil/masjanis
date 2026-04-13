@@ -743,6 +743,51 @@
           <div class="form-actions" style="margin-top:1.5rem;">
             <button class="btn-save" onclick="saveSettings()">💾 Simpan Semua Pengaturan</button>
           </div>
+
+          <!-- ===== PROMO BANNER ===== -->
+          <div class="crud-form-wrap" style="margin-top:2rem;">
+            <h4>🎉 Promo Banner — Kelas</h4>
+            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem;">Tampil di halaman List Kelas</p>
+            <div class="form-grid">
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="promoKelasActive" />
+                <label for="promoKelasActive">Aktifkan promo banner di halaman Kelas</label>
+              </div>
+              <div class="form-field full-width">
+                <label for="promoKelasTitle">Judul Promo</label>
+                <input type="text" id="promoKelasTitle" placeholder="🎉 Promo Spesial! Diskon hingga 50%" />
+              </div>
+              <div class="form-field full-width">
+                <label for="promoKelasSubtitle">Subtitle</label>
+                <input type="text" id="promoKelasSubtitle" placeholder="Berlaku untuk semua kelas. Gunakan kode: HERBAL50" />
+              </div>
+            </div>
+            <div class="form-actions" style="margin-top:1rem;">
+              <button class="btn-save" onclick="savePromo('kelas')">💾 Simpan Promo Kelas</button>
+            </div>
+          </div>
+
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
+            <h4>🛍️ Promo Banner — Produk / Shop</h4>
+            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem;">Tampil di halaman Shop</p>
+            <div class="form-grid">
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="promoShopActive" />
+                <label for="promoShopActive">Aktifkan promo banner di halaman Shop</label>
+              </div>
+              <div class="form-field full-width">
+                <label for="promoShopTitle">Judul Promo</label>
+                <input type="text" id="promoShopTitle" placeholder="🛍️ Flash Sale! Diskon hingga 30%" />
+              </div>
+              <div class="form-field full-width">
+                <label for="promoShopSubtitle">Subtitle</label>
+                <input type="text" id="promoShopSubtitle" placeholder="Berlaku untuk semua produk hari ini." />
+              </div>
+            </div>
+            <div class="form-actions" style="margin-top:1rem;">
+              <button class="btn-save" onclick="savePromo('shop')">💾 Simpan Promo Shop</button>
+            </div>
+          </div>
         </section>
 
         <!-- Panel: Testimoni -->

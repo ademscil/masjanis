@@ -242,9 +242,10 @@
     if (!db) return;
     const totalEl    = document.getElementById('dlStatTotal');
     const kategoriEl = document.getElementById('dlStatKategori');
-    if (!totalEl && !kategoriEl) return;
+    const unduhanEl  = document.getElementById('dlStatUnduhan');
+    if (!totalEl && !kategoriEl && !unduhanEl) return;
 
-    db.from('downloads').select('id, category').eq('is_active', true)
+    db.from('downloads').select('id, category, download_count').eq('is_active', true)
       .then(({ data }) => {
         if (!data) return;
         if (totalEl) totalEl.textContent = data.length;
@@ -252,12 +253,19 @@
           const uniqueCategories = new Set(data.map(d => d.category)).size;
           kategoriEl.textContent = uniqueCategories;
         }
+        if (unduhanEl) {
+          const total = data.reduce((sum, d) => sum + (d.download_count || 0), 0);
+          unduhanEl.textContent = total >= 1000
+            ? (total / 1000).toFixed(1).replace('.0', '') + 'K+'
+            : total.toString();
+        }
       });
   }
 
   function renderDownload(d) {
     const btn = d.file_url
-      ? `<a href="${d.file_url}" target="_blank" rel="noopener noreferrer" class="btn-download">⬇ Unduh</a>`
+      ? `<a href="${d.file_url}" target="_blank" rel="noopener noreferrer" class="btn-download"
+           onclick="trackDownload('${d.id}')">⬇ Unduh</a>`
       : `<button class="btn-download" disabled style="opacity:.5;cursor:not-allowed;">Segera Hadir</button>`;
 
     return `
@@ -351,12 +359,18 @@
         // Promo banner (kelas.html & shop.html)
         const promoBanner = document.getElementById('promoBanner');
         if (promoBanner) {
-          if (s.promo_active === 'false') {
+          const page = document.body.dataset.page;
+          const isShop  = page === 'shop';
+          const active  = isShop ? s.promo_shop_active  : s.promo_active;
+          const title   = isShop ? s.promo_shop_title   : s.promo_title;
+          const subtitle= isShop ? s.promo_shop_subtitle: s.promo_subtitle;
+
+          if (active === 'false') {
             promoBanner.style.display = 'none';
           } else {
             promoBanner.style.display = '';
-            if (s.promo_title)    set('promo_title',    s.promo_title);
-            if (s.promo_subtitle) set('promo_subtitle', s.promo_subtitle);
+            if (title)    set('promo_title',    title);
+            if (subtitle) set('promo_subtitle', subtitle);
           }
         }
 
@@ -425,6 +439,23 @@
           </div>`).join('');
       });
   }
+
+  // ── Track download click ──────────────────────────────────────
+  window.trackDownload = function(id) {
+    const db = getClient();
+    if (!db || !id) return;
+    db.rpc('increment_download_count', { download_id: id }).then(() => {
+      // Update counter di UI jika ada
+      const unduhanEl = document.getElementById('dlStatUnduhan');
+      if (unduhanEl) {
+        const current = parseInt(unduhanEl.textContent.replace(/[^0-9]/g, '')) || 0;
+        const next = current + 1;
+        unduhanEl.textContent = next >= 1000
+          ? (next / 1000).toFixed(1).replace('.0', '') + 'K+'
+          : next.toString();
+      }
+    });
+  };
 
   // ── Active nav ────────────────────────────────────────────────
   function setActiveNav() {
