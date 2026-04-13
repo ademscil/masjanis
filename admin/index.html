@@ -1072,7 +1072,9 @@
                 <input type="number" id="productOriginalPrice" placeholder="75000" min="0" />
               </div>
               <div class="form-field">
-                <label for="productCategory">Kategori <span style="color:#be123c">*</span></label>
+                <label for="productCategory">Kategori <span style="color:#be123c">*</span>
+                  <button type="button" onclick="openCategoryManager('product')" style="margin-left:0.5rem;padding:0.15rem 0.5rem;font-size:0.72rem;background:var(--green-pale);color:var(--green-dark);border:1px solid var(--green-light);border-radius:4px;cursor:pointer;">⚙ Kelola</button>
+                </label>
                 <select id="productCategory">
                   <option value="suplemen">Suplemen</option>
                   <option value="minuman">Minuman</option>
@@ -1202,17 +1204,31 @@
                 <label for="articleEmoji">Emoji</label>
                 <input type="text" id="articleEmoji" placeholder="🌿" maxlength="8" />
               </div>
-              <div class="form-field">
-                <label for="articleBgClass">Background Class</label>
-                <select id="articleBgClass">
-                  <option value="">— Pilih —</option>
-                  <option value="bg1">bg1</option>
-                  <option value="bg2">bg2</option>
-                  <option value="bg3">bg3</option>
-                  <option value="bg4">bg4</option>
-                  <option value="bg5">bg5</option>
-                  <option value="bg6">bg6</option>
-                </select>
+              <div class="form-field full-width">
+                <label>Warna Latar Artikel</label>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+          <div class="bg-chip" data-val="bg1" title="Hijau Muda"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#d8f3dc,#74c69d);transition:all 0.2s;"
+          onclick="selectBgClass('articleBgClass',this)"></div><div class="bg-chip" data-val="bg2" title="Kuning"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#fef3cd,#f0c040);transition:all 0.2s;"
+          onclick="selectBgClass('articleBgClass',this)"></div><div class="bg-chip" data-val="bg3" title="Biru Muda"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#cfe2ff,#6ea8fe);transition:all 0.2s;"
+          onclick="selectBgClass('articleBgClass',this)"></div><div class="bg-chip" data-val="bg4" title="Merah Muda"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#f8d7da,#f1aeb5);transition:all 0.2s;"
+          onclick="selectBgClass('articleBgClass',this)"></div><div class="bg-chip" data-val="bg5" title="Ungu"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#e2d9f3,#c29ffa);transition:all 0.2s;"
+          onclick="selectBgClass('articleBgClass',this)"></div><div class="bg-chip" data-val="bg6" title="Biru Tosca"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#d1ecf1,#6edff6);transition:all 0.2s;"
+          onclick="selectBgClass('articleBgClass',this)"></div>
+          <span id="articleBgClassLabel" style="font-size:0.8rem;color:var(--text-light);margin-left:0.25rem;">— Belum dipilih —</span>
+        </div>
+        <input type="hidden" id="articleBgClass" />
               </div>
               <div class="form-field checkbox-field full-width">
                 <input type="checkbox" id="articleActive" checked />
@@ -1287,7 +1303,9 @@
                 <input type="number" id="classVideoCount" placeholder="20" min="0" />
               </div>
               <div class="form-field">
-                <label for="classLevel">Level <span style="color:#be123c">*</span></label>
+                <label for="classLevel">Level <span style="color:#be123c">*</span>
+                  <button type="button" onclick="openCategoryManager('class')" style="margin-left:0.5rem;padding:0.15rem 0.5rem;font-size:0.72rem;background:var(--green-pale);color:var(--green-dark);border:1px solid var(--green-light);border-radius:4px;cursor:pointer;">⚙ Kelola</button>
+                </label>
                 <select id="classLevel" required>
                   <option value="pemula">Pemula</option>
                   <option value="menengah">Menengah</option>
@@ -1306,17 +1324,31 @@
                 <label for="classEmoji">Emoji</label>
                 <input type="text" id="classEmoji" placeholder="🌿" maxlength="8" />
               </div>
-              <div class="form-field">
-                <label for="classBgClass">Background Class</label>
-                <select id="classBgClass">
-                  <option value="">— Pilih —</option>
-                  <option value="bg1">bg1</option>
-                  <option value="bg2">bg2</option>
-                  <option value="bg3">bg3</option>
-                  <option value="bg4">bg4</option>
-                  <option value="bg5">bg5</option>
-                  <option value="bg6">bg6</option>
-                </select>
+              <div class="form-field full-width">
+                <label>Warna Latar Kelas</label>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+          <div class="bg-chip" data-val="bg1" title="Hijau Muda"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#d8f3dc,#74c69d);transition:all 0.2s;"
+          onclick="selectBgClass('classBgClass',this)"></div><div class="bg-chip" data-val="bg2" title="Kuning"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#fef3cd,#f0c040);transition:all 0.2s;"
+          onclick="selectBgClass('classBgClass',this)"></div><div class="bg-chip" data-val="bg3" title="Biru Muda"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#cfe2ff,#6ea8fe);transition:all 0.2s;"
+          onclick="selectBgClass('classBgClass',this)"></div><div class="bg-chip" data-val="bg4" title="Merah Muda"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#f8d7da,#f1aeb5);transition:all 0.2s;"
+          onclick="selectBgClass('classBgClass',this)"></div><div class="bg-chip" data-val="bg5" title="Ungu"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#e2d9f3,#c29ffa);transition:all 0.2s;"
+          onclick="selectBgClass('classBgClass',this)"></div><div class="bg-chip" data-val="bg6" title="Biru Tosca"
+          style="width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+          background:linear-gradient(135deg,#d1ecf1,#6edff6);transition:all 0.2s;"
+          onclick="selectBgClass('classBgClass',this)"></div>
+          <span id="classBgClassLabel" style="font-size:0.8rem;color:var(--text-light);margin-left:0.25rem;">— Belum dipilih —</span>
+        </div>
+        <input type="hidden" id="classBgClass" />
               </div>
               <div class="form-field checkbox-field full-width">
                 <input type="checkbox" id="classActive" checked />
@@ -1375,7 +1407,8 @@
               </div>
               <div class="form-field full-width">
                 <label for="downloadDesc">Deskripsi</label>
-                <textarea id="downloadDesc" placeholder="Deskripsi singkat materi"></textarea>
+                <div id="downloadDescEditor" style="min-height:100px;"></div>
+                <textarea id="downloadDesc" style="display:none;"></textarea>
               </div>
               <div class="form-field">
                 <label for="downloadCategory">Kategori <span style="color:#be123c">*</span></label>
@@ -1477,7 +1510,8 @@
               </div>
               <div class="form-field full-width">
                 <label for="settingHeroSubtitle">Subtitle Hero</label>
-                <textarea id="settingHeroSubtitle" placeholder="Deskripsi singkat..."></textarea>
+                <div id="settingHeroSubtitleEditor" style="min-height:80px;"></div>
+                <textarea id="settingHeroSubtitle" style="display:none;"></textarea>
               </div>
             </div>
           </div>
@@ -1616,7 +1650,8 @@
               </div>
               <div class="form-field full-width">
                 <label for="testimonialContent">Isi Testimoni <span style="color:#be123c">*</span></label>
-                <textarea id="testimonialContent" placeholder="Tuliskan testimoni pelanggan..." style="min-height:100px;" required></textarea>
+                <div id="testimonialContentEditor" style="min-height:100px;"></div>
+                <textarea id="testimonialContent" style="display:none;" required></textarea>
               </div>
               <div class="form-field checkbox-field full-width">
                 <input type="checkbox" id="testimonialActive" checked />
@@ -1662,7 +1697,8 @@
               </div>
               <div class="form-field full-width">
                 <label for="featureDesc">Deskripsi <span style="color:#be123c">*</span></label>
-                <textarea id="featureDesc" placeholder="Deskripsi singkat fitur..." style="min-height:80px;" required></textarea>
+                <div id="featureDescEditor" style="min-height:80px;"></div>
+                <textarea id="featureDesc" style="display:none;" required></textarea>
               </div>
               <div class="form-field checkbox-field full-width">
                 <input type="checkbox" id="featureActive" checked />
@@ -1694,7 +1730,8 @@
               </div>
               <div class="form-field full-width">
                 <label for="infoAboutBody">Deskripsi Tentang Kami</label>
-                <textarea id="infoAboutBody" rows="4" placeholder="Ceritakan tentang MasJanis..."></textarea>
+                <div id="infoAboutBodyEditor" style="min-height:120px;"></div>
+              <textarea id="infoAboutBody" style="display:none;"></textarea>
               </div>
             </div>
           </div>
@@ -2431,6 +2468,7 @@
       document.getElementById('articlePublishedDate').value = article?.published_date || '';
       document.getElementById('articleEmoji').value         = article?.emoji || '';
       document.getElementById('articleBgClass').value       = article?.bg_class || '';
+      setBgClassValue('articleBgClass', article?.bg_class || '');
       document.getElementById('articleActive').checked      = article ? article.is_active : true;
 
       document.getElementById('uploadArticleImage').value = '';
@@ -2654,6 +2692,7 @@
       document.getElementById('classOriginalPrice').value = cls?.original_price ?? '';
       document.getElementById('classEmoji').value         = cls?.emoji || '';
       document.getElementById('classBgClass').value       = cls?.bg_class || '';
+      setBgClassValue('classBgClass', cls?.bg_class || '');
       document.getElementById('classActive').checked      = cls ? cls.is_active : true;
 
       document.getElementById('uploadClassImage').value = '';
@@ -2894,6 +2933,7 @@
       errEl.textContent = ''; errEl.classList.remove('visible');
       document.getElementById('downloadForm').style.display = 'block';
       document.getElementById('downloadForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      initEditor('downloadDesc').then(() => setEditorData('downloadDesc', dl?.description || ''));
     }
 
     function hideDownloadForm() {
@@ -2901,14 +2941,14 @@
       document.getElementById('downloadId').value = '';
       const uploadInput = document.getElementById('uploadDownloadFile');
       if (uploadInput) uploadInput.value = '';
-      const statusEl = document.getElementById('downloadFileStatus');
-      if (statusEl) statusEl.textContent = '';
+      const statusEl2 = document.getElementById('downloadFileStatus');
+      if (statusEl2) statusEl2.textContent = '';
     }
 
     async function saveDownload() {
       const id          = document.getElementById('downloadId').value.trim();
       const title       = document.getElementById('downloadTitle').value.trim();
-      const description = document.getElementById('downloadDesc').value.trim();
+      const description = getEditorData('downloadDesc');
       const category    = document.getElementById('downloadCategory').value;
       const file_size   = document.getElementById('downloadFileSize').value.trim();
       let   file_url    = document.getElementById('downloadFileUrl').value.trim();
@@ -3294,6 +3334,7 @@
       const map = Object.fromEntries(data.map(s => [s.key, s.value]));
       document.getElementById('infoAboutTitle').value = map.about_title || '';
       document.getElementById('infoAboutBody').value  = map.about_body  || '';
+      initEditor('infoAboutBody').then(() => setEditorData('infoAboutBody', map.about_body || ''));
       document.getElementById('infoAddress').value   = map.address   || '';
       document.getElementById('infoPhone').value     = map.phone     || '';
       document.getElementById('infoEmail').value     = map.email     || '';
@@ -3314,7 +3355,7 @@
 
       const vals = {
         about_title: document.getElementById('infoAboutTitle').value.trim(),
-        about_body:  document.getElementById('infoAboutBody').value.trim(),
+        about_body:  getEditorData('infoAboutBody'),
         address:   document.getElementById('infoAddress').value.trim(),
         phone:     document.getElementById('infoPhone').value.trim(),
         email:     document.getElementById('infoEmail').value.trim(),
@@ -3380,6 +3421,7 @@
       errEl.textContent = ''; errEl.classList.remove('visible');
       document.getElementById('testimonialForm').style.display = 'block';
       document.getElementById('testimonialForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      initEditor('testimonialContent').then(() => setEditorData('testimonialContent', t?.content || ''));
     }
 
     function hideTestimonialForm() { document.getElementById('testimonialForm').style.display = 'none'; }
@@ -3390,7 +3432,7 @@
       const location = document.getElementById('testimonialLocation').value.trim();
       const rating   = parseInt(document.getElementById('testimonialRating').value);
       const order    = parseInt(document.getElementById('testimonialOrder').value) || 0;
-      const content  = document.getElementById('testimonialContent').value.trim();
+      const content  = getEditorData('testimonialContent');
       const is_active = document.getElementById('testimonialActive').checked;
       const errEl = document.getElementById('testimonialError');
       const saveBtn = document.getElementById('testimonialSaveBtn');
@@ -3461,6 +3503,7 @@
       errEl.textContent = ''; errEl.classList.remove('visible');
       document.getElementById('featureForm').style.display = 'block';
       document.getElementById('featureForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      initEditor('featureDesc').then(() => setEditorData('featureDesc', f?.description || ''));
     }
 
     function hideFeatureForm() { document.getElementById('featureForm').style.display = 'none'; }
@@ -3469,7 +3512,7 @@
       const id    = document.getElementById('featureId').value.trim();
       const icon  = document.getElementById('featureIcon').value.trim() || '🌿';
       const title = document.getElementById('featureTitle').value.trim();
-      const desc  = document.getElementById('featureDesc').value.trim();
+      const desc  = getEditorData('featureDesc');
       const order = parseInt(document.getElementById('featureOrder').value) || 0;
       const is_active = document.getElementById('featureActive').checked;
       const errEl = document.getElementById('featureError');
@@ -3558,7 +3601,10 @@
     ];
 
     // ID editor yang pakai toolbar kecil
-    const SMALL_EDITORS = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
+    const SMALL_EDITORS = [
+      'productManfaat','productCaraPakai','productPeringatan','productSpesifikasi',
+      'downloadDesc','testimonialContent','featureDesc','infoAboutBody','settingHeroSubtitle',
+    ];
 
     function initEditor(id) {
       if (editors[id]) return Promise.resolve();
@@ -3640,6 +3686,151 @@
         setEditorData('classDesc', val);
       });
     };
+
+    // ===== COLOR PICKER FOR BG CLASS =====
+    const BG_LABELS = { bg1:'Hijau Muda', bg2:'Kuning', bg3:'Biru Muda', bg4:'Merah Muda', bg5:'Ungu', bg6:'Biru Tosca' };
+
+    function selectBgClass(fieldId, chipEl) {
+      const val = chipEl.dataset.val;
+      document.getElementById(fieldId).value = val;
+      const label = document.getElementById(fieldId + 'Label');
+      if (label) label.textContent = BG_LABELS[val] || val;
+      // Reset semua chip border
+      chipEl.closest('div').querySelectorAll('.bg-chip').forEach(c => {
+        c.style.border = '2px solid transparent';
+        c.style.transform = '';
+      });
+      chipEl.style.border = '2px solid var(--green-dark)';
+      chipEl.style.transform = 'scale(1.15)';
+    }
+
+    function setBgClassValue(fieldId, val) {
+      if (!val) return;
+      document.getElementById(fieldId).value = val;
+      const label = document.getElementById(fieldId + 'Label');
+      if (label) label.textContent = BG_LABELS[val] || val;
+      const container = document.getElementById(fieldId)?.previousElementSibling;
+      if (container) {
+        container.querySelectorAll('.bg-chip').forEach(c => {
+          const isActive = c.dataset.val === val;
+          c.style.border = isActive ? '2px solid var(--green-dark)' : '2px solid transparent';
+          c.style.transform = isActive ? 'scale(1.15)' : '';
+        });
+      }
+    }
+
+    // ===== CATEGORY / LEVEL MANAGER MODAL =====
+    function openCategoryManager(type) {
+      const isProduct = type === 'product';
+      const selectId  = isProduct ? 'productCategory' : 'classLevel';
+      const title     = isProduct ? 'Kelola Kategori Produk' : 'Kelola Level Kelas';
+      const select    = document.getElementById(selectId);
+      const options   = Array.from(select.options).map(o => ({ value: o.value, label: o.text }));
+
+      // Build modal HTML
+      const modal = document.createElement('div');
+      modal.id = 'catManagerOverlay';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+      modal.innerHTML = `
+        <div style="background:#fff;border-radius:12px;padding:1.75rem;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+          <h3 style="margin-bottom:1rem;font-size:1.05rem;color:var(--text-dark);">⚙️ ${title}</h3>
+          <div id="catList" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;max-height:260px;overflow-y:auto;">
+            ${options.map(o => `
+              <div style="display:flex;align-items:center;gap:0.5rem;" data-val="${o.value}">
+                <input type="text" value="${o.label}" data-orig="${o.value}"
+                  style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;"
+                  onchange="updateCatOption('${selectId}','${o.value}',this.value)" />
+                <button onclick="removeCatOption('${selectId}','${o.value}',this.closest('[data-val]'))"
+                  style="padding:0.4rem 0.6rem;background:#fee2e2;color:#be123c;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">✕</button>
+              </div>`).join('')}
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+            <input type="text" id="newCatValue" placeholder="value (misal: herbal)" style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;" />
+            <input type="text" id="newCatLabel" placeholder="Label (misal: Herbal)" style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;" />
+            <button onclick="addCatOption('${selectId}')"
+              style="padding:0.5rem 0.75rem;background:var(--green-dark);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.875rem;">＋</button>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-light);margin-bottom:1rem;">Perubahan hanya berlaku di form ini. Untuk perubahan permanen, update juga di database.</p>
+          <div style="display:flex;justify-content:flex-end;">
+            <button onclick="document.getElementById('catManagerOverlay').remove()"
+              style="padding:0.5rem 1.25rem;background:var(--green-dark);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Selesai</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    }
+
+    function updateCatOption(selectId, origVal, newLabel) {
+      const select = document.getElementById(selectId);
+      const opt = Array.from(select.options).find(o => o.value === origVal);
+      if (opt) opt.text = newLabel;
+    }
+
+    function removeCatOption(selectId, val, rowEl) {
+      const select = document.getElementById(selectId);
+      const opt = Array.from(select.options).find(o => o.value === val);
+      if (opt) select.removeChild(opt);
+      if (rowEl) rowEl.remove();
+    }
+
+    function addCatOption(selectId) {
+      const valInput   = document.getElementById('newCatValue');
+      const labelInput = document.getElementById('newCatLabel');
+      const val   = valInput.value.trim().toLowerCase().replace(/\s+/g, '-');
+      const label = labelInput.value.trim();
+      if (!val || !label) { showToast('Isi value dan label terlebih dahulu', 'warning'); return; }
+      const select = document.getElementById(selectId);
+      if (Array.from(select.options).find(o => o.value === val)) {
+        showToast('Value sudah ada', 'warning'); return;
+      }
+      const opt = new Option(label, val);
+      select.appendChild(opt);
+      select.value = val;
+      // Tambah ke list di modal
+      const list = document.getElementById('catList');
+      const row  = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:0.5rem;';
+      row.dataset.val = val;
+      row.innerHTML = `
+        <input type="text" value="${label}" data-orig="${val}"
+          style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.875rem;font-family:inherit;"
+          onchange="updateCatOption('${selectId}','${val}',this.value)" />
+        <button onclick="removeCatOption('${selectId}','${val}',this.closest('[data-val]'))"
+          style="padding:0.4rem 0.6rem;background:#fee2e2;color:#be123c;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">✕</button>`;
+      list.appendChild(row);
+      valInput.value = ''; labelInput.value = '';
+      showToast(`Opsi "${label}" ditambahkan`, 'success');
+    }
+
+    // Init Quill untuk form Download
+    const _origShowDownloadForm = showDownloadForm;
+    const _patchDownloadForm = () => {
+      initEditor('downloadDesc').then(() => {
+        const val = document.getElementById('downloadDesc').value;
+        setEditorData('downloadDesc', val);
+      });
+    };
+
+    // Init Quill untuk Testimoni
+    const _origShowTestimonialForm = showTestimonialForm;
+    const _patchTestimonialForm = () => {
+      initEditor('testimonialContent').then(() => {
+        const val = document.getElementById('testimonialContent').value;
+        setEditorData('testimonialContent', val);
+      });
+    };
+
+    // Init Quill untuk Fitur
+    const _origShowFeatureForm = showFeatureForm;
+    const _patchFeatureForm = () => {
+      initEditor('featureDesc').then(() => {
+        const val = document.getElementById('featureDesc').value;
+        setEditorData('featureDesc', val);
+      });
+    };
+
+    // Init Quill untuk Info About
+    const _origLoadInfo = loadInfo;
 
     // ===== USERS / ADMIN MANAGEMENT =====
     async function loadUsers() {
