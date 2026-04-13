@@ -776,3 +776,19 @@ ul { list-style: none; }
   #toastContainer { bottom: 5rem; right: 1rem; left: 1rem; }
   .toast-item { max-width: 100%; }
 }
+
+/* ===== PROMO BANNER (global — kelas & shop) ===== */
+.promo-banner {
+  background: linear-gradient(135deg, var(--gold), #e8b820);
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+.promo-banner .text { color: var(--white); }
+.promo-banner .text strong { font-size: 1.1rem; display: block; margin-bottom: 0.25rem; }
+.promo-banner .text span { font-size: 0.9rem; opacity: 0.9; }

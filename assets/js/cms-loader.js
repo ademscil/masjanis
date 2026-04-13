@@ -96,7 +96,7 @@
   function initFeaturedProducts() {
     loadGrid(
       'featuredProductsGrid',
-      db => db.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }).limit(4),
+      db => db.from('products').select('*').eq('is_active', true).eq('is_featured', true).order('created_at', { ascending: false }).limit(4),
       renderProduct,
       'initFeaturedProducts'
     );
@@ -329,12 +329,16 @@
         if (s.cta_btn1_text) set('cta_btn1_text', s.cta_btn1_text, s.cta_btn1_url);
         if (s.cta_btn2_text) set('cta_btn2_text', s.cta_btn2_text, s.cta_btn2_url);
 
-        // Promo banner (kelas.html)
+        // Promo banner (kelas.html & shop.html)
         const promoBanner = document.getElementById('promoBanner');
         if (promoBanner) {
-          if (s.promo_active === 'false') promoBanner.style.display = 'none';
-          if (s.promo_title)    set('promo_title',    s.promo_title);
-          if (s.promo_subtitle) set('promo_subtitle', s.promo_subtitle);
+          if (s.promo_active === 'false') {
+            promoBanner.style.display = 'none';
+          } else {
+            promoBanner.style.display = '';
+            if (s.promo_title)    set('promo_title',    s.promo_title);
+            if (s.promo_subtitle) set('promo_subtitle', s.promo_subtitle);
+          }
         }
 
         // Map embed (kontak.html)

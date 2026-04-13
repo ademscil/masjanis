@@ -90,6 +90,7 @@ function showProductForm(product = null) {
   document.getElementById('productBadge').value        = product?.badge_label || '';
   document.getElementById('productPaymentUrl').value   = product?.payment_url || '';
   document.getElementById('productActive').checked     = product ? product.is_active : true;
+  document.getElementById('productFeatured').checked   = product ? (product.is_featured || false) : false;
 
   // Tab content fields
   document.getElementById('productManfaat').value     = product?.manfaat     || '';
@@ -159,6 +160,7 @@ async function saveProduct() {
   const badge_label = document.getElementById('productBadge').value.trim();
   const payment_url = document.getElementById('productPaymentUrl').value.trim();
   const is_active   = document.getElementById('productActive').checked;
+  const is_featured = document.getElementById('productFeatured').checked;
   let   image_url   = document.getElementById('productImageUrl').value.trim();
 
   const errEl  = document.getElementById('productError');
@@ -208,6 +210,7 @@ async function saveProduct() {
       badge_label: badge_label || null,
       payment_url: payment_url || null,
       is_active,
+      is_featured,
       manfaat:     getEditorData('productManfaat')     || null,
       cara_pakai:  getEditorData('productCaraPakai')   || null,
       peringatan:  getEditorData('productPeringatan')  || null,
