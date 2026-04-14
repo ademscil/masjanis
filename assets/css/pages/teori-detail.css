@@ -85,20 +85,20 @@
 /* Article body */
 .article-body-content {
   font-size: 1rem;
-  line-height: 1.85;
+  line-height: 1.65;
   color: var(--text-mid);
 }
 
 /* Proper spacing untuk konten dari Quill editor */
-.article-body-content p { margin-bottom: 0.85rem; }
+.article-body-content p { margin-bottom: 0.5rem; line-height: 1.65; }
 .article-body-content p:last-child { margin-bottom: 0; }
 
-/* Empty paragraph dari Quill = spasi antar blok, beri tinggi kecil bukan hide */
+/* Empty paragraph dari Quill = spasi antar blok */
 .article-body-content p:empty,
 .article-body-content p > br:only-child {
   display: block;
   margin: 0;
-  height: 0.6rem;
+  height: 0.4rem;
 }
 .article-body-content h1,
 .article-body-content h2,
