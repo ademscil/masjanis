@@ -266,7 +266,8 @@
   }
 
   function renderArticle(a) {
-    const bg   = a.bg_class || 'bg1';
+    const bgMap = { 'tanaman-obat':'bg1', 'ramuan':'bg2', 'fitokimia':'bg3', 'holistik':'bg4', 'jamu':'bg5', 'modern':'bg6' };
+    const bg   = a.bg_class || bgMap[a.category] || 'bg1';
     const time = a.read_time ? `<span>⏱ ${a.read_time} menit baca</span>` : '';
     const date = a.published_date
       ? `<span>📅 ${new Date(a.published_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>`
@@ -302,7 +303,8 @@
   }
 
   function renderKelas(c) {
-    const bg    = c.bg_class || 'bg1';
+    const bgMap = { 'pemula':'bg1', 'menengah':'bg2', 'lanjutan':'bg3' };
+    const bg    = c.bg_class || bgMap[c.level] || 'bg1';
     const price = c.price ? 'Rp ' + Number(c.price).toLocaleString('id-ID') : '';
     const orig  = c.original_price ? 'Rp ' + Number(c.original_price).toLocaleString('id-ID') : '';
     const lvl   = { pemula: 'Pemula', menengah: 'Menengah', lanjutan: 'Lanjutan' }[c.level] || c.level;

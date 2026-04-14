@@ -199,38 +199,6 @@ function confirmDiscard(onConfirm) {
   );
 }
 
-// ===== COLOR PICKER FOR BG CLASS =====
-const BG_LABELS = { bg1:'Hijau Muda', bg2:'Kuning', bg3:'Biru Muda', bg4:'Merah Muda', bg5:'Ungu', bg6:'Biru Tosca' };
-
-function selectBgClass(fieldId, chipEl) {
-  const val = chipEl.dataset.val;
-  document.getElementById(fieldId).value = val;
-  const label = document.getElementById(fieldId + 'Label');
-  if (label) label.textContent = BG_LABELS[val] || val;
-  // Reset semua chip border
-  chipEl.closest('div').querySelectorAll('.bg-chip').forEach(c => {
-    c.style.border = '2px solid transparent';
-    c.style.transform = '';
-  });
-  chipEl.style.border = '2px solid var(--green-dark)';
-  chipEl.style.transform = 'scale(1.15)';
-}
-
-function setBgClassValue(fieldId, val) {
-  if (!val) return;
-  document.getElementById(fieldId).value = val;
-  const label = document.getElementById(fieldId + 'Label');
-  if (label) label.textContent = BG_LABELS[val] || val;
-  const container = document.getElementById(fieldId)?.previousElementSibling;
-  if (container) {
-    container.querySelectorAll('.bg-chip').forEach(c => {
-      const isActive = c.dataset.val === val;
-      c.style.border = isActive ? '2px solid var(--green-dark)' : '2px solid transparent';
-      c.style.transform = isActive ? 'scale(1.15)' : '';
-    });
-  }
-}
-
 // ===== CATEGORY / LEVEL MANAGER =====
 // Key di site_settings: 'product_categories' dan 'class_levels' (JSON array)
 const CAT_DEFAULTS = {

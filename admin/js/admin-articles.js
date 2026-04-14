@@ -67,8 +67,6 @@ function showArticleForm(article = null) {
   document.getElementById('articleReadTime').value      = article?.read_time ?? '';
   document.getElementById('articlePublishedDate').value = article?.published_date || '';
   document.getElementById('articleEmoji').value         = article?.emoji || '';
-  document.getElementById('articleBgClass').value       = article?.bg_class || '';
-  setBgClassValue('articleBgClass', article?.bg_class || '');
   document.getElementById('articleActive').checked      = article ? article.is_active : true;
 
   document.getElementById('uploadArticleImage').value = '';
@@ -102,7 +100,6 @@ async function saveArticle() {
   const readTimeRaw   = document.getElementById('articleReadTime').value;
   const publishedDate = document.getElementById('articlePublishedDate').value;
   const emoji         = document.getElementById('articleEmoji').value.trim();
-  const bg_class      = document.getElementById('articleBgClass').value;
   const is_active     = document.getElementById('articleActive').checked;
 
   const errEl   = document.getElementById('articleError');
@@ -141,7 +138,6 @@ async function saveArticle() {
       read_time: readTimeRaw !== '' ? parseInt(readTimeRaw, 10) : null,
       published_date: publishedDate || null,
       emoji: emoji || null,
-      bg_class: bg_class || null,
       is_active,
     };
     if (image_url) payload.image_url = image_url;
