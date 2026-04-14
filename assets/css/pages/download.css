@@ -163,15 +163,3 @@
   .stats-row { grid-template-columns: repeat(2, 1fr); }
 }
 
-.newsletter-form {
-  display: flex;
-  gap: 0.75rem;
-  max-width: 420px;
-  margin: 0 auto;
-}
-
-@media (max-width: 480px) {
-  .newsletter-form { flex-direction: column; }
-  .newsletter-form input { width: 100%; }
-  .newsletter-form .btn { width: 100%; justify-content: center; }
-}
