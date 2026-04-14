@@ -229,15 +229,13 @@ async function saveInfo() {
     footer_col3_title: document.getElementById('infoFooterCol3Title').value.trim(),
   };
 
-  // Validasi URL Google Maps — harus format embed atau URL dengan koordinat
+  // Validasi URL Google Maps — terima semua format Google Maps
   if (vals.map_embed_url) {
     const u = vals.map_embed_url;
-    const isEmbed = u.includes('google.com/maps/embed');
-    const hasCoords = /@-?\d+\.\d+,-?\d+\.\d+/.test(u);
-    const hasQuery = /[?&]q=/.test(u);
-    if (!isEmbed && !hasCoords && !hasQuery) {
+    const isGoogleMaps = u.includes('google.com/maps') || u.includes('maps.app.goo.gl') || u.includes('goo.gl/maps');
+    if (!isGoogleMaps) {
       if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
-      errEl.textContent = '❌ URL Google Maps tidak dapat di-embed. Gunakan: Share → Embed a map → salin src URL (format: google.com/maps/embed?pb=...) atau URL dengan koordinat.';
+      errEl.textContent = '❌ URL tidak valid. Masukkan URL dari Google Maps (google.com/maps atau maps.app.goo.gl).';
       errEl.classList.add('visible');
       return;
     }

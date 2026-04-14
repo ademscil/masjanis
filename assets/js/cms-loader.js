@@ -35,6 +35,7 @@
 
   // ── Map URL normalizer ────────────────────────────────────────
   // Konversi berbagai format URL Google Maps ke format embed iframe.
+  // Juga kembalikan originalUrl untuk tombol "Buka di Maps".
   function normalizeMapUrl(url) {
     if (!url) return null;
     url = url.trim();
@@ -42,27 +43,30 @@
     // Sudah format embed — langsung pakai
     if (url.includes('google.com/maps/embed')) return url;
 
-    // Coba ekstrak koordinat atau place dari berbagai format URL
-    // Format: https://www.google.com/maps/place/.../@lat,lng,zoom
-    // Format: https://www.google.com/maps/@lat,lng,zoom
-    // Format: https://maps.app.goo.gl/... (short link — tidak bisa di-resolve client-side)
-
-    // Coba ekstrak @lat,lng dari URL biasa
-    const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    // Ekstrak koordinat dari URL biasa: @lat,lng atau ?ll=lat,lng
+    const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) ||
+                       url.match(/[?&]ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
     if (coordMatch) {
       const lat = coordMatch[1];
       const lng = coordMatch[2];
-      return `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d5000!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sid!2sid!4v1`;
+      // Gunakan /maps/search/ embed — tidak butuh API key, tampilkan pin merah
+      return `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
     }
 
-    // Coba ekstrak query/place dari URL
+    // Ekstrak nama place dari URL /maps/place/NamaLokasi/
+    const placeMatch = url.match(/maps\/place\/([^/@?]+)/);
+    if (placeMatch) {
+      const place = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
+      return `https://www.google.com/maps?q=${encodeURIComponent(place)}&output=embed`;
+    }
+
+    // Ekstrak ?q= atau &q=
     const qMatch = url.match(/[?&]q=([^&]+)/);
     if (qMatch) {
-      const q = qMatch[1];
-      return `https://www.google.com/maps/embed/v1/place?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&q=${q}`;
+      return `https://www.google.com/maps?q=${qMatch[1]}&output=embed`;
     }
 
-    // Tidak bisa dikonversi — kembalikan null
+    // Short link atau format tidak dikenal — tidak bisa dikonversi client-side
     return null;
   }
 
@@ -481,16 +485,34 @@
         // Map embed (kontak.html)
         const mapWrap = document.getElementById('mapEmbed');
         if (mapWrap && s.map_embed_url) {
-          const embedUrl = normalizeMapUrl(s.map_embed_url);
+          const rawUrl   = s.map_embed_url;
+          const embedUrl = normalizeMapUrl(rawUrl);
+          // URL untuk tombol "Buka di Maps" — pakai URL asli agar langsung ke titik
+          const openUrl  = rawUrl.includes('google.com/maps/embed')
+            ? rawUrl.replace('output=embed', '').replace('/embed?', '?')
+            : rawUrl;
           if (embedUrl) {
-            mapWrap.innerHTML = `<iframe src="${embedUrl}" width="100%" height="380" style="border:0;border-radius:var(--radius);" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+            mapWrap.innerHTML = `
+              <iframe src="${embedUrl}" width="100%" height="380"
+                style="border:0;border-radius:var(--radius);"
+                allowfullscreen loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <div style="text-align:right;margin-top:0.4rem;">
+                <a href="${openUrl}" target="_blank" rel="noopener"
+                   style="font-size:0.78rem;color:var(--green-mid);text-decoration:none;">
+                  🗺️ Buka di Google Maps →
+                </a>
+              </div>`;
           } else {
-            // Short link (maps.app.goo.gl) tidak bisa di-resolve client-side
-            mapWrap.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;padding:2.5rem;color:var(--text-light);text-align:center;">
-              <span style="font-size:2.5rem;">🗺️</span>
-              <p style="margin:0;font-size:0.9rem;color:#dc2626;">URL Google Maps tidak valid untuk embed.<br>Gunakan format embed dari Google Maps → Share → Embed a map.</p>
-              <a href="${s.map_embed_url}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Buka di Google Maps →</a>
-            </div>`;
+            // Short link — tidak bisa di-embed, tampilkan tombol buka langsung
+            mapWrap.innerHTML = `
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;padding:2.5rem;color:var(--text-light);text-align:center;">
+                <span style="font-size:2.5rem;">🗺️</span>
+                <p style="margin:0;font-size:0.9rem;">Klik tombol di bawah untuk melihat lokasi kami.</p>
+                <a href="${rawUrl}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+                  🗺️ Buka di Google Maps →
+                </a>
+              </div>`;
           }
         }
 
