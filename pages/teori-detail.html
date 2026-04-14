@@ -116,7 +116,7 @@
       <a href="/" class="nav-logo">
         <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
       </a>
-      <p data-site="footer_tagline">MasJanis � Atur tagline ini melalui Admin ? Informasi.</p>
+      <p data-site="footer_tagline">MasJanis � Atur tagline ini melalui Admin ? Informasi.</p>
       <div class="social-links">
         <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener">📸</a>
         <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener">👥</a>
@@ -204,14 +204,16 @@
     // Body: render sebagai HTML (support tag dari CMS)
     const body = document.getElementById('articleBody');
     let content = a.excerpt || '';
-    // Fix: jika konten ter-escape (berisi &lt;p&gt; dll), decode dulu
-    if (content.includes('&lt;') || content.includes('&amp;lt;')) {
-      const tmp = document.createElement('div');
+
+    // Fix: jika konten ter-escape (berisi &lt;p&gt; dll), decode HTML entities dulu
+    // Gunakan innerHTML bukan textContent agar tag HTML tetap terjaga
+    if (content.includes('&lt;p&gt;') || content.includes('&amp;lt;')) {
+      const tmp = document.createElement('textarea');
       tmp.innerHTML = content;
-      content = tmp.textContent || tmp.innerText || content;
+      content = tmp.value;
     }
-    // Bersihkan empty paragraphs dari Quill
-    content = content.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '');
+
+    // Jangan hapus empty paragraphs — biarkan CSS yang handle sebagai spasi visual
     body.innerHTML = content
       ? content
       : '<p style="color:var(--text-light);font-style:italic;">Konten lengkap belum tersedia.</p>';
