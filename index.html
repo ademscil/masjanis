@@ -145,7 +145,11 @@
       <h2>Pilihan Terbaik untuk Kesehatan Anda</h2>
       <p>Produk herbal pilihan yang paling diminati pelanggan kami.</p>
     </div>
-    <div id="featuredProductsGrid"></div>
+    <div class="featured-slider-wrap">
+      <button class="slider-btn prev" onclick="slideProducts(-1)" aria-label="Sebelumnya">‹</button>
+      <div id="featuredProductsGrid"></div>
+      <button class="slider-btn next" onclick="slideProducts(1)" aria-label="Berikutnya">›</button>
+    </div>
   </div>
 </section>
 
@@ -213,7 +217,7 @@
       <a href="/" class="nav-logo">
         <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
       </a>
-      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda. Dipercaya lebih dari 50.000 pelanggan di seluruh Indonesia.</p>
+      <p data-site="footer_tagline">Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda. Dipercaya lebih dari 50.000 pelanggan di seluruh Indonesia.</p>
       <div class="social-links">
         <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener" title="Instagram">📸</a>
         <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener" title="Facebook">👥</a>
@@ -222,7 +226,7 @@
       </div>
     </div>
     <div class="footer-col">
-      <h4>Navigasi</h4>
+      <h4 data-site="footer_col2_title">Navigasi</h4>
       <ul>
         <li><a href="/">Beranda</a></li>
         <li><a href="/teori">Teori Herbal</a></li>
@@ -233,7 +237,7 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Produk</h4>
+      <h4 data-site="footer_col3_title">Produk</h4>
       <ul>
         <li><a href="/shop">Suplemen Herbal</a></li>
         <li><a href="/shop">Minuman Herbal</a></li>
@@ -244,7 +248,7 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Kontak</h4>
+      <h4 data-site="footer_col4_title">Kontak</h4>
       <ul>
         <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
         <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
@@ -254,7 +258,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+    <p data-site="footer_copyright">© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
   </div>
 </footer>
 
@@ -280,34 +284,18 @@
       }
     } catch(e) {}
 
-    // Featured products
-    const section = document.getElementById('featuredSection');
-    const grid    = document.getElementById('featuredProductsGrid');
-    if (!section || !grid) return;
-    try {
-      const { data, error } = await db.from('products').select('*').eq('is_active', true)
-        .order('created_at', { ascending: false }).limit(4);
-      if (error || !data?.length) { section.style.display = 'none'; return; }
-      grid.innerHTML = data.map(p => {
-        const price    = p.price ? 'Rp ' + Number(p.price).toLocaleString('id-ID') : '';
-        const origPrice = p.original_price ? 'Rp ' + Number(p.original_price).toLocaleString('id-ID') : '';
-        const badge    = p.badge_label ? `<span class="badge badge-gold">${p.badge_label}</span>` : '';
-        const img      = p.image_url
-          ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
-          : `<span style="font-size:2.5rem;">${p.emoji||'🌿'}</span>`;
-        return `<div class="card fade-in">
-          <div class="card-img" style="position:relative;overflow:hidden;">${img}</div>
-          <div class="card-body">${badge}<h3>${p.name}</h3><p>${p.description||''}</p>
-            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
-              <strong style="color:var(--green-dark);">${price}</strong>
-              ${origPrice?`<span style="text-decoration:line-through;color:var(--text-light);font-size:0.85rem;">${origPrice}</span>`:''}
-            </div>
-            <a href="/shop" class="btn btn-outline btn-sm">Lihat di Toko →</a>
-          </div></div>`;
-      }).join('');
-      grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
-    } catch(err) { section.style.display = 'none'; }
+    // Featured products — dihandle oleh cms-loader.js (initFeaturedProducts)
   });
+</script>
+
+<script>
+  // Slider navigation untuk produk unggulan
+  function slideProducts(dir) {
+    const grid = document.getElementById('featuredProductsGrid');
+    if (!grid) return;
+    const cardWidth = grid.querySelector('.product-card')?.offsetWidth || 280;
+    grid.scrollBy({ left: dir * (cardWidth + 24), behavior: 'smooth' });
+  }
 </script>
 </body>
 </html>

@@ -458,6 +458,18 @@
           });
         }
 
+        // Footer copyright
+        if (s.footer_copyright) {
+          document.querySelectorAll('[data-site="footer_copyright"]').forEach(el => {
+            el.textContent = s.footer_copyright;
+          });
+        }
+
+        // Footer column titles
+        ['footer_col2_title','footer_col3_title','footer_col4_title'].forEach(k => {
+          if (s[k]) document.querySelectorAll(`[data-site="${k}"]`).forEach(el => { el.textContent = s[k]; });
+        });
+
         // About section (index.html)
         const aboutTitle = document.getElementById('aboutTitle');
         const aboutBody  = document.getElementById('aboutBody');

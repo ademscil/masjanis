@@ -1096,6 +1096,39 @@
             </div>
           </div>
 
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
+            <h4>🗺️ Google Maps</h4>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="infoMapEmbed">URL Embed Google Maps</label>
+                <input type="url" id="infoMapEmbed" placeholder="https://www.google.com/maps/embed?pb=..." />
+                <small style="color:var(--text-light);font-size:0.78rem;">Buka Google Maps → Share → Embed a map → salin URL dari atribut <code>src</code> pada iframe.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="crud-form-wrap" style="margin-top:1.5rem;">
+            <h4>🦶 Footer</h4>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="infoFooterTagline">Tagline Footer <small style="color:var(--text-light);font-weight:400;">(deskripsi singkat di bawah logo)</small></label>
+                <textarea id="infoFooterTagline" rows="2" placeholder="Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda." style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;resize:vertical;"></textarea>
+              </div>
+              <div class="form-field full-width">
+                <label for="infoFooterCopyright">Teks Copyright <small style="color:var(--text-light);font-weight:400;">(di bagian bawah footer)</small></label>
+                <input type="text" id="infoFooterCopyright" placeholder="© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia" />
+              </div>
+              <div class="form-field">
+                <label for="infoFooterCol2Title">Judul Kolom 2 Footer</label>
+                <input type="text" id="infoFooterCol2Title" placeholder="Navigasi" />
+              </div>
+              <div class="form-field">
+                <label for="infoFooterCol3Title">Judul Kolom 3 Footer</label>
+                <input type="text" id="infoFooterCol3Title" placeholder="Produk" />
+              </div>
+            </div>
+          </div>
+
           <div class="form-actions" style="margin-top:1.5rem;">
             <button class="btn-save" onclick="saveInfo()">💾 Simpan Informasi</button>
           </div>
