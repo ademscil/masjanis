@@ -72,8 +72,6 @@ function showClassForm(cls = null) {
   document.getElementById('classPrice').value         = cls?.price ?? '';
   document.getElementById('classOriginalPrice').value = cls?.original_price ?? '';
   document.getElementById('classEmoji').value         = cls?.emoji || '';
-  document.getElementById('classBgClass').value       = cls?.bg_class || '';
-  setBgClassValue('classBgClass', cls?.bg_class || '');
   document.getElementById('classActive').checked      = cls ? cls.is_active : true;
 
   document.getElementById('uploadClassImage').value = '';
@@ -110,7 +108,6 @@ async function saveClass() {
   const price         = parseInt(document.getElementById('classPrice').value, 10);
   const origPriceRaw  = document.getElementById('classOriginalPrice').value;
   const emoji         = document.getElementById('classEmoji').value.trim();
-  const bg_class      = document.getElementById('classBgClass').value;
   const is_active     = document.getElementById('classActive').checked;
 
   const errEl   = document.getElementById('classError');
@@ -140,7 +137,6 @@ async function saveClass() {
     price,
     original_price: origPriceRaw !== '' ? parseInt(origPriceRaw, 10) : null,
     emoji: emoji || null,
-    bg_class: bg_class || null,
     is_active,
   };
 
