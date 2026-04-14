@@ -90,31 +90,6 @@
   50% { transform: translateY(8px); }
 }
 
-/* ── Stats bar ── */
-.stats-bar {
-  background: var(--green-dark);
-  padding: 2rem;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.stat-item { color: var(--white); }
-.stat-item .num {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--gold-light);
-  display: block;
-}
-.stat-item span:last-child { font-size: 0.85rem; opacity: 0.8; }
-
 /* ── Features ── */
 .feature-card {
   text-align: center;
