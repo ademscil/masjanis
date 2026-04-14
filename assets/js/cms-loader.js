@@ -107,9 +107,37 @@
     loadGrid(
       'featuredProductsGrid',
       db => db.from('products').select('*').eq('is_active', true).eq('is_featured', true).order('created_at', { ascending: false }).limit(4),
-      renderProduct,
+      renderFeaturedProduct,
       'initFeaturedProducts'
     );
+  }
+
+  function renderFeaturedProduct(p) {
+    const price  = p.price ? 'Rp ' + Number(p.price).toLocaleString('id-ID') : 'Gratis';
+    const orig   = p.original_price ? 'Rp ' + Number(p.original_price).toLocaleString('id-ID') : '';
+    const badge  = p.badge_label ? `<span class="product-badge">${esc(p.badge_label)}</span>` : '';
+    const bgMap  = { suplemen: 'bg1', minuman: 'bg2', perawatan: 'bg5', paket: 'bg3' };
+    const bg     = bgMap[p.category] || 'bg1';
+    const imgEl  = p.image_url
+      ? `<img src="${p.image_url}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;">`
+      : `<span style="font-size:3.5rem;">${p.emoji || '🌿'}</span>`;
+    const detailUrl = `/product-detail/${slugify(p.name)}`;
+    const desc = plainText(p.description, 80);
+
+    return `
+      <a href="${detailUrl}" class="product-card fade-in" data-category="${p.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
+        <div class="product-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}${badge}</div>
+        <div class="product-body">
+          <h3>${esc(p.name)}</h3>
+          <p>${esc(desc)}</p>
+          <div class="product-footer">
+            <div class="product-price">
+              ${orig ? `<span class="original">${orig}</span>` : ''}${price}
+            </div>
+            <span class="btn btn-outline btn-sm">Lihat Detail →</span>
+          </div>
+        </div>
+      </a>`;
   }
 
   // ── Shop ──────────────────────────────────────────────────────
