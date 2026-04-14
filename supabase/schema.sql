@@ -221,7 +221,7 @@ CREATE POLICY "public read active features"
 -- ============================================================
 INSERT INTO site_settings (key, value) VALUES
   -- Hero
-  ('hero_tag',              '🌿 Herbal Nusantara Terpercaya'),
+  ('hero_tag',              '🌿 MasJanis'),
   ('hero_btn1_text',        '🛒 Jelajahi Produk'),
   ('hero_btn1_url',         'shop.html'),
   ('hero_btn2_text',        '📖 Pelajari Teori'),
@@ -236,8 +236,8 @@ INSERT INTO site_settings (key, value) VALUES
   ('stat4_num',             '15+'),
   ('stat4_label',           'Tahun Pengalaman'),
   -- About section
-  ('about_title',           'Warisan Alam Nusantara dalam Setiap Tetes'),
-  ('about_body',            'MasJanis lahir dari kecintaan mendalam terhadap kekayaan tanaman obat Indonesia.'),
+  ('about_title',           'Tentang MasJanis'),
+  ('about_body',            'Atur konten tentang kami melalui Admin → Informasi.'),
   ('about_image_url',       ''),
   -- Features section title
   ('features_title',        'Mengapa Memilih MasJanis?'),
@@ -247,7 +247,7 @@ INSERT INTO site_settings (key, value) VALUES
   ('testimonials_subtitle', 'Ribuan pelanggan telah merasakan manfaat nyata dari produk MasJanis.'),
   -- CTA Banner
   ('cta_title',             'Mulai Perjalanan Sehat Anda Hari Ini'),
-  ('cta_subtitle',          'Bergabunglah dengan ribuan orang yang telah merasakan manfaat herbal nusantara.'),
+  ('cta_subtitle',          'Bergabunglah dengan ribuan orang yang telah merasakan manfaat produk MasJanis.'),
   ('cta_btn1_text',         '🛒 Belanja Sekarang'),
   ('cta_btn1_url',          'shop.html'),
   ('cta_btn2_text',         '📚 Lihat Kelas'),
@@ -269,5 +269,5 @@ INSERT INTO site_settings (key, value) VALUES
   -- Kontak
   ('map_embed_url',         ''),
   ('whatsapp',              ''),
-  ('footer_tagline',        'Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda.')
+  ('footer_tagline',        'MasJanis — Atur tagline ini melalui Admin → Informasi.')
 ON CONFLICT (key) DO NOTHING;
