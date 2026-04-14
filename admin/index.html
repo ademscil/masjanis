@@ -319,7 +319,9 @@
                 <textarea id="articleExcerpt" style="display:none;"></textarea>
               </div>
               <div class="form-field">
-                <label for="articleCategory">Kategori <span style="color:#be123c">*</span></label>
+                <label for="articleCategory">Kategori <span style="color:#be123c">*</span>
+                  <button type="button" onclick="openCategoryManager('article')" style="margin-left:0.5rem;padding:0.15rem 0.5rem;font-size:0.72rem;background:var(--green-pale);color:var(--green-dark);border:1px solid var(--green-light);border-radius:4px;cursor:pointer;">⚙ Kelola</button>
+                </label>
                 <select id="articleCategory">
                   <option value="tanaman-obat">Tanaman Obat</option>
                   <option value="ramuan">Ramuan</option>
@@ -622,123 +624,210 @@
             ✅ Pengaturan berhasil disimpan!
           </div>
 
-          <!-- Hero Beranda -->
+          <!-- Gambar & Teks Halaman (Hero + Page Headers) -->
           <div class="crud-form-wrap">
-            <h4>🏠 Hero — Beranda</h4>
-            <div class="form-grid">
-              <div class="form-field full-width">
-                <label>Gambar Hero</label>
-                <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-                  <button type="button" onclick="switchUploadTab('hero','file')" id="tabFile_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
-                  <button type="button" onclick="switchUploadTab('hero','url')" id="tabUrl_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+            <h4>🖼️ Gambar & Teks Tiap Halaman</h4>
+            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1.5rem;">Atur gambar latar, tag, judul, dan subtitle untuk setiap halaman</p>
+
+            <!-- Beranda -->
+            <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
+              <div style="font-weight:700;color:var(--text-dark);margin-bottom:1rem;font-size:0.95rem;">🏠 Beranda (Hero)</div>
+              <div class="form-grid">
+                <div class="form-field full-width">
+                  <label>Gambar Hero</label>
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button type="button" onclick="switchUploadTab('hero','file')" id="tabFile_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                    <button type="button" onclick="switchUploadTab('hero','url')" id="tabUrl_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                  </div>
+                  <div id="tabFileArea_hero">
+                    <input type="file" id="uploadHeroImage" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHero','settingHeroImage')" />
+                  </div>
+                  <div id="tabUrlArea_hero" style="display:none;">
+                    <input type="url" id="settingHeroImage" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                  </div>
+                  <img id="previewHero" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
                 </div>
-                <div id="tabFileArea_hero">
-                  <input type="file" id="uploadHeroImage" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHero','settingHeroImage')" />
+                <div class="form-field">
+                  <label for="settingHeroTag">Tag <span style="font-size:0.75rem;color:var(--text-light);">(teks kecil di atas judul)</span></label>
+                  <input type="text" id="settingHeroTag" placeholder="🌿 Herbal Nusantara Terpercaya" />
                 </div>
-                <div id="tabUrlArea_hero" style="display:none;">
-                  <input type="url" id="settingHeroImage" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                <div class="form-field">
+                  <label for="settingHeroTitle">Judul</label>
+                  <input type="text" id="settingHeroTitle" placeholder="Temukan Kekuatan Alam..." />
                 </div>
-                <img id="previewHero" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
-              </div>
-              <div class="form-field full-width">
-                <label for="settingHeroTitle">Judul Hero</label>
-                <input type="text" id="settingHeroTitle" placeholder="Temukan Kekuatan Alam..." />
-              </div>
-              <div class="form-field full-width">
-                <label for="settingHeroSubtitle">Subtitle Hero</label>
-                <div id="settingHeroSubtitleEditor" style="min-height:80px;"></div>
-                <textarea id="settingHeroSubtitle" style="display:none;"></textarea>
+                <div class="form-field full-width">
+                  <label for="settingHeroSubtitle">Subtitle</label>
+                  <div id="settingHeroSubtitleEditor" style="min-height:80px;"></div>
+                  <textarea id="settingHeroSubtitle" style="display:none;"></textarea>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Page Headers -->
-          <div class="crud-form-wrap" style="margin-top:1.5rem;">
-            <h4>🖼️ Gambar Page Header (tiap halaman)</h4>
-            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1.25rem;">Gambar latar belakang untuk banner di bagian atas tiap halaman</p>
-
-            <!-- shop -->
+            <!-- 🛍️ Toko -->
             <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
-              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">🛍️ Toko</div>
-              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-                <button type="button" class="tab-upload-btn active" onclick="switchUploadTab('shop','file')" id="tabFile_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
-                <button type="button" class="tab-upload-btn" onclick="switchUploadTab('shop','url')" id="tabUrl_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">🛍️ Toko</div>
+              <div class="form-grid">
+                <div class="form-field full-width">
+                  <label>Gambar Header</label>
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button type="button" onclick="switchUploadTab('shop','file')" id="tabFile_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                    <button type="button" onclick="switchUploadTab('shop','url')" id="tabUrl_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                  </div>
+                  <div id="tabFileArea_shop">
+                    <input type="file" id="uploadHeader_shop" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_shop','settingHeader_shop')" />
+                  </div>
+                  <div id="tabUrlArea_shop" style="display:none;">
+                    <input type="url" id="settingHeader_shop" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                  </div>
+                  <img id="previewHeader_shop" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+                </div>
+                <div class="form-field">
+                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTag_shop" placeholder="contoh: 🌿 Herbal Terpercaya" />
+                </div>
+                <div class="form-field">
+                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTitle_shop" placeholder="Judul halaman" />
+                </div>
+                <div class="form-field full-width">
+                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderSubtitle_shop" placeholder="Deskripsi singkat halaman" />
+                </div>
               </div>
-              <div id="tabFileArea_shop">
-                <input type="file" id="uploadHeader_shop" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_shop','settingHeader_shop')" />
-              </div>
-              <div id="tabUrlArea_shop" style="display:none;">
-                <input type="url" id="settingHeader_shop" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
-              </div>
-              <img id="previewHeader_shop" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
             </div>
 
-            <!-- teori -->
+            <!-- 📖 Teori -->
             <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
-              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">📖 Teori</div>
-              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-                <button type="button" onclick="switchUploadTab('teori','file')" id="tabFile_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
-                <button type="button" onclick="switchUploadTab('teori','url')" id="tabUrl_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">📖 Teori</div>
+              <div class="form-grid">
+                <div class="form-field full-width">
+                  <label>Gambar Header</label>
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button type="button" onclick="switchUploadTab('teori','file')" id="tabFile_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                    <button type="button" onclick="switchUploadTab('teori','url')" id="tabUrl_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                  </div>
+                  <div id="tabFileArea_teori">
+                    <input type="file" id="uploadHeader_teori" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_teori','settingHeader_teori')" />
+                  </div>
+                  <div id="tabUrlArea_teori" style="display:none;">
+                    <input type="url" id="settingHeader_teori" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                  </div>
+                  <img id="previewHeader_teori" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+                </div>
+                <div class="form-field">
+                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTag_teori" placeholder="contoh: 🌿 Herbal Terpercaya" />
+                </div>
+                <div class="form-field">
+                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTitle_teori" placeholder="Judul halaman" />
+                </div>
+                <div class="form-field full-width">
+                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderSubtitle_teori" placeholder="Deskripsi singkat halaman" />
+                </div>
               </div>
-              <div id="tabFileArea_teori">
-                <input type="file" id="uploadHeader_teori" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_teori','settingHeader_teori')" />
-              </div>
-              <div id="tabUrlArea_teori" style="display:none;">
-                <input type="url" id="settingHeader_teori" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
-              </div>
-              <img id="previewHeader_teori" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
             </div>
 
-            <!-- kelas -->
+            <!-- 🎓 Kelas -->
             <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
-              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">🎓 Kelas</div>
-              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-                <button type="button" onclick="switchUploadTab('kelas','file')" id="tabFile_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
-                <button type="button" onclick="switchUploadTab('kelas','url')" id="tabUrl_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">🎓 Kelas</div>
+              <div class="form-grid">
+                <div class="form-field full-width">
+                  <label>Gambar Header</label>
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button type="button" onclick="switchUploadTab('kelas','file')" id="tabFile_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                    <button type="button" onclick="switchUploadTab('kelas','url')" id="tabUrl_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                  </div>
+                  <div id="tabFileArea_kelas">
+                    <input type="file" id="uploadHeader_kelas" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_kelas','settingHeader_kelas')" />
+                  </div>
+                  <div id="tabUrlArea_kelas" style="display:none;">
+                    <input type="url" id="settingHeader_kelas" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                  </div>
+                  <img id="previewHeader_kelas" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+                </div>
+                <div class="form-field">
+                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTag_kelas" placeholder="contoh: 🌿 Herbal Terpercaya" />
+                </div>
+                <div class="form-field">
+                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTitle_kelas" placeholder="Judul halaman" />
+                </div>
+                <div class="form-field full-width">
+                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderSubtitle_kelas" placeholder="Deskripsi singkat halaman" />
+                </div>
               </div>
-              <div id="tabFileArea_kelas">
-                <input type="file" id="uploadHeader_kelas" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_kelas','settingHeader_kelas')" />
-              </div>
-              <div id="tabUrlArea_kelas" style="display:none;">
-                <input type="url" id="settingHeader_kelas" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
-              </div>
-              <img id="previewHeader_kelas" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
             </div>
 
-            <!-- download -->
+            <!-- 📥 Download -->
             <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;">
-              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">📥 Download</div>
-              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-                <button type="button" onclick="switchUploadTab('download','file')" id="tabFile_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
-                <button type="button" onclick="switchUploadTab('download','url')" id="tabUrl_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">📥 Download</div>
+              <div class="form-grid">
+                <div class="form-field full-width">
+                  <label>Gambar Header</label>
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button type="button" onclick="switchUploadTab('download','file')" id="tabFile_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                    <button type="button" onclick="switchUploadTab('download','url')" id="tabUrl_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                  </div>
+                  <div id="tabFileArea_download">
+                    <input type="file" id="uploadHeader_download" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_download','settingHeader_download')" />
+                  </div>
+                  <div id="tabUrlArea_download" style="display:none;">
+                    <input type="url" id="settingHeader_download" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                  </div>
+                  <img id="previewHeader_download" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+                </div>
+                <div class="form-field">
+                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTag_download" placeholder="contoh: 🌿 Herbal Terpercaya" />
+                </div>
+                <div class="form-field">
+                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTitle_download" placeholder="Judul halaman" />
+                </div>
+                <div class="form-field full-width">
+                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderSubtitle_download" placeholder="Deskripsi singkat halaman" />
+                </div>
               </div>
-              <div id="tabFileArea_download">
-                <input type="file" id="uploadHeader_download" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_download','settingHeader_download')" />
-              </div>
-              <div id="tabUrlArea_download" style="display:none;">
-                <input type="url" id="settingHeader_download" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
-              </div>
-              <img id="previewHeader_download" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
             </div>
 
-            <!-- kontak -->
+            <!-- ✉️ Kontak -->
             <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;">
-              <div style="font-weight:600;color:var(--text-dark);margin-bottom:0.75rem;">✉️ Kontak</div>
-              <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-                <button type="button" onclick="switchUploadTab('kontak','file')" id="tabFile_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
-                <button type="button" onclick="switchUploadTab('kontak','url')" id="tabUrl_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+              <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">✉️ Kontak</div>
+              <div class="form-grid">
+                <div class="form-field full-width">
+                  <label>Gambar Header</label>
+                  <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button type="button" onclick="switchUploadTab('kontak','file')" id="tabFile_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
+                    <button type="button" onclick="switchUploadTab('kontak','url')" id="tabUrl_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
+                  </div>
+                  <div id="tabFileArea_kontak">
+                    <input type="file" id="uploadHeader_kontak" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_kontak','settingHeader_kontak')" />
+                  </div>
+                  <div id="tabUrlArea_kontak" style="display:none;">
+                    <input type="url" id="settingHeader_kontak" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
+                  </div>
+                  <img id="previewHeader_kontak" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
+                </div>
+                <div class="form-field">
+                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTag_kontak" placeholder="contoh: 🌿 Herbal Terpercaya" />
+                </div>
+                <div class="form-field">
+                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderTitle_kontak" placeholder="Judul halaman" />
+                </div>
+                <div class="form-field full-width">
+                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <input type="text" id="settingHeaderSubtitle_kontak" placeholder="Deskripsi singkat halaman" />
+                </div>
               </div>
-              <div id="tabFileArea_kontak">
-                <input type="file" id="uploadHeader_kontak" accept="image/*" style="width:100%;" onchange="previewUpload(this,'previewHeader_kontak','settingHeader_kontak')" />
-              </div>
-              <div id="tabUrlArea_kontak" style="display:none;">
-                <input type="url" id="settingHeader_kontak" placeholder="https://contoh.com/gambar.jpg" style="width:100%;padding:0.65rem 0.85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.875rem;font-family:inherit;" />
-              </div>
-              <img id="previewHeader_kontak" src="" alt="" style="display:none;margin-top:0.75rem;max-height:100px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
             </div>
-
           </div>
-
           <div class="form-actions" style="margin-top:1.5rem;">
             <button class="btn-save" onclick="saveSettings()">💾 Simpan Semua Pengaturan</button>
           </div>

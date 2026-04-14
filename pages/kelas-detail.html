@@ -264,7 +264,7 @@
       document.getElementById('enrollDisc').style.display = '';
     }
 
-    // Daftar button
+    // Daftar button — Mayar.id tidak support iframe, buka modal konfirmasi
     const btnDaftar = document.getElementById('btnDaftar');
     if (c.payment_url) {
       btnDaftar.addEventListener('click', () => {
@@ -272,11 +272,26 @@
         const nameEl = document.getElementById('modalProductName');
         const wrap   = document.getElementById('modalIframeWrap');
         if (nameEl) nameEl.textContent = c.title;
-        if (wrap) wrap.innerHTML = `<iframe src="${c.payment_url}" width="100%" height="380" frameborder="0" style="border:none;border-radius:8px;"></iframe>`;
+        if (wrap) wrap.innerHTML = `
+          <div style="text-align:center;padding:2rem 1.5rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">🎓</div>
+            <h3 style="font-size:1.1rem;color:var(--text-dark);margin-bottom:0.5rem;">${esc(c.title)}</h3>
+            <p style="color:var(--text-mid);font-size:0.9rem;margin-bottom:1.5rem;">
+              Anda akan diarahkan ke halaman pembayaran aman Mayar.id
+            </p>
+            <a href="${c.payment_url}" target="_blank" rel="noopener noreferrer"
+               style="display:inline-flex;align-items:center;gap:0.5rem;justify-content:center;width:100%;padding:0.9rem;background:var(--green-dark);color:#fff;border-radius:var(--radius-sm);font-weight:600;text-decoration:none;font-size:1rem;"
+               onclick="document.getElementById('paymentModal').classList.remove('open');document.body.style.overflow='';">
+              💳 Lanjut ke Pembayaran
+            </a>
+            <p style="color:var(--text-light);font-size:0.78rem;margin-top:1rem;">
+              🔒 Pembayaran diproses oleh Mayar.id — platform pembayaran terpercaya
+            </p>
+          </div>`;
         if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
       });
     } else {
-      btnDaftar.addEventListener('click', () => { window.location.href = 'kontak.html'; });
+      btnDaftar.addEventListener('click', () => { window.location.href = '/kontak'; });
     }
 
     // Share

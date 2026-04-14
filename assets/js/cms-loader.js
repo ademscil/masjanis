@@ -23,6 +23,16 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  // Strip HTML dan truncate untuk preview card
+  function plainText(html, maxLen = 120) {
+    const plain = String(html || '')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + '...' : plain;
+  }
+
   // ── Slug helper ───────────────────────────────────────────────
   function slugify(text) {
     return String(text || '')
@@ -128,7 +138,7 @@
         <div class="product-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}${badge}</div>
         <div class="product-body">
           <h3>${esc(p.name)}</h3>
-          <p>${p.description || ''}</p>
+          <p>${plainText(p.description)}</p>
           <div class="product-footer">
             <div class="product-price">
               ${orig ? `<span class="original">${orig}</span>` : ''}${price}
@@ -140,13 +150,43 @@
   }
 
   window.openPaymentModal = function (p) {
+    const name = (p.emoji || '') + ' ' + (p.name || p.title || '');
+    const payUrl = p.payment_url;
+
+    if (!payUrl) {
+      // Tidak ada URL pembayaran
+      const modal  = document.getElementById('paymentModal');
+      const nameEl = document.getElementById('modalProductName');
+      const wrap   = document.getElementById('modalIframeWrap');
+      if (nameEl) nameEl.textContent = name;
+      if (wrap) wrap.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-light);">Link pembayaran belum tersedia.</div>`;
+      if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      return;
+    }
+
+    // Mayar.id tidak support iframe embed — buka di tab baru
+    // Tampilkan modal konfirmasi dulu
     const modal  = document.getElementById('paymentModal');
     const nameEl = document.getElementById('modalProductName');
     const wrap   = document.getElementById('modalIframeWrap');
-    if (nameEl) nameEl.textContent = (p.emoji || '') + ' ' + p.name;
-    if (wrap) wrap.innerHTML = p.payment_url
-      ? `<iframe src="${p.payment_url}" width="100%" height="380" frameborder="0" style="border:none;border-radius:8px;"></iframe>`
-      : `<div style="text-align:center;padding:2rem;color:var(--text-light);">Link pembayaran belum tersedia.</div>`;
+    if (nameEl) nameEl.textContent = name;
+    if (wrap) wrap.innerHTML = `
+      <div style="text-align:center;padding:2rem 1.5rem;">
+        <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
+        <h3 style="font-size:1.1rem;color:var(--text-dark);margin-bottom:0.5rem;">${name}</h3>
+        <p style="color:var(--text-mid);font-size:0.9rem;margin-bottom:1.5rem;">
+          Anda akan diarahkan ke halaman pembayaran aman Mayar.id
+        </p>
+        <a href="${payUrl}" target="_blank" rel="noopener noreferrer"
+           class="btn btn-primary"
+           style="display:inline-flex;align-items:center;gap:0.5rem;justify-content:center;width:100%;padding:0.9rem;"
+           onclick="document.getElementById('paymentModal').classList.remove('open');document.body.style.overflow='';">
+          💳 Lanjut ke Pembayaran
+        </a>
+        <p style="color:var(--text-light);font-size:0.78rem;margin-top:1rem;">
+          🔒 Pembayaran diproses oleh Mayar.id — platform pembayaran terpercaya
+        </p>
+      </div>`;
     if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
   };
 
@@ -167,8 +207,11 @@
       ? `<span>📅 ${new Date(a.published_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>`
       : '';
     const imgEl = a.image_url
-      ? `<img src="${a.image_url}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+      ? `<img src="${a.image_url}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;">`
       : `<span style="font-size:3.5rem;">${a.emoji || '🌿'}</span>`;
+
+    // Strip HTML tags dari excerpt untuk tampilan card (plain text)
+    const plainExcerpt = plainText(a.excerpt);
 
     return `
       <a href="/teori-detail/${slugify(a.title)}" class="article-card searchable-card fade-in visible" data-category="${a.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
@@ -176,7 +219,7 @@
         <div class="article-body">
           <span class="badge badge-green">${a.category}</span>
           <h3>${esc(a.title)}</h3>
-          <div class="article-excerpt">${a.excerpt || ''}</div>
+          <p class="article-excerpt">${esc(plainExcerpt)}</p>
           <div class="article-meta">${time}${date}</div>
           <span class="btn btn-outline btn-sm" style="margin-top:auto;">Baca Selengkapnya</span>
         </div>
@@ -215,7 +258,7 @@
             ${c.duration_hours ? `<span>⏱ ${c.duration_hours} jam</span>` : ''}
             ${c.video_count ? `<span>🎬 ${c.video_count} video</span>` : ''}
           </div>
-          <p class="kelas-desc">${c.description || ''}</p>
+          <p class="kelas-desc">${plainText(c.description)}</p>
           <div class="kelas-footer">
             <div class="kelas-price">
               ${orig ? `<span class="original">${orig}</span>` : ''}${price}
@@ -272,7 +315,7 @@
       <div class="download-card ${d.category} fade-in" data-category="${d.category}">
         <div class="download-icon">${d.emoji || '📄'}</div>
         <h3>${esc(d.title)}</h3>
-        <p>${d.description || ''}</p>
+        <p>${plainText(d.description, 100)}</p>
         <div class="download-meta">
           ${d.file_size ? `<span class="size">📦 ${d.file_size}</span>` : '<span></span>'}
           ${btn}

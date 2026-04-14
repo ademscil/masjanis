@@ -60,6 +60,7 @@ async function loadSettings() {
   const map = Object.fromEntries(data.map(s => [s.key, s.value]));
 
   if (map.hero_image_url) document.getElementById('settingHeroImage').value = map.hero_image_url;
+  if (map.hero_tag)       document.getElementById('settingHeroTag').value   = map.hero_tag || '';
   if (map.hero_title)     document.getElementById('settingHeroTitle').value = map.hero_title;
 
   // Selalu init Quill untuk subtitle, set data setelah init selesai
@@ -75,6 +76,20 @@ async function loadSettings() {
       const img = document.getElementById(`previewHeader_${page}`);
       if (img) { img.src = val; img.style.display = 'block'; }
     }
+    // Load tag, title, subtitle
+    const setField = (suffix) => {
+      const key = `page_header_${page}_${suffix}`;
+      const fieldEl = document.getElementById(`settingHeaderTag_${page}`.replace('Tag', suffix.charAt(0).toUpperCase() + suffix.slice(1)));
+      // Use direct getElementById
+      const f = document.getElementById(`settingHeader${suffix.charAt(0).toUpperCase() + suffix.slice(1)}_${page}`);
+      if (f && map[key]) f.value = map[key];
+    };
+    ['tag','title','subtitle'].forEach(s => {
+      const key = `page_header_${page}_${s}`;
+      const fieldId = `settingHeader${s.charAt(0).toUpperCase()+s.slice(1)}_${page}`;
+      const f = document.getElementById(fieldId);
+      if (f && map[key]) f.value = map[key];
+    });
   });
 
   // Load promo banners
@@ -128,12 +143,17 @@ async function saveSettings() {
     // Kumpulkan semua nilai untuk disimpan
     const updates = [
       { key: 'hero_image_url', value: document.getElementById('settingHeroImage').value.trim() },
+      { key: 'hero_tag',       value: document.getElementById('settingHeroTag').value.trim() },
       { key: 'hero_title',     value: document.getElementById('settingHeroTitle').value.trim() },
       { key: 'hero_subtitle',  value: getEditorData('settingHeroSubtitle') },
       ...PAGES.map(page => ({
         key: `page_header_${page}`,
         value: document.getElementById(`settingHeader_${page}`)?.value?.trim() || ''
-      }))
+      })),
+      ...PAGES.flatMap(page => ['tag','title','subtitle'].map(s => ({
+        key: `page_header_${page}_${s}`,
+        value: document.getElementById(`settingHeader${s.charAt(0).toUpperCase()+s.slice(1)}_${page}`)?.value?.trim() || ''
+      })))
     ].filter(u => u.value);
 
     for (const item of updates) {

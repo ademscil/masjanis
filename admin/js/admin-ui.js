@@ -56,7 +56,7 @@ function showPanel(panelId) {
 function loadPanelData(panelId) {
   if (panelId === 'panelDashboard') setTimeout(loadDashboardStats, 50);
   if (panelId === 'panelProducts')  { loadProducts(); loadCategoriesFromDB(); }
-  if (panelId === 'panelArticles')  loadArticles();
+  if (panelId === 'panelArticles')  { loadArticles(); loadCategoriesFromDB(); }
   if (panelId === 'panelClasses')   { loadClasses(); loadCategoriesFromDB(); }
   if (panelId === 'panelDownloads') loadDownloads();
   if (panelId === 'panelContacts')  loadContacts();
@@ -248,10 +248,11 @@ const CAT_DEFAULTS = {
 
 async function openCategoryManager(type) {
   const isProduct = type === 'product';
-  const selectId  = isProduct ? 'productCategory' : 'classLevel';
-  const settingKey= isProduct ? 'product_categories' : 'class_levels';
-  const title     = isProduct ? 'Kelola Kategori Produk' : 'Kelola Level Kelas';
-  const icon      = isProduct ? '🏷️' : '🎓';
+  const isArticle = type === 'article';
+  const selectId  = isProduct ? 'productCategory' : isArticle ? 'articleCategory' : 'classLevel';
+  const settingKey= isProduct ? 'product_categories' : isArticle ? 'article_categories' : 'class_levels';
+  const title     = isProduct ? 'Kelola Kategori Produk' : isArticle ? 'Kelola Kategori Artikel' : 'Kelola Level Kelas';
+  const icon      = isProduct ? '🏷️' : isArticle ? '📝' : '🎓';
 
   // Ambil data dari DB atau pakai default dari select saat ini
   let items = [];
@@ -389,12 +390,14 @@ async function loadCategoriesFromDB() {
   try {
     const { data } = await dataClient.from('site_settings')
       .select('key,value')
-      .in('key', ['product_categories', 'class_levels']);
+      .in('key', ['product_categories', 'class_levels', 'article_categories']);
     if (!data) return;
     data.forEach(row => {
       const items = JSON.parse(row.value || '[]');
       if (!items.length) return;
-      const selectId = row.key === 'product_categories' ? 'productCategory' : 'classLevel';
+      const selectId = row.key === 'product_categories' ? 'productCategory'
+                     : row.key === 'article_categories' ? 'articleCategory'
+                     : 'classLevel';
       const select = document.getElementById(selectId);
       if (!select) return;
       const current = select.value;

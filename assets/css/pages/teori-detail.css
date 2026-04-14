@@ -17,7 +17,7 @@
 .article-wrap {
   max-width: 860px;
   margin: 0 auto;
-  padding: 0 2rem 5rem;
+  padding: 0 2rem 1.5rem;
 }
 
 /* Hero image */
@@ -149,16 +149,19 @@
 }
 .share-btn:hover { background: var(--green-pale); border-color: var(--green-light); }
 
-/* Related */
-.related-section { background: var(--off-white); padding: 4rem 2rem; }
+/* Related — pakai layout sama dengan article-grid di teori.css */
+.related-section { background: var(--off-white); padding: 1.5rem 2rem 3rem; }
 
 .related-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 2rem;
   max-width: 1100px;
   margin: 0 auto;
 }
+
+@media (max-width: 900px) { .related-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .related-grid { grid-template-columns: 1fr; } }
 
 /* Skeleton */
 .article-skeleton {
@@ -190,3 +193,29 @@
 @media (max-width: 480px) {
   .related-grid { grid-template-columns: 1fr; }
 }
+
+/* ===== QUILL FONT CLASSES (agar font dari CMS tampil benar) ===== */
+.ql-font-inter         { font-family: 'Inter', sans-serif; }
+.ql-font-open-sans     { font-family: 'Open Sans', sans-serif; }
+.ql-font-roboto        { font-family: 'Roboto', sans-serif; }
+.ql-font-lato          { font-family: 'Lato', sans-serif; }
+.ql-font-nunito        { font-family: 'Nunito', sans-serif; }
+.ql-font-playfair-display { font-family: 'Playfair Display', serif; }
+.ql-font-merriweather  { font-family: 'Merriweather', serif; }
+.ql-font-georgia       { font-family: Georgia, serif; }
+.ql-font-arial         { font-family: Arial, sans-serif; }
+.ql-font-courier-new   { font-family: 'Courier New', monospace; }
+
+/* Quill size classes */
+.ql-size-10px { font-size: 10px; }
+.ql-size-12px { font-size: 12px; }
+.ql-size-14px { font-size: 14px; }
+.ql-size-18px { font-size: 18px; }
+.ql-size-20px { font-size: 20px; }
+.ql-size-24px { font-size: 24px; }
+.ql-size-28px { font-size: 28px; }
+.ql-size-32px { font-size: 32px; }
+
+/* Sembunyikan empty paragraphs dari Quill */
+.article-body-content p:empty { display: none; }
+.article-body-content p > br:only-child { display: none; }

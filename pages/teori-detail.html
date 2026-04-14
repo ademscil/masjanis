@@ -12,10 +12,12 @@
   <link rel="icon" href="/assets/img/gambarlogo-removebg-preview.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Lato:wght@400;700&family=Nunito:wght@400;600;700&family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/supabase-config.js"></script>
+  <link rel="stylesheet" href="/assets/css/quill-content.css" />
+  <link rel="stylesheet" href="/assets/css/pages/teori.css" />
   <link rel="stylesheet" href="/assets/css/pages/teori-detail.css" />
 </head>
 <body data-page="teori">
@@ -79,7 +81,7 @@
       </div>
     </div>
 
-    <div class="article-body-content" id="articleBody"></div>
+    <div class="article-body-content quill-content" id="articleBody"></div>
 
     <div class="article-share">
       <span>Bagikan:</span>
@@ -201,8 +203,17 @@
 
     // Body: render sebagai HTML (support tag dari CMS)
     const body = document.getElementById('articleBody');
-    body.innerHTML = a.excerpt
-      ? a.excerpt
+    let content = a.excerpt || '';
+    // Fix: jika konten ter-escape (berisi &lt;p&gt; dll), decode dulu
+    if (content.includes('&lt;') || content.includes('&amp;lt;')) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = content;
+      content = tmp.textContent || tmp.innerText || content;
+    }
+    // Bersihkan empty paragraphs dari Quill
+    content = content.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '');
+    body.innerHTML = content
+      ? content
       : '<p style="color:var(--text-light);font-style:italic;">Konten lengkap belum tersedia.</p>';
 
     // Share
@@ -241,19 +252,23 @@
     grid.innerHTML = related.map(a => {
       const bg = a.bg_class || 'bg1';
       const imgEl = a.image_url
-        ? `<img src="${a.image_url}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
-        : `<span style="font-size:3rem;">${a.emoji || '🌿'}</span>`;
+        ? `<img src="${a.image_url}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;">`
+        : `<span style="font-size:3.5rem;">${a.emoji || '🌿'}</span>`;
+      const time = a.read_time ? `<span>⏱ ${a.read_time} menit baca</span>` : '';
       const date = a.published_date
-        ? new Date(a.published_date).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' })
+        ? `<span>📅 ${new Date(a.published_date).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })}</span>`
         : '';
+      const plainExcerpt = (a.excerpt || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g,' ').replace(/\s+/g, ' ').trim();
+      const truncated = plainExcerpt.length > 120 ? plainExcerpt.slice(0, 120).trimEnd() + '...' : plainExcerpt;
       return `
-        <a href="/teori-detail/${slugify(a.title)}" class="article-card fade-in" style="text-decoration:none;color:inherit;">
+        <a href="/teori-detail/${slugify(a.title)}" class="article-card searchable-card fade-in visible" data-category="${a.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
           <div class="article-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}</div>
           <div class="article-body">
             <span class="badge badge-green">${a.category}</span>
             <h3>${esc(a.title)}</h3>
-            <p>${esc(a.excerpt || '')}</p>
-            <div class="article-meta">${date ? `<span>📅 ${date}</span>` : ''}</div>
+            <p class="article-excerpt">${esc(truncated)}</p>
+            <div class="article-meta">${time}${date}</div>
+            <span class="btn btn-outline btn-sm" style="margin-top:auto;">Baca Selengkapnya</span>
           </div>
         </a>`;
     }).join('');
