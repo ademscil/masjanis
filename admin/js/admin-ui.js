@@ -26,7 +26,9 @@ function showDashboardView(user) {
     // Panel sudah aktif (misal setelah tab switch) — reload stats jika di dashboard
     const dashPanel = document.getElementById('panelDashboard');
     if (dashPanel && !dashPanel.hidden) {
-      setTimeout(loadDashboardStats, 100);
+      setTimeout(() => {
+        if (typeof loadDashboardStats === 'function') loadDashboardStats();
+      }, 100);
     }
   }
 }
@@ -54,7 +56,9 @@ function showPanel(panelId) {
 }
 
 function loadPanelData(panelId) {
-  if (panelId === 'panelDashboard') setTimeout(loadDashboardStats, 50);
+  if (panelId === 'panelDashboard') setTimeout(() => {
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+  }, 50);
   if (panelId === 'panelProducts')  { loadProducts(); loadCategoriesFromDB(); }
   if (panelId === 'panelArticles')  { loadArticles(); loadCategoriesFromDB(); }
   if (panelId === 'panelClasses')   { loadClasses(); loadCategoriesFromDB(); }
@@ -119,14 +123,15 @@ authClient.auth.onAuthStateChange((event, session) => {
 });
 
 // ===== AUTH: CHECK SESSION ON LOAD =====
-(async () => {
+// Tunggu DOMContentLoaded agar semua script modul sudah ter-load
+document.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await authClient.auth.getSession();
   if (session?.user) {
     showDashboardView(session.user);
   } else {
     showLoginView();
   }
-})();
+});
 
 // ===== TOAST SYSTEM =====
 function showToast(message, type = 'success', duration = 3000) {
