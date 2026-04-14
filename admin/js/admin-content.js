@@ -1,5 +1,11 @@
 // ===== ADMIN CONTENT (TESTIMONIALS & FEATURES) =====
 
+// Strip HTML tags untuk preview di tabel
+function stripHtml(html, maxLen = 80) {
+  const plain = String(html || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+  return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + '…' : plain;
+}
+
 // ===== TESTIMONI =====
 
 async function loadTestimonials() {
@@ -102,7 +108,7 @@ async function loadFeatures() {
   if (!data?.length) { container.innerHTML = '<div class="table-empty">Belum ada fitur. Klik "Tambah Fitur".</div>'; return; }
   const rows = data.map(f => `<tr>
     <td>${f.icon} ${escHtml(f.title)}</td>
-    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(f.description)}</td>
+    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(stripHtml(f.description))}</td>
     <td><span class="badge-active ${f.is_active ? 'on' : 'off'}">${f.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
     <td><div class="action-btns">
       <button class="btn-sm btn-edit" onclick="editFeature('${f.id}')">Edit</button>
@@ -190,7 +196,7 @@ async function loadFaqs() {
   if (!data?.length) { container.innerHTML = '<div class="table-empty">Belum ada FAQ. Klik "Tambah FAQ".</div>'; return; }
   const rows = data.map(f => `<tr>
     <td style="max-width:300px;">${escHtml(f.question)}</td>
-    <td style="max-width:300px;color:var(--text-mid);font-size:0.85rem;">${escHtml(f.answer.slice(0,80))}${f.answer.length>80?'…':''}</td>
+    <td style="max-width:300px;color:var(--text-mid);font-size:0.85rem;">${escHtml(stripHtml(f.answer))}</td>
     <td>${f.sort_order}</td>
     <td><span class="badge-active ${f.is_active?'on':'off'}">${f.is_active?'Aktif':'Nonaktif'}</span></td>
     <td>
