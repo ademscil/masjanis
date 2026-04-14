@@ -176,7 +176,7 @@
         <div class="article-body">
           <span class="badge badge-green">${a.category}</span>
           <h3>${esc(a.title)}</h3>
-          <p>${a.excerpt || ''}</p>
+          <div class="article-excerpt">${a.excerpt || ''}</div>
           <div class="article-meta">${time}${date}</div>
           <span class="btn btn-outline btn-sm" style="margin-top:auto;">Baca Selengkapnya</span>
         </div>
@@ -386,6 +386,12 @@
             el.textContent = s.footer_tagline;
           });
         }
+
+        // About section (index.html)
+        const aboutTitle = document.getElementById('aboutTitle');
+        const aboutBody  = document.getElementById('aboutBody');
+        if (aboutTitle && s.about_title) aboutTitle.textContent = s.about_title;
+        if (aboutBody  && s.about_body)  aboutBody.innerHTML    = s.about_body;
       });
   }
 

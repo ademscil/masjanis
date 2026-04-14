@@ -51,14 +51,40 @@
   margin-bottom: 0.6rem;
   color: var(--text-dark);
   line-height: 1.4;
+  /* Truncate judul max 2 baris */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.article-body p {
+/* Excerpt di card — truncate 3 baris, semua card sama tinggi */
+.article-body .article-excerpt {
   color: var(--text-mid);
   font-size: 0.88rem;
   line-height: 1.65;
-  flex: 1;
   margin-bottom: 1.25rem;
+  /* Truncate 3 baris */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Sembunyikan semua tag HTML dari Quill di excerpt card */
+.article-body .article-excerpt p,
+.article-body .article-excerpt ul,
+.article-body .article-excerpt ol,
+.article-body .article-excerpt h1,
+.article-body .article-excerpt h2,
+.article-body .article-excerpt h3 {
+  display: inline;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .article-meta {
