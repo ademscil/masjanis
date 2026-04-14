@@ -271,23 +271,24 @@
 <script>
   // Override the contact form handler to use Supabase
   document.addEventListener('DOMContentLoaded', () => {
-    // Reuse client dari cms-loader.js agar tidak ada multiple GoTrueClient
-    const supabaseClient = window._mjClient || (isConfigured()
+    // Tunggu cms-loader.js inisialisasi _mjClient dulu
+    const getClient = () => window._mjClient || (isConfigured()
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: 'masjanis-kontak' }
         })
       : null);
-    if (supabaseClient && !window._mjClient) window._mjClient = supabaseClient;
 
     const form = document.getElementById('contactForm');
     if (!form) return;
 
-    // Prevent main.js from binding its simulated handler
     form.dataset.bound = 'supabase';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      e.stopImmediatePropagation(); // prevent any other submit listeners
+      e.stopImmediatePropagation();
+
+      // Ambil client saat submit (bukan saat DOMContentLoaded)
+      const supabaseClient = getClient();
 
       const name    = document.getElementById('nama')?.value?.trim()    || '';
       const email   = document.getElementById('email')?.value?.trim()   || '';
