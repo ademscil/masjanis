@@ -25,7 +25,7 @@ jobs:
 
       - name: Validate HTML files
         run: |
-          echo "=== Checking for orphan CSS in HTML body ==="
+          echo "=== Checking HTML structure and encoding ==="
           python3 - <<'EOF'
           import os, re, sys
 
@@ -39,18 +39,22 @@ jobs:
           errors = []
           for f in files:
             if not os.path.exists(f): continue
-            content = open(f, encoding='utf-8').read()
+            try:
+              content = open(f, encoding='utf-8').read()
+            except UnicodeDecodeError as e:
+              errors.append(f"{f}: invalid UTF-8 encoding - {e}")
+              continue
             head_count = content.count('</head>')
             body_count = content.count('<body')
             if head_count > 1 or body_count > 1:
               errors.append(f"{f}: duplicate head/body ({head_count} </head>, {body_count} <body>)")
 
           if errors:
-            print("❌ HTML structure errors:")
+            print("❌ HTML errors:")
             for e in errors: print(f"  {e}")
             sys.exit(1)
           else:
-            print("✅ All HTML files have valid structure")
+            print("✅ All HTML files valid (structure + encoding)")
           EOF
 
       - name: Check for .html references in navigation
@@ -69,16 +73,17 @@ jobs:
           errors = []
           for f in files:
             if not os.path.exists(f): continue
-            content = open(f, encoding='utf-8').read()
-            # Cari href ke .html (kecuali CDN dan external)
+            try:
+              content = open(f, encoding='utf-8').read()
+            except UnicodeDecodeError:
+              continue
             matches = re.findall(r'href="(?!https?://|//)[^"]*\.html[^"]*"', content)
             if matches:
               errors.append(f"{f}: {matches[:3]}")
 
           if errors:
-            print("⚠️  Found .html references in href (should use clean paths):")
+            print("Warning: Found .html references in href (should use clean paths):")
             for e in errors: print(f"  {e}")
-            # Warning only, tidak fail
           else:
             print("✅ No .html references in navigation")
           EOF
