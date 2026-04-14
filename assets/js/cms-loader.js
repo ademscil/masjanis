@@ -538,8 +538,15 @@
         // About section (index.html)
         const aboutTitle = document.getElementById('aboutTitle');
         const aboutBody  = document.getElementById('aboutBody');
+        const aboutImg   = document.getElementById('aboutImg');
         if (aboutTitle && s.about_title) aboutTitle.textContent = s.about_title;
         if (aboutBody  && s.about_body)  aboutBody.innerHTML    = s.about_body;
+        if (aboutImg   && s.about_image_url) {
+          aboutImg.innerHTML = `<img src="${s.about_image_url}" alt="Tentang Kami" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;border-radius:var(--radius);">`;
+          aboutImg.style.position = 'relative';
+          aboutImg.style.overflow = 'hidden';
+          aboutImg.style.fontSize = '0'; // sembunyikan emoji fallback
+        }
       });
   }
 

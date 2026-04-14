@@ -181,6 +181,12 @@ async function loadInfo() {
   document.getElementById('infoAboutTitle').value = map.about_title || '';
   document.getElementById('infoAboutBody').value  = map.about_body  || '';
   initEditor('infoAboutBody').then(() => setEditorData('infoAboutBody', map.about_body || ''));
+  if (map.about_image_url) {
+    document.getElementById('infoAboutImageUrl').value = map.about_image_url;
+    const img = document.getElementById('previewAboutImg');
+    if (img) { img.src = map.about_image_url; img.style.display = 'block'; }
+    switchUploadTab('aboutImg', 'url');
+  }
   document.getElementById('infoAddress').value        = map.address        || '';
   document.getElementById('infoPhone').value          = map.phone          || '';
   document.getElementById('infoEmail').value          = map.email          || '';
@@ -211,9 +217,26 @@ async function saveInfo() {
 
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
 
+  // Upload gambar about jika ada file baru
+  const aboutImgFile = document.getElementById('uploadAboutImg')?.files[0];
+  if (aboutImgFile) {
+    try {
+      const url = await uploadImage(aboutImgFile, `about/about_${Date.now()}.${aboutImgFile.name.split('.').pop()}`);
+      document.getElementById('infoAboutImageUrl').value = url;
+      const img = document.getElementById('previewAboutImg');
+      if (img) { img.src = url; img.style.display = 'block'; }
+    } catch(e) {
+      errEl.textContent = 'Gagal upload gambar: ' + e.message;
+      errEl.classList.add('visible');
+      if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
+      return;
+    }
+  }
+
   const vals = {
-    about_title: document.getElementById('infoAboutTitle').value.trim(),
-    about_body:  getEditorData('infoAboutBody'),
+    about_title:      document.getElementById('infoAboutTitle').value.trim(),
+    about_body:       getEditorData('infoAboutBody'),
+    about_image_url:  document.getElementById('infoAboutImageUrl').value.trim(),
     address:          document.getElementById('infoAddress').value.trim(),
     phone:            document.getElementById('infoPhone').value.trim(),
     email:            document.getElementById('infoEmail').value.trim(),
