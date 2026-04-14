@@ -9,9 +9,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 2rem;
+  padding: 2rem 2rem 5rem;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden dihapus agar hero-scroll tidak terpotong */
 }
 
 .hero::after {
