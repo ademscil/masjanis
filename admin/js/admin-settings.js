@@ -181,14 +181,25 @@ async function loadInfo() {
   document.getElementById('infoAboutTitle').value = map.about_title || '';
   document.getElementById('infoAboutBody').value  = map.about_body  || '';
   initEditor('infoAboutBody').then(() => setEditorData('infoAboutBody', map.about_body || ''));
-  document.getElementById('infoAddress').value   = map.address   || '';
-  document.getElementById('infoPhone').value     = map.phone     || '';
-  document.getElementById('infoEmail').value     = map.email     || '';
-  document.getElementById('infoHours').value     = map.hours     || '';
-  document.getElementById('infoInstagram').value = map.instagram || '';
-  document.getElementById('infoYoutube').value   = map.youtube   || '';
-  document.getElementById('infoFacebook').value  = map.facebook  || '';
-  document.getElementById('infoTiktok').value    = map.tiktok    || '';
+  if (map.about_image_url) {
+    document.getElementById('infoAboutImageUrl').value = map.about_image_url;
+    const img = document.getElementById('previewAboutImg');
+    if (img) { img.src = map.about_image_url; img.style.display = 'block'; }
+    switchUploadTab('aboutImg', 'url');
+  }
+  document.getElementById('infoAddress').value        = map.address        || '';
+  document.getElementById('infoPhone').value          = map.phone          || '';
+  document.getElementById('infoEmail').value          = map.email          || '';
+  document.getElementById('infoHours').value          = map.hours          || '';
+  document.getElementById('infoInstagram').value      = map.instagram      || '';
+  document.getElementById('infoYoutube').value        = map.youtube        || '';
+  document.getElementById('infoFacebook').value       = map.facebook       || '';
+  document.getElementById('infoTiktok').value         = map.tiktok         || '';
+  document.getElementById('infoMapEmbed').value        = map.map_embed_url      || '';
+  document.getElementById('infoFooterTagline').value   = map.footer_tagline     || '';
+  document.getElementById('infoFooterCopyright').value = map.footer_copyright   || '';
+  document.getElementById('infoFooterCol2Title').value = map.footer_col2_title  || '';
+  document.getElementById('infoFooterCol3Title').value = map.footer_col3_title  || '';
 }
 
 async function saveInfo() {
@@ -206,18 +217,52 @@ async function saveInfo() {
 
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
 
+  // Upload gambar about jika ada file baru
+  const aboutImgFile = document.getElementById('uploadAboutImg')?.files[0];
+  if (aboutImgFile) {
+    try {
+      const url = await uploadImage(aboutImgFile, `about/about_${Date.now()}.${aboutImgFile.name.split('.').pop()}`);
+      document.getElementById('infoAboutImageUrl').value = url;
+      const img = document.getElementById('previewAboutImg');
+      if (img) { img.src = url; img.style.display = 'block'; }
+    } catch(e) {
+      errEl.textContent = 'Gagal upload gambar: ' + e.message;
+      errEl.classList.add('visible');
+      if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
+      return;
+    }
+  }
+
   const vals = {
-    about_title: document.getElementById('infoAboutTitle').value.trim(),
-    about_body:  getEditorData('infoAboutBody'),
-    address:   document.getElementById('infoAddress').value.trim(),
-    phone:     document.getElementById('infoPhone').value.trim(),
-    email:     document.getElementById('infoEmail').value.trim(),
-    hours:     document.getElementById('infoHours').value.trim(),
-    instagram: document.getElementById('infoInstagram').value.trim(),
-    youtube:   document.getElementById('infoYoutube').value.trim(),
-    facebook:  document.getElementById('infoFacebook').value.trim(),
-    tiktok:    document.getElementById('infoTiktok').value.trim(),
+    about_title:      document.getElementById('infoAboutTitle').value.trim(),
+    about_body:       getEditorData('infoAboutBody'),
+    about_image_url:  document.getElementById('infoAboutImageUrl').value.trim(),
+    address:          document.getElementById('infoAddress').value.trim(),
+    phone:            document.getElementById('infoPhone').value.trim(),
+    email:            document.getElementById('infoEmail').value.trim(),
+    hours:            document.getElementById('infoHours').value.trim(),
+    instagram:        document.getElementById('infoInstagram').value.trim(),
+    youtube:          document.getElementById('infoYoutube').value.trim(),
+    facebook:         document.getElementById('infoFacebook').value.trim(),
+    tiktok:           document.getElementById('infoTiktok').value.trim(),
+    map_embed_url:    document.getElementById('infoMapEmbed').value.trim(),
+    footer_tagline:   document.getElementById('infoFooterTagline').value.trim(),
+    footer_copyright: document.getElementById('infoFooterCopyright').value.trim(),
+    footer_col2_title: document.getElementById('infoFooterCol2Title').value.trim(),
+    footer_col3_title: document.getElementById('infoFooterCol3Title').value.trim(),
   };
+
+  // Validasi URL Google Maps — terima semua format Google Maps
+  if (vals.map_embed_url) {
+    const u = vals.map_embed_url;
+    const isGoogleMaps = u.includes('google.com/maps') || u.includes('maps.app.goo.gl') || u.includes('goo.gl/maps');
+    if (!isGoogleMaps) {
+      if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
+      errEl.textContent = '❌ URL tidak valid. Masukkan URL dari Google Maps (google.com/maps atau maps.app.goo.gl).';
+      errEl.classList.add('visible');
+      return;
+    }
+  }
 
   try {
     const upserts = Object.entries(vals)

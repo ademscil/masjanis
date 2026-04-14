@@ -33,6 +33,43 @@
     return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + '...' : plain;
   }
 
+  // ── Map URL normalizer ────────────────────────────────────────
+  // Konversi berbagai format URL Google Maps ke format embed iframe.
+  // Juga kembalikan originalUrl untuk tombol "Buka di Maps".
+  function normalizeMapUrl(url) {
+    if (!url) return null;
+    url = url.trim();
+
+    // Sudah format embed — langsung pakai
+    if (url.includes('google.com/maps/embed')) return url;
+
+    // Ekstrak koordinat dari URL biasa: @lat,lng atau ?ll=lat,lng
+    const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) ||
+                       url.match(/[?&]ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (coordMatch) {
+      const lat = coordMatch[1];
+      const lng = coordMatch[2];
+      // Gunakan /maps/search/ embed — tidak butuh API key, tampilkan pin merah
+      return `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
+    }
+
+    // Ekstrak nama place dari URL /maps/place/NamaLokasi/
+    const placeMatch = url.match(/maps\/place\/([^/@?]+)/);
+    if (placeMatch) {
+      const place = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
+      return `https://www.google.com/maps?q=${encodeURIComponent(place)}&output=embed`;
+    }
+
+    // Ekstrak ?q= atau &q=
+    const qMatch = url.match(/[?&]q=([^&]+)/);
+    if (qMatch) {
+      return `https://www.google.com/maps?q=${qMatch[1]}&output=embed`;
+    }
+
+    // Short link atau format tidak dikenal — tidak bisa dikonversi client-side
+    return null;
+  }
+
   // ── Slug helper ───────────────────────────────────────────────
   function slugify(text) {
     return String(text || '')
@@ -107,9 +144,37 @@
     loadGrid(
       'featuredProductsGrid',
       db => db.from('products').select('*').eq('is_active', true).eq('is_featured', true).order('created_at', { ascending: false }).limit(4),
-      renderProduct,
+      renderFeaturedProduct,
       'initFeaturedProducts'
     );
+  }
+
+  function renderFeaturedProduct(p) {
+    const price  = p.price ? 'Rp ' + Number(p.price).toLocaleString('id-ID') : 'Gratis';
+    const orig   = p.original_price ? 'Rp ' + Number(p.original_price).toLocaleString('id-ID') : '';
+    const badge  = p.badge_label ? `<span class="product-badge">${esc(p.badge_label)}</span>` : '';
+    const bgMap  = { suplemen: 'bg1', minuman: 'bg2', perawatan: 'bg5', paket: 'bg3' };
+    const bg     = bgMap[p.category] || 'bg1';
+    const imgEl  = p.image_url
+      ? `<img src="${p.image_url}" alt="${esc(p.name)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;">`
+      : `<span style="font-size:3.5rem;">${p.emoji || '🌿'}</span>`;
+    const detailUrl = `/product-detail/${slugify(p.name)}`;
+    const desc = plainText(p.description, 80);
+
+    return `
+      <a href="${detailUrl}" class="product-card fade-in" data-category="${p.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
+        <div class="product-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}${badge}</div>
+        <div class="product-body">
+          <h3>${esc(p.name)}</h3>
+          <p>${esc(desc)}</p>
+          <div class="product-footer">
+            <div class="product-price">
+              ${orig ? `<span class="original">${orig}</span>` : ''}${price}
+            </div>
+            <span class="btn btn-outline btn-sm">Lihat Detail →</span>
+          </div>
+        </div>
+      </a>`;
   }
 
   // ── Shop ──────────────────────────────────────────────────────
@@ -420,7 +485,35 @@
         // Map embed (kontak.html)
         const mapWrap = document.getElementById('mapEmbed');
         if (mapWrap && s.map_embed_url) {
-          mapWrap.innerHTML = `<iframe src="${s.map_embed_url}" width="100%" height="380" style="border:0;border-radius:var(--radius);" allowfullscreen loading="lazy"></iframe>`;
+          const rawUrl   = s.map_embed_url;
+          const embedUrl = normalizeMapUrl(rawUrl);
+          // URL untuk tombol "Buka di Maps" — pakai URL asli agar langsung ke titik
+          const openUrl  = rawUrl.includes('google.com/maps/embed')
+            ? rawUrl.replace('output=embed', '').replace('/embed?', '?')
+            : rawUrl;
+          if (embedUrl) {
+            mapWrap.innerHTML = `
+              <iframe src="${embedUrl}" width="100%" height="380"
+                style="border:0;border-radius:var(--radius);"
+                allowfullscreen loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <div style="text-align:right;margin-top:0.4rem;">
+                <a href="${openUrl}" target="_blank" rel="noopener"
+                   style="font-size:0.78rem;color:var(--green-mid);text-decoration:none;">
+                  🗺️ Buka di Google Maps →
+                </a>
+              </div>`;
+          } else {
+            // Short link — tidak bisa di-embed, tampilkan tombol buka langsung
+            mapWrap.innerHTML = `
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;padding:2.5rem;color:var(--text-light);text-align:center;">
+                <span style="font-size:2.5rem;">🗺️</span>
+                <p style="margin:0;font-size:0.9rem;">Klik tombol di bawah untuk melihat lokasi kami.</p>
+                <a href="${rawUrl}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+                  🗺️ Buka di Google Maps →
+                </a>
+              </div>`;
+          }
         }
 
         // Footer tagline
@@ -430,11 +523,30 @@
           });
         }
 
+        // Footer copyright
+        if (s.footer_copyright) {
+          document.querySelectorAll('[data-site="footer_copyright"]').forEach(el => {
+            el.textContent = s.footer_copyright;
+          });
+        }
+
+        // Footer column titles
+        ['footer_col2_title','footer_col3_title','footer_col4_title'].forEach(k => {
+          if (s[k]) document.querySelectorAll(`[data-site="${k}"]`).forEach(el => { el.textContent = s[k]; });
+        });
+
         // About section (index.html)
         const aboutTitle = document.getElementById('aboutTitle');
         const aboutBody  = document.getElementById('aboutBody');
+        const aboutImg   = document.getElementById('aboutImg');
         if (aboutTitle && s.about_title) aboutTitle.textContent = s.about_title;
         if (aboutBody  && s.about_body)  aboutBody.innerHTML    = s.about_body;
+        if (aboutImg   && s.about_image_url) {
+          aboutImg.innerHTML = `<img src="${s.about_image_url}" alt="Tentang Kami" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;border-radius:var(--radius);">`;
+          aboutImg.style.position = 'relative';
+          aboutImg.style.overflow = 'hidden';
+          aboutImg.style.fontSize = '0'; // sembunyikan emoji fallback
+        }
       });
   }
 

@@ -54,9 +54,9 @@
 <!-- ===== HERO ===== -->
 <section class="hero" id="heroSection">
   <div class="hero-content">
-    <div class="hero-tag" data-site="hero_tag">🌿 Herbal Nusantara Terpercaya</div>
-    <h1 data-site="hero_title">Temukan Kekuatan <em>Alam</em> untuk Kesehatan Anda</h1>
-    <p data-site="hero_subtitle">Warisan leluhur yang telah teruji ribuan tahun, kini hadir dalam formula modern berbasis riset ilmiah untuk mendukung kesehatan optimal Anda.</p>
+    <div class="hero-tag" data-site="hero_tag">🌿 MasJanis</div>
+    <h1 data-site="hero_title">Selamat Datang di <em>MasJanis</em></h1>
+    <p data-site="hero_subtitle">Atur konten hero ini melalui panel Admin → Pengaturan.</p>
     <div class="hero-btns">
       <a href="/shop" class="btn btn-gold" data-site-href="hero_btn1_url" data-site="hero_btn1_text">🛒 Jelajahi Produk</a>
       <a href="/teori" class="btn btn-white" data-site-href="hero_btn2_url" data-site="hero_btn2_text">📖 Pelajari Teori</a>
@@ -65,51 +65,29 @@
   </div>
 </section>
 
-<!-- ===== STATS BAR ===== -->
-<div class="stats-bar">
-  <div class="stats-grid">
-    <div class="stat-item fade-in">
-      <span class="num" data-site="stat1_num">500+</span>
-      <span data-site="stat1_label">Produk Herbal</span>
-    </div>
-    <div class="stat-item fade-in">
-      <span class="num" data-site="stat2_num">50K+</span>
-      <span data-site="stat2_label">Pelanggan Puas</span>
-    </div>
-    <div class="stat-item fade-in">
-      <span class="num" data-site="stat3_num">100+</span>
-      <span data-site="stat3_label">Artikel Riset</span>
-    </div>
-    <div class="stat-item fade-in">
-      <span class="num" data-site="stat4_num">15+</span>
-      <span data-site="stat4_label">Tahun Pengalaman</span>
-    </div>
-  </div>
-</div>
-
 <!-- ===== FEATURES ===== -->
 <section class="section">
   <div class="container">
     <div class="section-header fade-in">
       <div class="section-tag">Keunggulan Kami</div>
       <h2 data-site="features_title">Mengapa Memilih MasJanis?</h2>
-      <p data-site="features_subtitle">Kami menggabungkan kearifan lokal dengan standar ilmiah modern untuk menghadirkan produk herbal terbaik.</p>
+      <p data-site="features_subtitle">Atur deskripsi ini melalui Admin → Pengaturan.</p>
     </div>
     <div class="grid-3" id="featuresGrid">
       <div class="feature-card fade-in">
         <div class="feature-icon">🌱</div>
         <h3>Produk Alami</h3>
-        <p>Seluruh bahan baku dipilih dari tanaman herbal pilihan yang ditanam secara organik tanpa pestisida berbahaya.</p>
+        <p>Atur konten fitur ini melalui Admin → Fitur.</p>
       </div>
       <div class="feature-card fade-in">
         <div class="feature-icon">🔬</div>
         <h3>Berbasis Riset</h3>
-        <p>Setiap formula dikembangkan bersama para ahli fitokimia dan didukung oleh penelitian ilmiah yang tervalidasi.</p>
+        <p>Atur konten fitur ini melalui Admin → Fitur.</p>
       </div>
       <div class="feature-card fade-in">
         <div class="feature-icon">🏆</div>
         <h3>Terpercaya</h3>
-        <p>Telah mendapatkan sertifikasi BPOM dan dipercaya oleh lebih dari 50.000 pelanggan di seluruh Indonesia.</p>
+        <p>Atur konten fitur ini melalui Admin → Fitur.</p>
       </div>
     </div>
   </div>
@@ -118,19 +96,12 @@
 <!-- ===== ABOUT ===== -->
 <section class="section section-alt">
   <div class="about-grid">
-    <div class="about-img fade-in">🌿</div>
+    <div class="about-img fade-in" id="aboutImg">🌿</div>
     <div class="about-text fade-in">
       <div class="section-tag">Tentang Kami</div>
-      <h2 id="aboutTitle">Warisan Alam Nusantara dalam Setiap Tetes</h2>
+      <h2 id="aboutTitle">Tentang MasJanis</h2>
       <div id="aboutBody">
-        <p>MasJanis lahir dari kecintaan mendalam terhadap kekayaan tanaman obat Indonesia. Kami percaya bahwa alam telah menyediakan semua yang dibutuhkan tubuh untuk tetap sehat dan seimbang.</p>
-        <p>Dengan menggabungkan pengetahuan tradisional yang telah diwariskan turun-temurun dan teknologi ekstraksi modern, kami menghadirkan produk herbal berkualitas tinggi yang aman dan efektif.</p>
-        <ul class="about-list">
-          <li>Bahan baku 100% dari tanaman herbal Indonesia</li>
-          <li>Proses produksi berstandar GMP (Good Manufacturing Practice)</li>
-          <li>Tersertifikasi BPOM dan Halal MUI</li>
-          <li>Tim ahli fitokimia dan herbalis berpengalaman</li>
-        </ul>
+        <p>Atur konten tentang kami melalui Admin → Informasi → Tentang Kami.</p>
       </div>
       <a href="/teori" class="btn btn-primary">Pelajari Lebih Lanjut →</a>
     </div>
@@ -145,7 +116,11 @@
       <h2>Pilihan Terbaik untuk Kesehatan Anda</h2>
       <p>Produk herbal pilihan yang paling diminati pelanggan kami.</p>
     </div>
-    <div class="grid-4" id="featuredProductsGrid"></div>
+    <div class="featured-slider-wrap">
+      <button class="slider-btn prev" onclick="slideProducts(-1)" aria-label="Sebelumnya">‹</button>
+      <div id="featuredProductsGrid"></div>
+      <button class="slider-btn next" onclick="slideProducts(1)" aria-label="Berikutnya">›</button>
+    </div>
   </div>
 </section>
 
@@ -155,42 +130,10 @@
     <div class="section-header fade-in">
       <div class="section-tag">Testimoni</div>
       <h2 data-site="testimonials_title">Apa Kata Pelanggan Kami</h2>
-      <p data-site="testimonials_subtitle">Ribuan pelanggan telah merasakan manfaat nyata dari produk MasJanis.</p>
+      <p data-site="testimonials_subtitle">Atur deskripsi ini melalui Admin → Pengaturan.</p>
     </div>
     <div class="grid-3" id="testimonialsGrid">
-      <!-- Diisi dari Supabase, fallback ke hardcode jika kosong -->
-      <div class="testimonial-card fade-in">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">Setelah rutin mengonsumsi Jamu Kunyit Asam MasJanis selama 3 bulan, stamina saya meningkat drastis. Produknya benar-benar alami dan tidak ada efek samping.</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">SR</div>
-          <div class="author-info">
-            <strong>Sari Rahayu</strong>
-            <span>Ibu Rumah Tangga, Jakarta</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card fade-in">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">Kelas online Herbal Dasar sangat informatif. Saya jadi paham cara meracik jamu sendiri di rumah. Instrukturnya sangat berpengalaman dan sabar menjelaskan.</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">BP</div>
-          <div class="author-info">
-            <strong>Budi Prasetyo</strong>
-            <span>Pengusaha, Surabaya</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card fade-in">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">E-book Panduan Tanaman Obat Keluarga sangat lengkap dan mudah dipahami. Sekarang saya bisa memanfaatkan tanaman di kebun sendiri untuk kesehatan keluarga.</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">DW</div>
-          <div class="author-info">
-            <strong>Dewi Wulandari</strong>
-            <span>Guru, Yogyakarta</span>
-          </div>
-        </div>
+      <!-- Diisi dari Supabase via cms-loader.js -->
       </div>
     </div>
   </div>
@@ -199,7 +142,7 @@
 <!-- ===== CTA BANNER ===== -->
 <section class="cta-banner">
   <h2 data-site="cta_title">Mulai Perjalanan Sehat Anda Hari Ini</h2>
-  <p data-site="cta_subtitle">Bergabunglah dengan ribuan orang yang telah merasakan manfaat herbal nusantara. Kesehatan optimal dimulai dari pilihan alami.</p>
+  <p data-site="cta_subtitle">Bergabunglah dengan ribuan orang yang telah merasakan manfaat MasJanis. Kesehatan optimal dimulai dari pilihan alami.</p>
   <div class="cta-btns">
     <a href="/shop" class="btn btn-gold" data-site-href="cta_btn1_url" data-site="cta_btn1_text">🛒 Belanja Sekarang</a>
     <a href="/kelas" class="btn btn-white" data-site-href="cta_btn2_url" data-site="cta_btn2_text">📚 Lihat Kelas</a>
@@ -213,7 +156,7 @@
       <a href="/" class="nav-logo">
         <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:56px;width:auto;object-fit:contain;" />
       </a>
-      <p>Menghadirkan kekuatan alam nusantara untuk kesehatan optimal Anda. Dipercaya lebih dari 50.000 pelanggan di seluruh Indonesia.</p>
+      <p data-site="footer_tagline">MasJanis — Atur tagline ini melalui Admin → Informasi.</p>
       <div class="social-links">
         <a class="social-link" href="#" data-site="instagram" target="_blank" rel="noopener" title="Instagram">📸</a>
         <a class="social-link" href="#" data-site="facebook" target="_blank" rel="noopener" title="Facebook">👥</a>
@@ -222,7 +165,7 @@
       </div>
     </div>
     <div class="footer-col">
-      <h4>Navigasi</h4>
+      <h4 data-site="footer_col2_title">Navigasi</h4>
       <ul>
         <li><a href="/">Beranda</a></li>
         <li><a href="/teori">Teori Herbal</a></li>
@@ -233,7 +176,7 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Produk</h4>
+      <h4 data-site="footer_col3_title">Produk</h4>
       <ul>
         <li><a href="/shop">Suplemen Herbal</a></li>
         <li><a href="/shop">Minuman Herbal</a></li>
@@ -244,7 +187,7 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Kontak</h4>
+      <h4 data-site="footer_col4_title">Kontak</h4>
       <ul>
         <li><a href="#" data-site="address">📍 Jakarta, Indonesia</a></li>
         <li><a href="tel:+6281234567890" data-site="phone">📞 +62 812-3456-7890</a></li>
@@ -254,7 +197,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
+    <p data-site="footer_copyright">© 2026 MasJanis. Semua hak dilindungi. | Dibuat dengan 💚 untuk kesehatan Indonesia</p>
   </div>
 </footer>
 
@@ -280,34 +223,18 @@
       }
     } catch(e) {}
 
-    // Featured products
-    const section = document.getElementById('featuredSection');
-    const grid    = document.getElementById('featuredProductsGrid');
-    if (!section || !grid) return;
-    try {
-      const { data, error } = await db.from('products').select('*').eq('is_active', true)
-        .order('created_at', { ascending: false }).limit(4);
-      if (error || !data?.length) { section.style.display = 'none'; return; }
-      grid.innerHTML = data.map(p => {
-        const price    = p.price ? 'Rp ' + Number(p.price).toLocaleString('id-ID') : '';
-        const origPrice = p.original_price ? 'Rp ' + Number(p.original_price).toLocaleString('id-ID') : '';
-        const badge    = p.badge_label ? `<span class="badge badge-gold">${p.badge_label}</span>` : '';
-        const img      = p.image_url
-          ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
-          : `<span style="font-size:2.5rem;">${p.emoji||'🌿'}</span>`;
-        return `<div class="card fade-in">
-          <div class="card-img" style="position:relative;overflow:hidden;">${img}</div>
-          <div class="card-body">${badge}<h3>${p.name}</h3><p>${p.description||''}</p>
-            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
-              <strong style="color:var(--green-dark);">${price}</strong>
-              ${origPrice?`<span style="text-decoration:line-through;color:var(--text-light);font-size:0.85rem;">${origPrice}</span>`:''}
-            </div>
-            <a href="/shop" class="btn btn-outline btn-sm">Lihat di Toko →</a>
-          </div></div>`;
-      }).join('');
-      grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
-    } catch(err) { section.style.display = 'none'; }
+    // Featured products — dihandle oleh cms-loader.js (initFeaturedProducts)
   });
+</script>
+
+<script>
+  // Slider navigation untuk produk unggulan
+  function slideProducts(dir) {
+    const grid = document.getElementById('featuredProductsGrid');
+    if (!grid) return;
+    const cardWidth = grid.querySelector('.product-card')?.offsetWidth || 280;
+    grid.scrollBy({ left: dir * (cardWidth + 24), behavior: 'smooth' });
+  }
 </script>
 </body>
 </html>

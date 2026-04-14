@@ -90,31 +90,6 @@
   50% { transform: translateY(8px); }
 }
 
-/* ── Stats bar ── */
-.stats-bar {
-  background: var(--green-dark);
-  padding: 2rem;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.stat-item { color: var(--white); }
-.stat-item .num {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--gold-light);
-  display: block;
-}
-.stat-item span:last-child { font-size: 0.85rem; opacity: 0.8; }
-
 /* ── Features ── */
 .feature-card {
   text-align: center;
@@ -244,7 +219,7 @@
 /* ── CTA Banner ── */
 .cta-banner {
   background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
-  padding: 5rem 2rem;
+  padding: 3.5rem 2rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -282,12 +257,22 @@
   .about-img { height: 260px; font-size: 4rem; }
 }
 
-/* ── Produk Unggulan (featured products grid) ── */
-#featuredProductsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+/* ── Produk Unggulan (featured products slider) ── */
+.featured-slider-wrap {
+  position: relative;
 }
+
+#featuredProductsGrid {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 0.5rem;
+}
+
+#featuredProductsGrid::-webkit-scrollbar { display: none; }
 
 #featuredProductsGrid .product-card {
   background: var(--white);
@@ -299,7 +284,8 @@
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  height: 100%;
+  flex: 0 0 280px;
+  scroll-snap-align: start;
 }
 
 #featuredProductsGrid .product-card:hover {
@@ -312,7 +298,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
+  font-size: 3.5rem;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -398,10 +384,30 @@
   z-index: 1;
 }
 
-@media (max-width: 1024px) {
-  #featuredProductsGrid { grid-template-columns: repeat(2, 1fr); }
+/* Slider nav buttons */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  z-index: 2;
+  transition: var(--transition);
 }
+.slider-btn:hover { background: var(--green-pale); border-color: var(--green-light); }
+.slider-btn.prev { left: -20px; }
+.slider-btn.next { right: -20px; }
 
-@media (max-width: 480px) {
-  #featuredProductsGrid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  .slider-btn { display: none; }
+  #featuredProductsGrid .product-card { flex: 0 0 260px; }
 }
