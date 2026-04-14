@@ -388,7 +388,7 @@ body { background: #f7f8f5; }
   .detail-skeleton { grid-template-columns: 1fr; }
   .related-grid { grid-template-columns: repeat(2, 1fr); }
   .detail-title { font-size: 1.65rem; }
-  .tabs-section { padding: 0 1rem 5rem; }
+  .tabs-section { padding: 0 1rem 3rem; }
 }
 @media (max-width: 768px) {
   .sticky-buy-bar { display: flex; }

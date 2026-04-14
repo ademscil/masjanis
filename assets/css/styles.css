@@ -176,7 +176,7 @@ ul { list-style: none; }
 /* ===== PAGE HEADER ===== */
 .page-header {
   background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
-  padding: 5rem 2rem 4rem;
+  padding: 3.5rem 2rem 3rem;
   text-align: center;
   color: var(--white);
   position: relative;
@@ -205,7 +205,7 @@ ul { list-style: none; }
 }
 
 /* ===== SECTION STYLES ===== */
-.section { padding: 5rem 2rem; }
+.section { padding: 3.5rem 2rem; }
 .section-alt { background: var(--off-white); }
 
 .container {
@@ -215,7 +215,7 @@ ul { list-style: none; }
 
 .section-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .section-header h2 {
@@ -642,10 +642,10 @@ ul { list-style: none; }
   .grid-3 { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .section { padding: 3.5rem 1.25rem; }
+  .section { padding: 2.5rem 1.25rem; }
   .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
   .navbar { padding: 0 1.25rem; }
-  .page-header { padding: 4rem 1.25rem 3rem; }
+  .page-header { padding: 3rem 1.25rem 2.5rem; }
   .search-bar { flex-direction: column; }
   .modal { margin: 0.5rem; max-height: 95vh; }
 }
