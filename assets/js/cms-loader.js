@@ -33,6 +33,18 @@
     return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + '...' : plain;
   }
 
+  // ── Map URL normalizer ────────────────────────────────────────
+  // Hanya URL format embed resmi yang bisa dipakai di iframe.
+  // Format valid: https://www.google.com/maps/embed?pb=...
+  function normalizeMapUrl(url) {
+    if (!url) return null;
+    url = url.trim();
+    // Sudah format embed — langsung pakai
+    if (url.includes('google.com/maps/embed')) return url;
+    // Bukan format embed — tidak bisa dipakai
+    return null;
+  }
+
   // ── Slug helper ───────────────────────────────────────────────
   function slugify(text) {
     return String(text || '')
@@ -448,7 +460,10 @@
         // Map embed (kontak.html)
         const mapWrap = document.getElementById('mapEmbed');
         if (mapWrap && s.map_embed_url) {
-          mapWrap.innerHTML = `<iframe src="${s.map_embed_url}" width="100%" height="380" style="border:0;border-radius:var(--radius);" allowfullscreen loading="lazy"></iframe>`;
+          const embedUrl = normalizeMapUrl(s.map_embed_url);
+          if (embedUrl) {
+            mapWrap.innerHTML = `<iframe src="${embedUrl}" width="100%" height="380" style="border:0;border-radius:var(--radius);" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+          }
         }
 
         // Footer tagline

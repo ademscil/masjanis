@@ -229,6 +229,14 @@ async function saveInfo() {
     footer_col3_title: document.getElementById('infoFooterCol3Title').value.trim(),
   };
 
+  // Validasi URL Google Maps — harus format embed
+  if (vals.map_embed_url && !vals.map_embed_url.includes('google.com/maps/embed')) {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Informasi'; }
+    errEl.textContent = '❌ URL Google Maps tidak valid. Harus format: https://www.google.com/maps/embed?pb=... (bukan link share atau maps.app.goo.gl)';
+    errEl.classList.add('visible');
+    return;
+  }
+
   try {
     const upserts = Object.entries(vals)
       .filter(([, v]) => v !== '')
