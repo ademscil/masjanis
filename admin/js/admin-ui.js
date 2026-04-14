@@ -63,6 +63,7 @@ function loadPanelData(panelId) {
   if (panelId === 'panelSettings')     loadSettings();
   if (panelId === 'panelTestimonials') loadTestimonials();
   if (panelId === 'panelFeatures')     loadFeatures();
+  if (panelId === 'panelFaq')          loadFaqs();
   if (panelId === 'panelInfo')         loadInfo();
   if (panelId === 'panelUsers')        loadUsers();
 }

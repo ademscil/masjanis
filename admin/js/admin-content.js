@@ -178,3 +178,96 @@ async function toggleFeatureActive(id, current) {
   showToast(`Fitur berhasil di${current ? 'nonaktifkan' : 'aktifkan'}`, 'success');
   await loadFeatures();
 }
+
+// ===== FAQ CRUD =====
+
+async function loadFaqs() {
+  const container = document.getElementById('faqList');
+  if (!container) return;
+  container.innerHTML = '<div class="table-empty">Memuat…</div>';
+  const { data, error } = await supabase.from('faqs').select('*').order('sort_order');
+  if (error) { container.innerHTML = `<div class="table-empty" style="color:#be123c">Gagal: ${error.message}</div>`; return; }
+  if (!data?.length) { container.innerHTML = '<div class="table-empty">Belum ada FAQ. Klik "Tambah FAQ".</div>'; return; }
+  const rows = data.map(f => `<tr>
+    <td style="max-width:300px;">${escHtml(f.question)}</td>
+    <td style="max-width:300px;color:var(--text-mid);font-size:0.85rem;">${escHtml(f.answer.slice(0,80))}${f.answer.length>80?'…':''}</td>
+    <td>${f.sort_order}</td>
+    <td><span class="badge-active ${f.is_active?'on':'off'}">${f.is_active?'Aktif':'Nonaktif'}</span></td>
+    <td>
+      <div class="action-btns">
+        <button class="btn-sm btn-edit" onclick="editFaq('${f.id}')">Edit</button>
+        <button class="btn-sm btn-delete" onclick="deleteFaq('${f.id}','${escHtml(f.question).replace(/'/g,"\\'")}')">Hapus</button>
+        <button class="btn-sm ${f.is_active?'btn-toggle-on':'btn-toggle-off'}" onclick="toggleFaqActive('${f.id}',${f.is_active})">
+          ${f.is_active?'Nonaktifkan':'Aktifkan'}
+        </button>
+      </div>
+    </td>
+  </tr>`).join('');
+  container.innerHTML = `<table class="admin-table"><thead><tr><th>Pertanyaan</th><th>Jawaban</th><th>Urutan</th><th>Aktif</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function showFaqForm(f = null) {
+  document.getElementById('faqId').value       = f?.id || '';
+  document.getElementById('faqQuestion').value = f?.question || '';
+  document.getElementById('faqAnswer').value   = f?.answer || '';
+  document.getElementById('faqOrder').value    = f?.sort_order ?? 0;
+  document.getElementById('faqActive').checked = f ? f.is_active : true;
+  document.getElementById('faqFormTitle').textContent = f ? 'Edit FAQ' : 'Tambah FAQ';
+  const errEl = document.getElementById('faqError');
+  errEl.textContent = ''; errEl.classList.remove('visible');
+  document.getElementById('faqForm').style.display = 'block';
+  document.getElementById('faqForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function hideFaqForm() {
+  document.getElementById('faqForm').style.display = 'none';
+  document.getElementById('faqId').value = '';
+}
+
+async function saveFaq() {
+  const id       = document.getElementById('faqId').value.trim();
+  const question = document.getElementById('faqQuestion').value.trim();
+  const answer   = document.getElementById('faqAnswer').value.trim();
+  const order    = parseInt(document.getElementById('faqOrder').value) || 0;
+  const active   = document.getElementById('faqActive').checked;
+  const errEl    = document.getElementById('faqError');
+  const saveBtn  = document.getElementById('faqSaveBtn');
+
+  errEl.textContent = ''; errEl.classList.remove('visible');
+  if (!question) { errEl.textContent = 'Pertanyaan wajib diisi.'; errEl.classList.add('visible'); return; }
+  if (!answer)   { errEl.textContent = 'Jawaban wajib diisi.'; errEl.classList.add('visible'); return; }
+
+  await new Promise(resolve => showConfirm('Simpan FAQ?', 'Apakah Anda yakin ingin menyimpan FAQ ini?', resolve, '💾', 'Ya, Simpan'));
+
+  saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan…';
+  const payload = { question, answer, sort_order: order, is_active: active };
+  const { error } = id
+    ? await supabase.from('faqs').update(payload).eq('id', id)
+    : await supabase.from('faqs').insert(payload);
+  saveBtn.disabled = false; saveBtn.textContent = 'Simpan';
+  if (error) { errEl.textContent = 'Gagal: ' + error.message; errEl.classList.add('visible'); return; }
+  showToast('FAQ berhasil disimpan ✓', 'success');
+  hideFaqForm();
+  await loadFaqs();
+}
+
+async function editFaq(id) {
+  const { data, error } = await supabase.from('faqs').select('*').eq('id', id).single();
+  if (error || !data) { showToast('Gagal memuat data', 'error'); return; }
+  showFaqForm(data);
+}
+
+async function deleteFaq(id, question) {
+  await new Promise(resolve => showConfirm('Hapus FAQ', `Hapus FAQ "${question}"?`, resolve));
+  await supabase.from('faqs').delete().eq('id', id);
+  showToast('FAQ berhasil dihapus', 'success');
+  await loadFaqs();
+}
+
+async function toggleFaqActive(id, current) {
+  const label = current ? 'Nonaktifkan' : 'Aktifkan';
+  await new Promise(resolve => showConfirm(label + ' FAQ', current ? 'FAQ ini akan disembunyikan.' : 'FAQ ini akan ditampilkan kembali.', resolve, current ? '🔴' : '🟢'));
+  await supabase.from('faqs').update({ is_active: !current }).eq('id', id);
+  showToast(`FAQ berhasil di${current?'nonaktifkan':'aktifkan'}`, 'success');
+  await loadFaqs();
+}

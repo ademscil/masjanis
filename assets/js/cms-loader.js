@@ -515,6 +515,24 @@
     });
   }
 
+  // ── FAQ ──────────────────────────────────────────────────────
+  function initFaq() {
+    const grid = document.getElementById('faqGrid');
+    if (!grid) return;
+    const db = getClient();
+    if (!db) return;
+
+    db.from('faqs').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => {
+        if (!data?.length) return; // fallback ke hardcode
+        grid.innerHTML = data.map(f => `
+          <div class="faq-item fade-in visible">
+            <h4>${esc(f.question)}</h4>
+            <p>${f.answer}</p>
+          </div>`).join('');
+      });
+  }
+
   // ── Auto-init ─────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     setActiveNav();
@@ -526,6 +544,7 @@
     initDownload();
     initTestimonials();
     initFeatures();
+    initFaq();
   });
 
 })();

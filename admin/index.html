@@ -87,6 +87,9 @@
         <a class="nav-link" data-panel="panelFeatures" onclick="showPanel('panelFeatures')">
           <span class="nav-icon">⭐</span> Fitur
         </a>
+        <a class="nav-link" data-panel="panelFaq" onclick="showPanel('panelFaq')">
+          <span class="nav-icon">❓</span> FAQ
+        </a>
         <a class="nav-link" data-panel="panelInfo" onclick="showPanel('panelInfo')">
           <span class="nav-icon">📋</span> Informasi
         </a>
@@ -978,6 +981,49 @@
             <div class="form-actions">
               <button class="btn-save" id="featureSaveBtn" onclick="saveFeature()">Simpan</button>
               <button class="btn-cancel" onclick="hideFeatureForm()">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Informasi -->
+        <!-- Panel: FAQ -->
+        <section id="panelFaq" class="admin-panel" hidden>
+          <div class="panel-header">
+            <h3>FAQ</h3>
+            <p>Kelola pertanyaan yang sering diajukan di halaman Kontak</p>
+          </div>
+          <div class="crud-panel-header">
+            <span></span>
+            <button class="btn-add" onclick="showFaqForm()">＋ Tambah FAQ</button>
+          </div>
+          <div id="faqList" class="table-wrap">
+            <div class="table-empty">Memuat data FAQ…</div>
+          </div>
+          <div id="faqForm" class="crud-form-wrap" style="display:none;">
+            <h4 id="faqFormTitle">Tambah FAQ</h4>
+            <input type="hidden" id="faqId" />
+            <div id="faqError" class="form-error" role="alert"></div>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label for="faqQuestion">Pertanyaan <span style="color:#be123c">*</span></label>
+                <input type="text" id="faqQuestion" placeholder="Berapa lama pengiriman produk?" required />
+              </div>
+              <div class="form-field full-width">
+                <label for="faqAnswer">Jawaban <span style="color:#be123c">*</span></label>
+                <textarea id="faqAnswer" rows="4" placeholder="Tuliskan jawaban..." required></textarea>
+              </div>
+              <div class="form-field">
+                <label for="faqOrder">Urutan</label>
+                <input type="number" id="faqOrder" placeholder="0" min="0" value="0" />
+              </div>
+              <div class="form-field checkbox-field full-width">
+                <input type="checkbox" id="faqActive" checked />
+                <label for="faqActive">Aktif (tampilkan di halaman kontak)</label>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn-save" id="faqSaveBtn" onclick="saveFaq()">Simpan</button>
+              <button class="btn-cancel" onclick="hideFaqForm()">Batal</button>
             </div>
           </div>
         </section>

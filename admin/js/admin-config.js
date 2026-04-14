@@ -40,6 +40,7 @@ const PANEL_TITLES = {
   panelSettings:      'Pengaturan',
   panelTestimonials:  'Testimoni',
   panelFeatures:      'Fitur / Keunggulan',
+  panelFaq:           'FAQ',
   panelInfo:          'Informasi',
   panelUsers:         'Pengguna',
 };
