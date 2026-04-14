@@ -732,28 +732,42 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 768px) {
   :root { --sidebar-width: 0px; }
 
+  #dashboardView { flex-direction: column; }
+  .admin-main { margin-left: 0; }
+
+  /* Sidebar jadi top bar */
   .sidebar {
     width: 100%;
     height: auto;
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 100;
     flex-direction: column;
     padding: 0;
     border-right: none;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
   }
 
+  /* Brand + user info dalam satu baris */
   .sidebar-brand {
     display: flex;
-    padding: 0.75rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
 
+  .sidebar-brand img { height: 36px !important; }
+  .sidebar-brand p { display: none; }
+  .sidebar-brand-mobile-user { display: flex !important; }
+
+  /* Nav pills horizontal scroll */
   .sidebar-nav {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 0.4rem 0.5rem;
+    padding: 0.35rem 0.75rem;
     gap: 0.25rem;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
@@ -761,36 +775,42 @@ a { text-decoration: none; color: inherit; }
   .sidebar-nav::-webkit-scrollbar { display: none; }
 
   .sidebar-nav a {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.78rem;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
     border-left: none;
-    border-radius: var(--radius-sm);
-    border-bottom: 2px solid transparent;
+    border-radius: 50px;
+    border-bottom: none;
     white-space: nowrap;
     flex-shrink: 0;
+    gap: 0.3rem;
   }
 
-  .sidebar-nav a.active,
-  .sidebar-nav a:hover {
+  .sidebar-nav a .nav-icon { font-size: 0.85rem; }
+
+  .sidebar-nav a.active {
     border-left-color: transparent;
-    border-bottom-color: #74c69d;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  .sidebar-nav a:hover {
+    background: rgba(255,255,255,0.12);
   }
 
-  #dashboardView { flex-direction: column; }
-  .admin-main { margin-left: 0; }
+  /* Header — sembunyikan karena info sudah di sidebar-brand */
+  .admin-header {
+    display: none;
+  }
+
   .admin-content { padding: 1rem; }
   .form-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .admin-header { padding: 0 1rem; }
-  .admin-header h2 { font-size: 0.95rem; }
   .table-wrap { overflow-x: auto; }
   .admin-table { min-width: 500px; }
   .crud-panel-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
 }
 
 @media (max-width: 480px) {
-  .sidebar-nav a .nav-icon { font-size: 0.9rem; }
+  .sidebar-nav a { padding: 0.35rem 0.6rem; font-size: 0.72rem; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
 }
 

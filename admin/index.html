@@ -61,6 +61,11 @@
       <div class="sidebar-brand">
         <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:52px;width:auto;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:0.25rem;" />
         <p>Admin Panel</p>
+        <!-- Mobile: user info + logout inline -->
+        <div class="sidebar-brand-mobile-user" style="display:none;align-items:center;gap:0.5rem;">
+          <div class="user-avatar" style="width:28px;height:28px;font-size:0.75rem;">A</div>
+          <button class="btn-logout" onclick="handleLogout()" style="padding:0.3rem 0.65rem;font-size:0.75rem;">Keluar</button>
+        </div>
       </div>
       <nav class="sidebar-nav">
         <a class="nav-link active" data-panel="panelDashboard" onclick="showPanel('panelDashboard')">
