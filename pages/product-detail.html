@@ -381,19 +381,36 @@
     });
   }
 
-  // ── Payment modal ──
+  // ── Payment modal ── Mayar.id tidak support iframe, buka modal konfirmasi
   function openPaymentModal(p) {
-    var modal = document.getElementById('paymentModal');
+    var modal  = document.getElementById('paymentModal');
     var nameEl = document.getElementById('modalProductName');
-    var wrap = document.getElementById('modalIframeWrap');
+    var wrap   = document.getElementById('modalIframeWrap');
     nameEl.textContent = p.name;
-    if (p.payment_url) {
-      wrap.innerHTML = '<iframe src="' + esc(p.payment_url) + '" style="width:100%;height:420px;border:none;border-radius:var(--radius-sm);" title="Pembayaran"></iframe>';
-    } else {
-      wrap.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-mid);">Mengarahkan ke halaman kontak...</p>';
-      setTimeout(function () { window.location.href = 'kontak.html'; }, 1200);
+
+    if (!p.payment_url) {
+      wrap.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-mid);">Link pembayaran belum tersedia. Hubungi kami untuk informasi lebih lanjut.</p>';
+      modal.classList.add('open');
+      return;
     }
-    modal.classList.add('active');
+
+    wrap.innerHTML = '\
+      <div style="text-align:center;padding:2rem 1.5rem;">\
+        <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>\
+        <h3 style="font-size:1.1rem;color:var(--text-dark);margin-bottom:0.5rem;">' + esc(p.name) + '</h3>\
+        <p style="color:var(--text-mid);font-size:0.9rem;margin-bottom:1.5rem;">\
+          Anda akan diarahkan ke halaman pembayaran aman Mayar.id\
+        </p>\
+        <a href="' + p.payment_url + '" target="_blank" rel="noopener noreferrer"\
+           style="display:inline-flex;align-items:center;gap:0.5rem;justify-content:center;width:100%;padding:0.9rem;background:var(--green-dark);color:#fff;border-radius:var(--radius-sm);font-weight:600;text-decoration:none;font-size:1rem;"\
+           onclick="document.getElementById(\'paymentModal\').classList.remove(\'active\');document.body.style.overflow=\'\';">\
+          💳 Lanjut ke Pembayaran\
+        </a>\
+        <p style="color:var(--text-light);font-size:0.78rem;margin-top:1rem;">\
+          🔒 Pembayaran diproses oleh Mayar.id — platform pembayaran terpercaya\
+        </p>\
+      </div>';
+    modal.classList.add('open');
   }
 
   // ── Render product detail ──
