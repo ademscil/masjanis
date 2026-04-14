@@ -29,7 +29,7 @@
 /* ── Quill content container ── */
 .quill-content {
   font-size: 1rem;
-  line-height: 1.85;
+  line-height: 1.65;
   color: var(--text-mid);
   word-break: break-word;
   overflow-wrap: break-word;
@@ -37,13 +37,13 @@
 
 /* Paragraf */
 .quill-content p {
-  margin-bottom: 0.85rem;
-  line-height: 1.85;
+  margin-bottom: 0.5rem;
+  line-height: 1.65;
 }
 
-/* Empty paragraph dari Quill = spasi visual, beri tinggi kecil bukan hide */
-.quill-content p:has(> br:only-child) { display: block; height: 0.6rem; margin: 0; }
-.quill-content p:empty { display: block; height: 0.6rem; margin: 0; }
+/* Empty paragraph dari Quill = spasi visual */
+.quill-content p:has(> br:only-child) { display: block; height: 0.4rem; margin: 0; }
+.quill-content p:empty { display: block; height: 0.4rem; margin: 0; }
 
 /* Headings */
 .quill-content h1,
