@@ -1,20 +1,5 @@
 // ===== ADMIN PRODUCTS =====
 
-function formatRupiah(amount) {
-  if (!amount && amount !== 0) return '—';
-  return 'Rp ' + Number(amount).toLocaleString('id-ID');
-}
-
-function escHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 async function loadProducts() {
   const container = document.getElementById('productsList');
   if (!container) return;
@@ -80,6 +65,10 @@ async function loadProducts() {
 }
 
 function showProductForm(product = null) {
+  const formEl = document.getElementById('productForm');
+  if (formEl && !document.body.contains(formEl)) {
+    document.getElementById('panelProducts').appendChild(formEl);
+  }
   document.getElementById('productId').value           = product?.id || '';
   document.getElementById('productName').value         = product?.name || '';
   document.getElementById('productSubtitle').value     = product?.subtitle || '';
@@ -92,57 +81,53 @@ function showProductForm(product = null) {
   document.getElementById('productActive').checked     = product ? product.is_active : true;
   document.getElementById('productFeatured').checked   = product ? (product.is_featured || false) : false;
 
-  // Tab content fields — set textarea value sebagai fallback
   document.getElementById('productManfaat').value     = product?.manfaat     || '';
   document.getElementById('productCaraPakai').value   = product?.cara_pakai  || '';
   document.getElementById('productPeringatan').value  = product?.peringatan  || '';
   document.getElementById('productSpesifikasi').value = product?.spesifikasi || '';
 
-  // Reset image fields
   document.getElementById('uploadProductImage').value = '';
   document.getElementById('productImageUrl').value = product?.image_url || '';
   const prevImg = document.getElementById('previewProductImg');
-  if (product?.image_url) {
-    prevImg.src = product.image_url;
-    prevImg.style.display = 'block';
-  } else {
-    prevImg.src = '';
-    prevImg.style.display = 'none';
-  }
-  // Default ke tab URL jika sudah ada gambar, file jika belum
+  if (product?.image_url) { prevImg.src = product.image_url; prevImg.style.display = 'block'; }
+  else { prevImg.src = ''; prevImg.style.display = 'none'; }
   switchUploadTab('product', product?.image_url ? 'url' : 'file');
 
   document.getElementById('productFormTitle').textContent = product ? 'Edit Produk' : 'Tambah Produk';
-
   const errEl = document.getElementById('productError');
-  errEl.textContent = '';
-  errEl.classList.remove('visible');
+  errEl.textContent = ''; errEl.classList.remove('visible');
 
-  document.getElementById('productForm').style.display = 'block';
-  document.getElementById('productForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  openFormInDrawer(
+    product ? 'Edit Produk' : 'Tambah Produk',
+    'productForm',
+    { id: 'productSaveBtn', fn: 'saveProduct', label: 'Simpan Produk' },
+    'hideProductForm'
+  );
+
   clearDirty();
-  // Mark dirty saat ada perubahan
   document.getElementById('productForm').querySelectorAll('input,textarea,select').forEach(el => {
     el.addEventListener('input', markDirty, { once: false });
     el.addEventListener('change', markDirty, { once: false });
   });
 
-  // Init semua editor SETELAH form visible (Quill tidak bisa init di display:none)
-  initEditorWithData('productDesc', product?.description || '');
-  const tabFields = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
-  const tabValues = {
-    productManfaat:     product?.manfaat     || '',
-    productCaraPakai:   product?.cara_pakai  || '',
-    productPeringatan:  product?.peringatan  || '',
-    productSpesifikasi: product?.spesifikasi || '',
-  };
-  tabFields.forEach(f => initEditorWithData(f, tabValues[f]));
+  // Init editor setelah drawer visible (tunggu CSS transition selesai)
+  setTimeout(() => {
+    initEditorWithData('productDesc', product?.description || '');
+    const tabValues = {
+      productManfaat:     product?.manfaat     || '',
+      productCaraPakai:   product?.cara_pakai  || '',
+      productPeringatan:  product?.peringatan  || '',
+      productSpesifikasi: product?.spesifikasi || '',
+    };
+    Object.entries(tabValues).forEach(([f, v]) => initEditorWithData(f, v));
+  }, 350); // setelah drawer transition 320ms selesai
 }
 
 function hideProductForm() {
   confirmDiscard(() => {
-    document.getElementById('productForm').style.display = 'none';
     document.getElementById('productId').value = '';
+    clearDirty();
+    closeDrawer();
   });
 }
 

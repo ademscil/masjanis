@@ -1,5 +1,36 @@
 // ===== ADMIN UI =====
 
+// ===== UNSAVED CHANGES TRACKING — deklarasi di atas agar tersedia sebelum modul lain load =====
+let _formDirty = false;
+function markDirty() { _formDirty = true; }
+function clearDirty() { _formDirty = false; }
+
+// ===== GLOBAL HELPERS (used by all modules) =====
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatRupiah(amount) {
+  if (!amount && amount !== 0) return '—';
+  return 'Rp ' + Number(amount).toLocaleString('id-ID');
+}
+
+function confirmDiscard(onConfirm) {
+  if (!_formDirty) { onConfirm(); return; }
+  showConfirm(
+    'Buang Perubahan?',
+    'Ada perubahan yang belum disimpan. Yakin ingin menutup form ini?',
+    () => { clearDirty(); onConfirm(); },
+    '⚠️'
+  );
+}
+
 // ===== SHOW / HIDE VIEWS =====
 function showLoginView() {
   document.getElementById('loginView').style.display = 'flex';
@@ -17,11 +48,17 @@ function showDashboardView(user) {
   // Update avatar initial
   const avatar = document.querySelector('.user-avatar');
   if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+  // Update mobile sidebar user info
+  const mobileAdminName = document.getElementById('mobileAdminName');
+  if (mobileAdminName) mobileAdminName.textContent = name.split('@')[0];
+  const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+  if (mobileUserAvatar) mobileUserAvatar.textContent = name.charAt(0).toUpperCase();
+  showMobileTopBarIfNeeded();
 
   // Hanya show dashboard jika belum ada panel aktif
   const activePanel = document.querySelector('.admin-panel:not([hidden])');
   if (!activePanel) {
-    showPanel('panelDashboard');
+    showPanel(restorePanelFromHash());
   } else {
     // Panel sudah aktif (misal setelah tab switch) — reload stats jika di dashboard
     const dashPanel = document.getElementById('panelDashboard');
@@ -51,25 +88,125 @@ function showPanel(panelId) {
     link.classList.toggle('active', link.dataset.panel === panelId);
   });
 
+  // Update URL hash
+  const hashMap = {
+    panelDashboard: 'dashboard', panelProducts: 'products', panelArticles: 'articles',
+    panelClasses: 'classes', panelDownloads: 'downloads', panelContacts: 'contacts',
+    panelSettings: 'settings', panelTestimonials: 'testimonials', panelFeatures: 'features',
+    panelFaq: 'faq', panelInfo: 'info', panelUsers: 'users',
+  };
+  if (hashMap[panelId]) {
+    history.replaceState(null, '', '/admin/#' + hashMap[panelId]);
+  }
+
   // Hook for panel data loading
   loadPanelData(panelId);
+  updateMobileNav(panelId);
+}
+
+// Restore panel from URL hash on load
+function restorePanelFromHash() {
+  const hashToPanel = {
+    dashboard: 'panelDashboard', products: 'panelProducts', articles: 'panelArticles',
+    classes: 'panelClasses', downloads: 'panelDownloads', contacts: 'panelContacts',
+    settings: 'panelSettings', testimonials: 'panelTestimonials', features: 'panelFeatures',
+    faq: 'panelFaq', info: 'panelInfo', users: 'panelUsers',
+  };
+  const hash = window.location.hash.replace('#', '');
+  return hashToPanel[hash] || 'panelDashboard';
 }
 
 function loadPanelData(panelId) {
   if (panelId === 'panelDashboard') setTimeout(() => {
     if (typeof loadDashboardStats === 'function') loadDashboardStats();
   }, 50);
-  if (panelId === 'panelProducts')  { loadProducts(); loadCategoriesFromDB(); }
-  if (panelId === 'panelArticles')  { loadArticles(); loadCategoriesFromDB(); }
-  if (panelId === 'panelClasses')   { loadClasses(); loadCategoriesFromDB(); }
-  if (panelId === 'panelDownloads') { loadDownloads(); loadCategoriesFromDB(); }
-  if (panelId === 'panelContacts')  loadContacts();
-  if (panelId === 'panelSettings')     loadSettings();
-  if (panelId === 'panelTestimonials') loadTestimonials();
-  if (panelId === 'panelFeatures')     loadFeatures();
-  if (panelId === 'panelFaq')          loadFaqs();
-  if (panelId === 'panelInfo')         loadInfo();
-  if (panelId === 'panelUsers')        loadUsers();
+  if (panelId === 'panelProducts')  {
+    if (typeof loadProducts === 'function') loadProducts();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelArticles')  {
+    if (typeof loadArticles === 'function') loadArticles();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelClasses')   {
+    if (typeof loadClasses === 'function') loadClasses();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelDownloads') {
+    if (typeof loadDownloads === 'function') loadDownloads();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelContacts')     { if (typeof loadContacts === 'function') loadContacts(); }
+  if (panelId === 'panelSettings')     { if (typeof loadSettings === 'function') loadSettings(); }
+  if (panelId === 'panelTestimonials') { if (typeof loadTestimonials === 'function') loadTestimonials(); }
+  if (panelId === 'panelFeatures')     { if (typeof loadFeatures === 'function') loadFeatures(); }
+  if (panelId === 'panelFaq')          { if (typeof loadFaqs === 'function') loadFaqs(); }
+  if (panelId === 'panelInfo')         { if (typeof loadInfo === 'function') loadInfo(); }
+  if (panelId === 'panelUsers')        { if (typeof loadUsers === 'function') loadUsers(); }
+}
+
+// ===== DRAWER =====
+function openDrawer(title, bodyHtml, footerHtml) {
+  document.getElementById('drawerTitle').textContent = title;
+  document.getElementById('drawerBody').innerHTML = bodyHtml || '';
+  document.getElementById('drawerFooter').innerHTML = footerHtml || '';
+  document.getElementById('mainDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Open a form element (by ID) inside the drawer
+function openFormInDrawer(title, formId, saveBtn, cancelFn) {
+  const formEl = document.getElementById(formId);
+  if (!formEl) { console.warn('Form not found:', formId); return; }
+
+  // Ensure form is visible and move to drawer
+  formEl.style.display = 'block';
+  formEl._originalParent = formEl.parentElement; // remember where it came from
+
+  const drawerBody = document.getElementById('drawerBody');
+  drawerBody.innerHTML = '';
+  drawerBody.appendChild(formEl);
+
+  document.getElementById('drawerTitle').textContent = title;
+  document.getElementById('drawerFooter').innerHTML = `
+    <button class="btn-cancel" onclick="${cancelFn}()">Batal</button>
+    <button class="btn-save" id="${saveBtn.id}" onclick="${saveBtn.fn}()">&#128190; ${saveBtn.label || 'Simpan'}</button>`;
+
+  // Reset expand button state
+  const expandBtn = document.getElementById('drawerExpandBtn');
+  if (expandBtn) { expandBtn.innerHTML = '&#8596;'; expandBtn.title = 'Perluas'; }
+
+  document.getElementById('mainDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById('mainDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+
+  // Return form to original panel before closing
+  const drawerBody = document.getElementById('drawerBody');
+  const formEl = drawerBody.firstElementChild;
+  if (formEl && formEl._originalParent) {
+    formEl.style.display = 'none';
+    formEl._originalParent.appendChild(formEl);
+    formEl._originalParent = null;
+  }
+
+  drawer.classList.remove('open', 'expanded');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  drawerBody.innerHTML = '';
+}
+
+function toggleDrawerExpand() {
+  const drawer = document.getElementById('mainDrawer');
+  const btn    = document.getElementById('drawerExpandBtn');
+  const isExpanded = drawer.classList.toggle('expanded');
+  if (btn) btn.innerHTML = isExpanded ? '&#8594;' : '&#8596;';
+  if (btn) btn.title = isExpanded ? 'Perkecil' : 'Perluas';
 }
 
 // ===== AUTH: LOGIN =====
@@ -125,6 +262,7 @@ authClient.auth.onAuthStateChange((event, session) => {
 // ===== AUTH: CHECK SESSION ON LOAD =====
 // Tunggu DOMContentLoaded agar semua script modul sudah ter-load
 document.addEventListener('DOMContentLoaded', async () => {
+  initMobileNav();
   const { data: { session } } = await authClient.auth.getSession();
   if (session?.user) {
     showDashboardView(session.user);
@@ -244,19 +382,53 @@ function showConfirm(title, message, onConfirm, icon = '🗑️', okLabel = null
   resetTimer();
 })();
 
-// ===== UNSAVED CHANGES TRACKING =====
-function markDirty() { _formDirty = true; }
-function clearDirty() { _formDirty = false; }
-
-function confirmDiscard(onConfirm) {
-  if (!_formDirty) { onConfirm(); return; }
-  showConfirm(
-    'Buang Perubahan?',
-    'Ada perubahan yang belum disimpan. Yakin ingin menutup form ini?',
-    () => { clearDirty(); onConfirm(); },
-    '⚠️'
-  );
+// ===== MOBILE NAV =====
+function initMobileNav() {
+  const isMobile = window.innerWidth <= 768;
+  const topBar   = document.getElementById('mobileTopBar');
+  if (topBar) topBar.style.display = isMobile ? 'flex' : 'none';
+  // Bottom nav removed — sidebar only
 }
+
+// Also call on dashboard show to ensure top bar is visible after login
+function showMobileTopBarIfNeeded() {
+  if (window.innerWidth <= 768) {
+    const topBar = document.getElementById('mobileTopBar');
+    if (topBar) topBar.style.display = 'flex';
+  }
+}
+
+function toggleMobileSidebar() {
+  const sidebar  = document.getElementById('mobileSidebar');
+  const overlay  = document.getElementById('mobileSidebarOverlay');
+  if (!sidebar) return;
+  const isOpen = sidebar.style.transform === 'translateX(0px)' || sidebar.style.transform === 'translateX(0)';
+  if (isOpen) {
+    closeMobileSidebar();
+  } else {
+    sidebar.style.display = 'flex';
+    overlay.style.display = 'block';
+    requestAnimationFrame(() => { sidebar.style.transform = 'translateX(0)'; });
+  }
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('mobileSidebar');
+  const overlay = document.getElementById('mobileSidebarOverlay');
+  if (!sidebar) return;
+  sidebar.style.transform = 'translateX(-100%)';
+  overlay.style.display = 'none';
+  setTimeout(() => { if (sidebar.style.transform === 'translateX(-100%)') sidebar.style.display = 'none'; }, 300);
+}
+
+// Update active state on mobile nav
+function updateMobileNav(panelId) {
+  document.querySelectorAll('#mobileBottomNav a[data-panel], #mobileSidebar a[data-panel]').forEach(a => {
+    a.classList.toggle('active', a.dataset.panel === panelId);
+  });
+}
+
+window.addEventListener('resize', initMobileNav);
 
 // ===== CATEGORY / LEVEL MANAGER =====
 // Key di site_settings: 'product_categories' dan 'class_levels' (JSON array)

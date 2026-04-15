@@ -62,6 +62,12 @@ async function loadClasses() {
 }
 
 function showClassForm(cls = null) {
+  // Ensure form is in DOM before setting values
+  const formEl = document.getElementById('classForm');
+  if (formEl && !document.body.contains(formEl)) {
+    document.getElementById('panelClasses').appendChild(formEl);
+  }
+
   document.getElementById('classId').value            = cls?.id || '';
   document.getElementById('classTitle').value         = cls?.title || '';
   document.getElementById('classDesc').value          = cls?.description || '';
@@ -84,16 +90,19 @@ function showClassForm(cls = null) {
   document.getElementById('classFormTitle').textContent = cls ? 'Edit Kelas' : 'Tambah Kelas';
   const errEl = document.getElementById('classError');
   errEl.textContent = ''; errEl.classList.remove('visible');
-  document.getElementById('classForm').style.display = 'block';
-  document.getElementById('classForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  // Init editor
-  initEditorWithData('classDesc', cls?.description || '');
+  openFormInDrawer(
+    cls ? 'Edit Kelas' : 'Tambah Kelas',
+    'classForm',
+    { id: 'classSaveBtn', fn: 'saveClass', label: 'Simpan Kelas' },
+    'hideClassForm'
+  );
+  setTimeout(() => initEditorWithData('classDesc', cls?.description || ''), 350);
 }
 
 function hideClassForm() {
   confirmDiscard(() => {
-    document.getElementById('classForm').style.display = 'none';
     document.getElementById('classId').value = '';
+    clearDirty(); closeDrawer();
   });
 }
 

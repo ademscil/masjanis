@@ -39,12 +39,18 @@ function showTestimonialForm(t = null) {
   document.getElementById('testimonialFormTitle').textContent = t ? 'Edit Testimoni' : 'Tambah Testimoni';
   const errEl = document.getElementById('testimonialError');
   errEl.textContent = ''; errEl.classList.remove('visible');
-  document.getElementById('testimonialForm').style.display = 'block';
-  document.getElementById('testimonialForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  initEditorWithData('testimonialContent', t?.content || '');
+  openFormInDrawer(
+    t ? 'Edit Testimoni' : 'Tambah Testimoni',
+    'testimonialForm',
+    { id: 'testimonialSaveBtn', fn: 'saveTestimonial', label: 'Simpan Testimoni' },
+    'hideTestimonialForm'
+  );
+  setTimeout(() => initEditorWithData('testimonialContent', t?.content || ''), 350);
 }
 
-function hideTestimonialForm() { document.getElementById('testimonialForm').style.display = 'none'; }
+function hideTestimonialForm() {
+  closeDrawer();
+}
 
 async function saveTestimonial() {
   const id       = document.getElementById('testimonialId').value.trim();
@@ -128,12 +134,18 @@ function showFeatureForm(f = null) {
   document.getElementById('featureFormTitle').textContent = f ? 'Edit Fitur' : 'Tambah Fitur';
   const errEl = document.getElementById('featureError');
   errEl.textContent = ''; errEl.classList.remove('visible');
-  document.getElementById('featureForm').style.display = 'block';
-  document.getElementById('featureForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  initEditorWithData('featureDesc', f?.description || '');
+  openFormInDrawer(
+    f ? 'Edit Fitur' : 'Tambah Fitur',
+    'featureForm',
+    { id: 'featureSaveBtn', fn: 'saveFeature', label: 'Simpan Fitur' },
+    'hideFeatureForm'
+  );
+  setTimeout(() => initEditorWithData('featureDesc', f?.description || ''), 350);
 }
 
-function hideFeatureForm() { document.getElementById('featureForm').style.display = 'none'; }
+function hideFeatureForm() {
+  closeDrawer();
+}
 
 async function saveFeature() {
   const id    = document.getElementById('featureId').value.trim();
@@ -221,13 +233,17 @@ function showFaqForm(f = null) {
   document.getElementById('faqFormTitle').textContent = f ? 'Edit FAQ' : 'Tambah FAQ';
   const errEl = document.getElementById('faqError');
   errEl.textContent = ''; errEl.classList.remove('visible');
-  document.getElementById('faqForm').style.display = 'block';
-  document.getElementById('faqForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  openFormInDrawer(
+    f ? 'Edit FAQ' : 'Tambah FAQ',
+    'faqForm',
+    { id: 'faqSaveBtn', fn: 'saveFaq', label: 'Simpan FAQ' },
+    'hideFaqForm'
+  );
 }
 
 function hideFaqForm() {
-  document.getElementById('faqForm').style.display = 'none';
   document.getElementById('faqId').value = '';
+  closeDrawer();
 }
 
 async function saveFaq() {

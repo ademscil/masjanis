@@ -60,6 +60,10 @@ async function loadArticles() {
 }
 
 function showArticleForm(article = null) {
+  const formEl = document.getElementById('articleForm');
+  if (formEl && !document.body.contains(formEl)) {
+    document.getElementById('panelArticles').appendChild(formEl);
+  }
   document.getElementById('articleId').value            = article?.id || '';
   document.getElementById('articleTitle').value         = article?.title || '';
   document.getElementById('articleExcerpt').value       = article?.excerpt || '';
@@ -79,16 +83,19 @@ function showArticleForm(article = null) {
   document.getElementById('articleFormTitle').textContent = article ? 'Edit Artikel' : 'Tambah Artikel';
   const errEl = document.getElementById('articleError');
   errEl.textContent = ''; errEl.classList.remove('visible');
-  document.getElementById('articleForm').style.display = 'block';
-  document.getElementById('articleForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  // Init editor
-  initEditorWithData('articleExcerpt', article?.excerpt || '');
+  openFormInDrawer(
+    article ? 'Edit Artikel' : 'Tambah Artikel',
+    'articleForm',
+    { id: 'articleSaveBtn', fn: 'saveArticle', label: 'Simpan Artikel' },
+    'hideArticleForm'
+  );
+  setTimeout(() => initEditorWithData('articleExcerpt', article?.excerpt || ''), 350);
 }
 
 function hideArticleForm() {
   confirmDiscard(() => {
-    document.getElementById('articleForm').style.display = 'none';
     document.getElementById('articleId').value = '';
+    clearDirty(); closeDrawer();
   });
 }
 

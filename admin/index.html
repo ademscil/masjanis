@@ -1215,6 +1215,70 @@
   <!-- Toast Container -->
   <div id="toastContainer"></div>
 
+  <!-- Mobile Top Bar (shown on mobile only) -->
+  <div id="mobileTopBar" style="display:none;">
+    <button onclick="showPanel('panelDashboard')" style="display:flex;align-items:center;gap:0.5rem;background:none;border:none;cursor:pointer;padding:0;">
+      <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:32px;filter:brightness(0) invert(1);" />
+      <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;">MasJanis</span>
+    </button>
+    <button onclick="toggleMobileSidebar()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;">&#9776;</button>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div id="mobileSidebarOverlay" onclick="closeMobileSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;"></div>
+
+  <!-- Mobile Sidebar Drawer -->
+  <div id="mobileSidebar" style="display:none;position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--green-dark);z-index:301;overflow-y:auto;transform:translateX(-100%);transition:transform 0.3s ease;flex-direction:column;">
+    <!-- Brand + User -->
+    <div style="padding:1.25rem;border-bottom:1px solid rgba(255,255,255,0.1);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+        <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:28px;filter:brightness(0) invert(1);" />
+        <button onclick="closeMobileSidebar()" style="background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">&#10005;</button>
+      </div>
+      <!-- User card -->
+      <div style="display:flex;align-items:center;gap:0.75rem;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem;">
+        <div id="mobileUserAvatar" style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#40916c,#74c69d);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.95rem;flex-shrink:0;">A</div>
+        <div style="flex:1;min-width:0;">
+          <div id="mobileAdminName" style="color:#fff;font-size:0.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;">Admin</div>
+          <div style="color:rgba(255,255,255,0.45);font-size:0.7rem;margin-top:1px;">Administrator</div>
+        </div>
+        <button onclick="handleLogout()" title="Keluar" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)';this.style.color='#fca5a5';this.style.borderColor='rgba(239,68,68,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.6)';this.style.borderColor='rgba(255,255,255,0.12)'">&#8594;&#124;</button>
+      </div>
+    </div>
+    <!-- Nav links -->
+    <nav style="padding:0.5rem 0;flex:1;">
+      <a class="mobile-sidebar-link" data-panel="panelDashboard" onclick="showPanel('panelDashboard');closeMobileSidebar()"><span class="nav-icon">&#128202;</span> Dashboard</a>
+      <a class="mobile-sidebar-link" data-panel="panelProducts" onclick="showPanel('panelProducts');closeMobileSidebar()"><span class="nav-icon">&#128717;</span> Produk</a>
+      <a class="mobile-sidebar-link" data-panel="panelArticles" onclick="showPanel('panelArticles');closeMobileSidebar()"><span class="nav-icon">&#128221;</span> Artikel</a>
+      <a class="mobile-sidebar-link" data-panel="panelClasses" onclick="showPanel('panelClasses');closeMobileSidebar()"><span class="nav-icon">&#127891;</span> Kelas</a>
+      <a class="mobile-sidebar-link" data-panel="panelDownloads" onclick="showPanel('panelDownloads');closeMobileSidebar()"><span class="nav-icon">&#128229;</span> Download</a>
+      <a class="mobile-sidebar-link" data-panel="panelContacts" onclick="showPanel('panelContacts');closeMobileSidebar()"><span class="nav-icon">&#9993;</span> Pesan</a>
+      <div style="height:1px;background:rgba(255,255,255,0.1);margin:0.4rem 0;"></div>
+      <a class="mobile-sidebar-link" data-panel="panelSettings" onclick="showPanel('panelSettings');closeMobileSidebar()"><span class="nav-icon">&#9881;</span> Pengaturan</a>
+      <a class="mobile-sidebar-link" data-panel="panelTestimonials" onclick="showPanel('panelTestimonials');closeMobileSidebar()"><span class="nav-icon">&#128172;</span> Testimoni</a>
+      <a class="mobile-sidebar-link" data-panel="panelFeatures" onclick="showPanel('panelFeatures');closeMobileSidebar()"><span class="nav-icon">&#11088;</span> Fitur</a>
+      <a class="mobile-sidebar-link" data-panel="panelFaq" onclick="showPanel('panelFaq');closeMobileSidebar()"><span class="nav-icon">&#10067;</span> FAQ</a>
+      <a class="mobile-sidebar-link" data-panel="panelInfo" onclick="showPanel('panelInfo');closeMobileSidebar()"><span class="nav-icon">&#128203;</span> Informasi</a>
+      <a class="mobile-sidebar-link" data-panel="panelUsers" onclick="showPanel('panelUsers');closeMobileSidebar()"><span class="nav-icon">&#128101;</span> Pengguna</a>
+    </nav>
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <!-- Drawer -->
+  <div class="drawer" id="mainDrawer">
+    <div class="drawer-header">
+      <h3 id="drawerTitle">Form</h3>
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-left:auto;">
+        <button class="drawer-expand-btn" id="drawerExpandBtn" onclick="toggleDrawerExpand()" title="Perluas">&#8596;</button>
+        <button class="drawer-close" onclick="closeDrawer()" title="Tutup">&#10005;</button>
+      </div>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-footer" id="drawerFooter"></div>
+  </div>
+
   <!-- Custom Confirm Dialog -->
   <div id="confirmOverlay">
     <div id="confirmBox">
