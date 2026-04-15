@@ -90,6 +90,26 @@
   50% { transform: translateY(8px); }
 }
 
+/* ── Visitor Counter Bar ── */
+.visitor-bar {
+  background: var(--green-pale);
+  padding: 0.6rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(45,106,79,0.1);
+}
+
+.visitor-count {
+  font-size: 0.82rem;
+  color: var(--green-dark);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+#visitorCount {
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
 /* ── Features ── */
 .feature-card {
   text-align: center;

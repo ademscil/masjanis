@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
-Sitemap: https://masjanis.netlify.app/sitemap.xml
+Sitemap: https://masjanis.com/sitemap.xml

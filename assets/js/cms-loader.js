@@ -662,6 +662,31 @@
       });
   }
 
+  // ── Page View Tracker ────────────────────────────────────────
+  function trackPageView() {
+    const db = getClient();
+    if (!db) return;
+    if (window.location.pathname.startsWith('/admin')) return;
+    const page     = window.location.pathname || '/';
+    const referrer = document.referrer ? (() => { try { return new URL(document.referrer).hostname; } catch(e) { return null; } })() : null;
+    db.from('page_views').insert({ page, referrer }).then(() => {});
+  }
+
+  // ── Visitor Counter (beranda) ─────────────────────────────────
+  function initVisitorCounter() {
+    const el = document.getElementById('visitorCount');
+    if (!el) return;
+    const db = getClient();
+    if (!db) return;
+    db.from('page_views').select('id', { count: 'exact', head: true })
+      .then(({ count }) => {
+        if (count == null) return;
+        el.textContent = count >= 1000
+          ? (count / 1000).toFixed(1).replace('.0', '') + 'K+'
+          : count.toLocaleString('id-ID');
+      });
+  }
+
   // ── Auto-init ─────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     setActiveNav();
@@ -674,6 +699,8 @@
     initTestimonials();
     initFeatures();
     initFaq();
+    trackPageView();
+    initVisitorCounter();
   });
 
 })();
