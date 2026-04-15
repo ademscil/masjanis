@@ -48,11 +48,11 @@ function showDashboardView(user) {
   // Update avatar initial
   const avatar = document.querySelector('.user-avatar');
   if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
-  // Update mobile top bar
-  const mobileAvatar = document.querySelector('#mobileTopBar .user-avatar');
-  if (mobileAvatar) mobileAvatar.textContent = name.charAt(0).toUpperCase();
+  // Update mobile sidebar user info
   const mobileAdminName = document.getElementById('mobileAdminName');
   if (mobileAdminName) mobileAdminName.textContent = name.split('@')[0];
+  const mobileUserAvatar = document.getElementById('mobileUserAvatar');
+  if (mobileUserAvatar) mobileUserAvatar.textContent = name.charAt(0).toUpperCase();
 
   // Hanya show dashboard jika belum ada panel aktif
   const activePanel = document.querySelector('.admin-panel:not([hidden])');
@@ -384,10 +384,9 @@ function showConfirm(title, message, onConfirm, icon = '🗑️', okLabel = null
 // ===== MOBILE NAV =====
 function initMobileNav() {
   const isMobile = window.innerWidth <= 768;
-  const topBar    = document.getElementById('mobileTopBar');
-  const bottomNav = document.getElementById('mobileBottomNav');
-  if (topBar)    topBar.style.display    = isMobile ? 'flex' : 'none';
-  if (bottomNav) bottomNav.style.display = isMobile ? 'flex' : 'none';
+  const topBar   = document.getElementById('mobileTopBar');
+  if (topBar) topBar.style.display = isMobile ? 'flex' : 'none';
+  // Bottom nav removed — sidebar only
 }
 
 function toggleMobileSidebar() {

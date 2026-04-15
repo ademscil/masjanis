@@ -1016,48 +1016,10 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== MOBILE BOTTOM NAV (replaces horizontal scroll) ===== */
 @media (max-width: 768px) {
-  /* Hide sidebar completely on mobile */
+  /* Hide desktop sidebar on mobile */
   .sidebar { display: none; }
 
-  /* Bottom navigation bar */
-  #mobileBottomNav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--green-dark);
-    z-index: 200;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    height: 56px;
-  }
-
-  #mobileBottomNav a {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    color: rgba(255,255,255,0.6);
-    font-size: 0.6rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-    padding: 0.25rem 0;
-  }
-
-  #mobileBottomNav a .nav-icon { font-size: 1.1rem; line-height: 1; }
-  #mobileBottomNav a span { font-size: 0.58rem; }
-
-  #mobileBottomNav a.active,
-  #mobileBottomNav a:hover {
-    color: var(--white);
-    background: rgba(255,255,255,0.1);
-  }
-
-  /* Mobile top bar — logo + user only */
+  /* Mobile top bar */
   #mobileTopBar {
     display: flex;
     position: sticky;
@@ -1070,9 +1032,11 @@ a { text-decoration: none; color: inherit; }
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
 
-  /* More menu overlay — removed, replaced with sidebar */
-  #mobileMoreMenu { display: none !important; }
+  /* Bottom nav — removed */
+  #mobileBottomNav { display: none !important; }
+  #mobileMoreMenu  { display: none !important; }
 
+  /* Mobile sidebar links */
   .mobile-sidebar-link {
     display: flex;
     align-items: center;
@@ -1086,6 +1050,7 @@ a { text-decoration: none; color: inherit; }
     border-left: 3px solid transparent;
     text-decoration: none;
   }
+  .mobile-sidebar-link .nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
   .mobile-sidebar-link:hover,
   .mobile-sidebar-link.active {
     color: #fff;
@@ -1093,7 +1058,7 @@ a { text-decoration: none; color: inherit; }
     border-left-color: #74c69d;
   }
 
-  .admin-main { margin-left: 0; padding-bottom: 56px; }
+  .admin-main { margin-left: 0; }
   .admin-content { padding: 1rem; }
   .form-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
