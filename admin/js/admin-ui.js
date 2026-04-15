@@ -53,6 +53,7 @@ function showDashboardView(user) {
   if (mobileAdminName) mobileAdminName.textContent = name.split('@')[0];
   const mobileUserAvatar = document.getElementById('mobileUserAvatar');
   if (mobileUserAvatar) mobileUserAvatar.textContent = name.charAt(0).toUpperCase();
+  showMobileTopBarIfNeeded();
 
   // Hanya show dashboard jika belum ada panel aktif
   const activePanel = document.querySelector('.admin-panel:not([hidden])');
@@ -387,6 +388,14 @@ function initMobileNav() {
   const topBar   = document.getElementById('mobileTopBar');
   if (topBar) topBar.style.display = isMobile ? 'flex' : 'none';
   // Bottom nav removed — sidebar only
+}
+
+// Also call on dashboard show to ensure top bar is visible after login
+function showMobileTopBarIfNeeded() {
+  if (window.innerWidth <= 768) {
+    const topBar = document.getElementById('mobileTopBar');
+    if (topBar) topBar.style.display = 'flex';
+  }
 }
 
 function toggleMobileSidebar() {
