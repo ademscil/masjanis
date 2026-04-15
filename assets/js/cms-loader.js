@@ -266,8 +266,11 @@
   }
 
   function renderArticle(a) {
-    const bgMap = { 'tanaman-obat':'bg1', 'ramuan':'bg2', 'fitokimia':'bg3', 'holistik':'bg4', 'jamu':'bg5', 'modern':'bg6' };
-    const bg   = a.bg_class || bgMap[a.category] || 'bg1';
+    const bgMap  = { 'tanaman-obat':'bg1', 'ramuan':'bg2', 'fitokimia':'bg3', 'holistik':'bg4', 'jamu':'bg5', 'modern':'bg6' };
+    const catMap = { 'tanaman-obat':'Tanaman Obat', 'ramuan':'Ramuan', 'fitokimia':'Fitokimia', 'holistik':'Holistik', 'jamu':'Jamu', 'modern':'Modern' };
+    const bg     = a.bg_class || bgMap[a.category] || 'bg1';
+    // Label kategori: pakai map jika ada, fallback ke capitalize raw value
+    const catLabel = catMap[a.category] || a.category.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
     const time = a.read_time ? `<span>⏱ ${a.read_time} menit baca</span>` : '';
     const date = a.published_date
       ? `<span>📅 ${new Date(a.published_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>`
@@ -283,7 +286,7 @@
       <a href="/teori-detail/${slugify(a.title)}" class="article-card searchable-card fade-in visible" data-category="${a.category}" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;">
         <div class="article-img ${bg}" style="position:relative;overflow:hidden;">${imgEl}</div>
         <div class="article-body">
-          <span class="badge badge-green">${a.category}</span>
+          <span class="badge badge-green">${esc(catLabel)}</span>
           <h3>${esc(a.title)}</h3>
           <p class="article-excerpt">${esc(plainExcerpt)}</p>
           <div class="article-meta">${time}${date}</div>
@@ -307,7 +310,8 @@
     const bg    = c.bg_class || bgMap[c.level] || 'bg1';
     const price = c.price ? 'Rp ' + Number(c.price).toLocaleString('id-ID') : '';
     const orig  = c.original_price ? 'Rp ' + Number(c.original_price).toLocaleString('id-ID') : '';
-    const lvl   = { pemula: 'Pemula', menengah: 'Menengah', lanjutan: 'Lanjutan' }[c.level] || c.level;
+    const lvl   = { pemula: 'Pemula', menengah: 'Menengah', lanjutan: 'Lanjutan' }[c.level]
+                  || c.level.replace(/-/g,' ').replace(/\b\w/g, ch => ch.toUpperCase());
     const imgEl = c.image_url
       ? `<img src="${c.image_url}" alt="${esc(c.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
       : `<span style="font-size:4rem;">${c.emoji || '🎓'}</span>`;
@@ -536,6 +540,17 @@
         ['footer_col2_title','footer_col3_title','footer_col4_title'].forEach(k => {
           if (s[k]) document.querySelectorAll(`[data-site="${k}"]`).forEach(el => { el.textContent = s[k]; });
         });
+
+        // Trust badges (product-detail.html)
+        const trustWrap = document.getElementById('trustBadges');
+        if (trustWrap && s.trust_badges) {
+          try {
+            const badges = JSON.parse(s.trust_badges);
+            if (Array.isArray(badges) && badges.length) {
+              trustWrap.innerHTML = badges.map(b => `<div class="trust-badge">${esc(b)}</div>`).join('');
+            }
+          } catch(e) {}
+        }
 
         // About section (index.html)
         const aboutTitle = document.getElementById('aboutTitle');
