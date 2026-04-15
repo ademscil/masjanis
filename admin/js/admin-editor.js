@@ -89,18 +89,17 @@ function initEditor(id) {
         placeholder: '',
       });
 
-      // Ukuran editor
       const qlEditor = container.querySelector('.ql-editor');
       if (qlEditor && isSmall) qlEditor.classList.add('small');
 
-      // Sync ke textarea
       quill.on('text-change', () => {
         const ta = document.getElementById(id);
         if (ta) ta.value = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
       });
 
       editors[id] = quill;
-      resolve();
+      // Beri satu tick agar Quill selesai render sebelum setEditorData dipanggil
+      setTimeout(resolve, 50);
     } catch(e) {
       console.warn('Quill init failed for', id, ':', e.message);
       resolve();

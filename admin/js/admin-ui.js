@@ -189,8 +189,62 @@ function showConfirm(title, message, onConfirm, icon = '🗑️', okLabel = null
   overlay.onclick = (e) => { if (e.target === overlay) close(); };
 }
 
+// ===== AUTO-LOGOUT SESSION =====
+// Logout otomatis setelah 30 menit tidak ada aktivitas
+(function() {
+  const TIMEOUT_MS = 30 * 60 * 1000; // 30 menit
+  const WARN_MS    = 2  * 60 * 1000; // warning 2 menit sebelum logout
+  let _logoutTimer, _warnTimer, _warnToast;
+
+  function resetTimer() {
+    clearTimeout(_logoutTimer);
+    clearTimeout(_warnTimer);
+    if (_warnToast) { _warnToast.remove(); _warnToast = null; }
+
+    _warnTimer = setTimeout(() => {
+      _warnToast = document.createElement('div');
+      _warnToast.style.cssText = `
+        position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);
+        background:#92400e;color:#fff;padding:0.85rem 1.5rem;border-radius:8px;
+        font-size:0.9rem;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);
+        display:flex;align-items:center;gap:0.75rem;`;
+      _warnToast.innerHTML = `
+        <span>&#9888;&#65039; Sesi akan berakhir dalam 2 menit</span>
+        <button onclick="window._resetSessionTimer()" style="
+          background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);
+          color:#fff;padding:0.3rem 0.75rem;border-radius:4px;cursor:pointer;font-size:0.82rem;">
+          Tetap Login
+        </button>`;
+      document.body.appendChild(_warnToast);
+    }, TIMEOUT_MS - WARN_MS);
+
+    _logoutTimer = setTimeout(async () => {
+      if (_warnToast) { _warnToast.remove(); _warnToast = null; }
+      await authClient.auth.signOut();
+      showLoginView();
+      const msg = document.createElement('div');
+      msg.style.cssText = `
+        position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+        background:#fff;border-radius:12px;padding:2rem 2.5rem;text-align:center;
+        box-shadow:0 8px 40px rgba(0,0,0,0.2);z-index:99999;`;
+      msg.innerHTML = `<div style="font-size:2rem;margin-bottom:0.75rem;">&#128274;</div>
+        <h3 style="margin-bottom:0.5rem;color:#1a1a2e;">Sesi Berakhir</h3>
+        <p style="color:#7a7a9a;font-size:0.9rem;">Logout otomatis karena tidak ada aktivitas selama 30 menit.</p>`;
+      document.body.appendChild(msg);
+      setTimeout(() => msg.remove(), 4000);
+    }, TIMEOUT_MS);
+  }
+
+  window._resetSessionTimer = resetTimer;
+
+  ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt => {
+    document.addEventListener(evt, resetTimer, { passive: true });
+  });
+
+  resetTimer();
+})();
+
 // ===== UNSAVED CHANGES TRACKING =====
-let _formDirty = false;
 function markDirty() { _formDirty = true; }
 function clearDirty() { _formDirty = false; }
 
