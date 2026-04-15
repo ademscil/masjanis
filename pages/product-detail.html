@@ -274,10 +274,10 @@
 
   const bgMap = { suplemen: 'bg1', minuman: 'bg2', perawatan: 'bg5', paket: 'bg3' };
   const catLabels = {
-    suplemen: '&#128138; Suplemen',
-    minuman: '&#127861; Minuman',
-    perawatan: '&#10024; Perawatan',
-    paket: '&#128166; Paket'
+    suplemen: 'Suplemen',
+    minuman: 'Minuman',
+    perawatan: 'Perawatan',
+    paket: 'Paket'
   };
 
   function fmt(n) {
@@ -393,16 +393,11 @@
       imgWrap.appendChild(badge);
     }
 
-    // Category badge
-    document.getElementById('detailCategory').textContent = catLabels[p.category] || p.category || '&mdash;';
-
-    // Title & subtitle
-    document.getElementById('detailTitle').textContent = p.name;
-    // subtitle column doesn't exist yet &mdash; keep placeholder
-    // aka column doesn't exist yet &mdash; keep placeholder
-
-    // Properties
-    document.getElementById('propKategori').textContent = catLabels[p.category] || p.category || '&mdash;';
+    // Category badge — capitalize custom categories too
+    const catDisplay = catLabels[p.category]
+      || (p.category || '').replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    document.getElementById('detailCategory').textContent = catDisplay;
+    document.getElementById('propKategori').textContent   = catDisplay;
 
     // Price
     document.getElementById('detailPrice').textContent = p.price ? fmt(p.price) : 'Hubungi Kami';
@@ -452,8 +447,8 @@
     }
 
     // Tab: Detail Produk specs
-    document.getElementById('specName').textContent = p.name;
-    document.getElementById('specCategory').textContent = catLabels[p.category] || p.category || '&mdash;';
+    document.getElementById('specName').textContent     = p.name;
+    document.getElementById('specCategory').textContent = catDisplay;
 
     // Sticky bar
     document.getElementById('stickyName').textContent = p.name;
@@ -509,17 +504,21 @@
     var grid = document.getElementById('relatedGrid');
     grid.innerHTML = related.map(function (p) {
       var bg    = bgMap[p.category] || 'bg1';
-      var price = p.price ? fmt(p.price) : '&mdash;';
+      var price = p.price ? fmt(p.price) : '';
+      var orig  = p.original_price ? fmt(p.original_price) : '';
       var imgEl = p.image_url
-        ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.name) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
-        : '<span style="font-size:2.5rem;">' + esc(p.emoji || '&#127807;') + '</span>';
-      return '<a href="/product-detail/' + slugify(p.name) + '" class="product-card fade-in" style="text-decoration:none;color:inherit;">'
-        + '<div class="product-img ' + bg + '" style="position:relative;overflow:hidden;">' + imgEl + '</div>'
-        + '<div class="product-body">'
-        + '<h3>' + esc(p.name) + '</h3>'
-        + '<div class="product-footer">'
-        + '<div class="product-price">' + price + '</div>'
-        + '<span class="btn btn-outline btn-sm">Lihat</span>'
+        ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.name) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:block;">'
+        : '<span style="font-size:2.5rem;">' + (p.emoji || '&#127807;') + '</span>';
+      return '<a href="/product-detail/' + slugify(p.name) + '" class="product-card fade-in" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);overflow:hidden;transition:all 0.3s ease;">'
+        + '<div class="product-img ' + bg + '" style="height:160px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;">' + imgEl + '</div>'
+        + '<div style="padding:1rem;flex:1;display:flex;flex-direction:column;">'
+        + '<h3 style="font-size:0.9rem;color:#1a1a2e;line-height:1.4;margin-bottom:0.5rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + esc(p.name) + '</h3>'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:0.75rem;border-top:1px solid #e0e0e0;">'
+        + '<div style="font-family:\'Playfair Display\',serif;font-weight:700;color:#2d6a4f;font-size:0.95rem;">'
+        + (orig ? '<span style="font-size:0.75rem;color:#7a7a9a;text-decoration:line-through;display:block;font-family:Inter,sans-serif;font-weight:400;">' + orig + '</span>' : '')
+        + price
+        + '</div>'
+        + '<span style="padding:0.4rem 0.9rem;border:2px solid #2d6a4f;color:#2d6a4f;border-radius:6px;font-size:0.8rem;font-weight:600;">Lihat</span>'
         + '</div></div></a>';
     }).join('');
 
