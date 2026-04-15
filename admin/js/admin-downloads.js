@@ -93,7 +93,7 @@ function showDownloadForm(dl = null) {
   errEl.textContent = ''; errEl.classList.remove('visible');
   document.getElementById('downloadForm').style.display = 'block';
   document.getElementById('downloadForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  initEditor('downloadDesc').then(() => setEditorData('downloadDesc', dl?.description || ''));
+  initEditorWithData('downloadDesc', dl?.description || '');
 }
 
 function hideDownloadForm() {
