@@ -90,24 +90,68 @@
   50% { transform: translateY(8px); }
 }
 
-/* ── Visitor Counter Bar ── */
-.visitor-bar {
-  background: var(--green-pale);
-  padding: 0.6rem 2rem;
-  text-align: center;
-  border-bottom: 1px solid rgba(45,106,79,0.1);
+/* ── Visitor Counter (digit style) ── */
+.visitor-counter {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
 }
 
-.visitor-count {
-  font-size: 0.82rem;
-  color: var(--green-dark);
+.visitor-counter-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   font-weight: 500;
-  opacity: 0.8;
 }
 
-#visitorCount {
+.visitor-digits {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.visitor-digits .digit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 48px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: var(--green-dark);
+  color: var(--gold-light);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Garis tengah seperti flip counter */
+.visitor-digits .digit::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.visitor-digits .sep {
+  color: rgba(255,255,255,0.4);
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 0 2px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 480px) {
+  .visitor-digits .digit { width: 30px; height: 40px; font-size: 1.3rem; }
 }
 
 /* ── Features ── */

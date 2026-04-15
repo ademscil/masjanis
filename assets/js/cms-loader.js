@@ -678,12 +678,18 @@
     if (!el) return;
     const db = getClient();
     if (!db) return;
-    db.from('page_views').select('id', { count: 'exact', head: true })
+    db.from('page_views').select('*', { count: 'exact', head: true })
       .then(({ count }) => {
-        if (count == null) return;
-        el.textContent = count >= 1000
-          ? (count / 1000).toFixed(1).replace('.0', '') + 'K+'
-          : count.toLocaleString('id-ID');
+        const total = count ?? 0;
+        // Render tiap digit sebagai <span class="digit">
+        const digits = String(total).padStart(6, '0').split('');
+        el.innerHTML = digits.map((d, i) => {
+          // Tambah separator titik setiap 3 digit dari kanan
+          const pos = digits.length - i;
+          const sep = (pos % 3 === 0 && i !== 0)
+            ? '<span class="sep">.</span>' : '';
+          return sep + `<span class="digit">${d}</span>`;
+        }).join('');
       });
   }
 
