@@ -1215,6 +1215,90 @@
   <!-- Toast Container -->
   <div id="toastContainer"></div>
 
+  <!-- Mobile Top Bar (shown on mobile only) -->
+  <div id="mobileTopBar" style="display:none;">
+    <a href="/" style="display:flex;align-items:center;gap:0.5rem;">
+      <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:32px;filter:brightness(0) invert(1);" />
+    </a>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <div class="user-avatar" style="width:28px;height:28px;font-size:0.75rem;background:rgba(255,255,255,0.2);color:#fff;">A</div>
+      <button class="btn-logout" onclick="handleLogout()" style="padding:0.25rem 0.6rem;font-size:0.72rem;">Keluar</button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav id="mobileBottomNav" style="display:none;">
+    <a data-panel="panelDashboard" onclick="showPanel('panelDashboard')">
+      <span class="nav-icon">&#128202;</span>
+      <span>Dashboard</span>
+    </a>
+    <a data-panel="panelProducts" onclick="showPanel('panelProducts')">
+      <span class="nav-icon">&#128717;</span>
+      <span>Produk</span>
+    </a>
+    <a data-panel="panelArticles" onclick="showPanel('panelArticles')">
+      <span class="nav-icon">&#128221;</span>
+      <span>Artikel</span>
+    </a>
+    <a data-panel="panelClasses" onclick="showPanel('panelClasses')">
+      <span class="nav-icon">&#127891;</span>
+      <span>Kelas</span>
+    </a>
+    <a onclick="toggleMobileMore()">
+      <span class="nav-icon">&#8943;</span>
+      <span>Lainnya</span>
+    </a>
+  </nav>
+
+  <!-- Mobile More Menu -->
+  <div id="mobileMoreMenu">
+    <a data-panel="panelDownloads" onclick="showPanel('panelDownloads');closeMobileMore()">
+      <span class="nav-icon">&#128229;</span>
+      <span>Download</span>
+    </a>
+    <a data-panel="panelContacts" onclick="showPanel('panelContacts');closeMobileMore()">
+      <span class="nav-icon">&#9993;</span>
+      <span>Pesan</span>
+    </a>
+    <a data-panel="panelSettings" onclick="showPanel('panelSettings');closeMobileMore()">
+      <span class="nav-icon">&#9881;</span>
+      <span>Pengaturan</span>
+    </a>
+    <a data-panel="panelTestimonials" onclick="showPanel('panelTestimonials');closeMobileMore()">
+      <span class="nav-icon">&#128172;</span>
+      <span>Testimoni</span>
+    </a>
+    <a data-panel="panelFeatures" onclick="showPanel('panelFeatures');closeMobileMore()">
+      <span class="nav-icon">&#11088;</span>
+      <span>Fitur</span>
+    </a>
+    <a data-panel="panelFaq" onclick="showPanel('panelFaq');closeMobileMore()">
+      <span class="nav-icon">&#10067;</span>
+      <span>FAQ</span>
+    </a>
+    <a data-panel="panelInfo" onclick="showPanel('panelInfo');closeMobileMore()">
+      <span class="nav-icon">&#128203;</span>
+      <span>Informasi</span>
+    </a>
+    <a data-panel="panelUsers" onclick="showPanel('panelUsers');closeMobileMore()">
+      <span class="nav-icon">&#128101;</span>
+      <span>Pengguna</span>
+    </a>
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <!-- Drawer -->
+  <div class="drawer" id="mainDrawer">
+    <div class="drawer-header">
+      <h3 id="drawerTitle">Form</h3>
+      <button class="drawer-close" onclick="closeDrawer()" title="Tutup">&#10005;</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-footer" id="drawerFooter"></div>
+  </div>
+
   <!-- Custom Confirm Dialog -->
   <div id="confirmOverlay">
     <div id="confirmBox">

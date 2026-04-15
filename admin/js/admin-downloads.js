@@ -69,6 +69,10 @@ async function loadDownloads() {
 }
 
 function showDownloadForm(dl = null) {
+  const formEl = document.getElementById('downloadForm');
+  if (formEl && !document.body.contains(formEl)) {
+    document.getElementById('panelDownloads').appendChild(formEl);
+  }
   document.getElementById('downloadId').value       = dl?.id || '';
   document.getElementById('downloadTitle').value    = dl?.title || '';
   document.getElementById('downloadDesc').value     = dl?.description || '';
@@ -91,18 +95,22 @@ function showDownloadForm(dl = null) {
   document.getElementById('downloadFormTitle').textContent = dl ? 'Edit Download' : 'Tambah Download';
   const errEl = document.getElementById('downloadError');
   errEl.textContent = ''; errEl.classList.remove('visible');
-  document.getElementById('downloadForm').style.display = 'block';
-  document.getElementById('downloadForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  initEditorWithData('downloadDesc', dl?.description || '');
+  openFormInDrawer(
+    dl ? 'Edit Download' : 'Tambah Download',
+    'downloadForm',
+    { id: 'downloadSaveBtn', fn: 'saveDownload', label: 'Simpan Download' },
+    'hideDownloadForm'
+  );
+  setTimeout(() => initEditorWithData('downloadDesc', dl?.description || ''), 350);
 }
 
 function hideDownloadForm() {
-  document.getElementById('downloadForm').style.display = 'none';
-  document.getElementById('downloadId').value = '';
   const uploadInput = document.getElementById('uploadDownloadFile');
   if (uploadInput) uploadInput.value = '';
   const statusEl2 = document.getElementById('downloadFileStatus');
   if (statusEl2) statusEl2.textContent = '';
+  document.getElementById('downloadId').value = '';
+  closeDrawer();
 }
 
 async function saveDownload() {

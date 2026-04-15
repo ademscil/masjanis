@@ -1,5 +1,20 @@
 // ===== ADMIN UI =====
 
+// ===== UNSAVED CHANGES TRACKING — deklarasi di atas agar tersedia sebelum modul lain load =====
+let _formDirty = false;
+function markDirty() { _formDirty = true; }
+function clearDirty() { _formDirty = false; }
+
+function confirmDiscard(onConfirm) {
+  if (!_formDirty) { onConfirm(); return; }
+  showConfirm(
+    'Buang Perubahan?',
+    'Ada perubahan yang belum disimpan. Yakin ingin menutup form ini?',
+    () => { clearDirty(); onConfirm(); },
+    '⚠️'
+  );
+}
+
 // ===== SHOW / HIDE VIEWS =====
 function showLoginView() {
   document.getElementById('loginView').style.display = 'flex';
@@ -17,11 +32,14 @@ function showDashboardView(user) {
   // Update avatar initial
   const avatar = document.querySelector('.user-avatar');
   if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+  // Update mobile top bar avatar too
+  const mobileAvatar = document.querySelector('#mobileTopBar .user-avatar');
+  if (mobileAvatar) mobileAvatar.textContent = name.charAt(0).toUpperCase();
 
   // Hanya show dashboard jika belum ada panel aktif
   const activePanel = document.querySelector('.admin-panel:not([hidden])');
   if (!activePanel) {
-    showPanel('panelDashboard');
+    showPanel(restorePanelFromHash());
   } else {
     // Panel sudah aktif (misal setelah tab switch) — reload stats jika di dashboard
     const dashPanel = document.getElementById('panelDashboard');
@@ -51,8 +69,32 @@ function showPanel(panelId) {
     link.classList.toggle('active', link.dataset.panel === panelId);
   });
 
+  // Update URL hash
+  const hashMap = {
+    panelDashboard: 'dashboard', panelProducts: 'products', panelArticles: 'articles',
+    panelClasses: 'classes', panelDownloads: 'downloads', panelContacts: 'contacts',
+    panelSettings: 'settings', panelTestimonials: 'testimonials', panelFeatures: 'features',
+    panelFaq: 'faq', panelInfo: 'info', panelUsers: 'users',
+  };
+  if (hashMap[panelId]) {
+    history.replaceState(null, '', '/admin/#' + hashMap[panelId]);
+  }
+
   // Hook for panel data loading
   loadPanelData(panelId);
+  updateMobileNav(panelId);
+}
+
+// Restore panel from URL hash on load
+function restorePanelFromHash() {
+  const hashToPanel = {
+    dashboard: 'panelDashboard', products: 'panelProducts', articles: 'panelArticles',
+    classes: 'panelClasses', downloads: 'panelDownloads', contacts: 'panelContacts',
+    settings: 'panelSettings', testimonials: 'panelTestimonials', features: 'panelFeatures',
+    faq: 'panelFaq', info: 'panelInfo', users: 'panelUsers',
+  };
+  const hash = window.location.hash.replace('#', '');
+  return hashToPanel[hash] || 'panelDashboard';
 }
 
 function loadPanelData(panelId) {
@@ -70,6 +112,67 @@ function loadPanelData(panelId) {
   if (panelId === 'panelFaq')          loadFaqs();
   if (panelId === 'panelInfo')         loadInfo();
   if (panelId === 'panelUsers')        loadUsers();
+}
+
+// ===== DRAWER =====
+function openDrawer(title, bodyHtml, footerHtml) {
+  document.getElementById('drawerTitle').textContent = title;
+  document.getElementById('drawerBody').innerHTML = bodyHtml || '';
+  document.getElementById('drawerFooter').innerHTML = footerHtml || '';
+  document.getElementById('mainDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Open a form element (by ID) inside the drawer
+function openFormInDrawer(title, formId, saveBtn, cancelFn) {
+  const formEl = document.getElementById(formId);
+  if (!formEl) { console.warn('Form not found:', formId); return; }
+
+  // Ensure form is visible and move to drawer
+  formEl.style.display = 'block';
+  formEl._originalParent = formEl.parentElement; // remember where it came from
+
+  const drawerBody = document.getElementById('drawerBody');
+  drawerBody.innerHTML = '';
+  drawerBody.appendChild(formEl);
+
+  document.getElementById('drawerTitle').textContent = title;
+  document.getElementById('drawerFooter').innerHTML = `
+    <button class="btn-cancel" onclick="${cancelFn}()">Batal</button>
+    <button class="btn-save" id="${saveBtn.id}" onclick="${saveBtn.fn}()">&#128190; ${saveBtn.label || 'Simpan'}</button>
+    <button class="drawer-expand-btn" id="drawerExpandBtn" onclick="toggleDrawerExpand()" title="Perluas">&#8596;</button>`;
+
+  document.getElementById('mainDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById('mainDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+
+  // Return form to original panel before closing
+  const drawerBody = document.getElementById('drawerBody');
+  const formEl = drawerBody.firstElementChild;
+  if (formEl && formEl._originalParent) {
+    formEl.style.display = 'none';
+    formEl._originalParent.appendChild(formEl);
+    formEl._originalParent = null;
+  }
+
+  drawer.classList.remove('open', 'expanded');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  drawerBody.innerHTML = '';
+}
+
+function toggleDrawerExpand() {
+  const drawer = document.getElementById('mainDrawer');
+  const btn    = document.getElementById('drawerExpandBtn');
+  const isExpanded = drawer.classList.toggle('expanded');
+  if (btn) btn.innerHTML = isExpanded ? '&#8594;' : '&#8596;';
+  if (btn) btn.title = isExpanded ? 'Perkecil' : 'Perluas';
 }
 
 // ===== AUTH: LOGIN =====
@@ -125,6 +228,7 @@ authClient.auth.onAuthStateChange((event, session) => {
 // ===== AUTH: CHECK SESSION ON LOAD =====
 // Tunggu DOMContentLoaded agar semua script modul sudah ter-load
 document.addEventListener('DOMContentLoaded', async () => {
+  initMobileNav();
   const { data: { session } } = await authClient.auth.getSession();
   if (session?.user) {
     showDashboardView(session.user);
@@ -244,19 +348,39 @@ function showConfirm(title, message, onConfirm, icon = '🗑️', okLabel = null
   resetTimer();
 })();
 
-// ===== UNSAVED CHANGES TRACKING =====
-function markDirty() { _formDirty = true; }
-function clearDirty() { _formDirty = false; }
-
-function confirmDiscard(onConfirm) {
-  if (!_formDirty) { onConfirm(); return; }
-  showConfirm(
-    'Buang Perubahan?',
-    'Ada perubahan yang belum disimpan. Yakin ingin menutup form ini?',
-    () => { clearDirty(); onConfirm(); },
-    '⚠️'
-  );
+// ===== MOBILE NAV =====
+function initMobileNav() {
+  const isMobile = window.innerWidth <= 768;
+  const topBar   = document.getElementById('mobileTopBar');
+  const bottomNav= document.getElementById('mobileBottomNav');
+  if (topBar)    topBar.style.display    = isMobile ? 'flex' : 'none';
+  if (bottomNav) bottomNav.style.display = isMobile ? 'flex' : 'none';
 }
+
+function toggleMobileMore() {
+  document.getElementById('mobileMoreMenu')?.classList.toggle('open');
+}
+
+function closeMobileMore() {
+  document.getElementById('mobileMoreMenu')?.classList.remove('open');
+}
+
+// Update active state on mobile bottom nav
+function updateMobileNav(panelId) {
+  const hashMap = {
+    panelDashboard:'panelDashboard', panelProducts:'panelProducts',
+    panelArticles:'panelArticles', panelClasses:'panelClasses',
+    panelDownloads:'panelDownloads', panelContacts:'panelContacts',
+    panelSettings:'panelSettings', panelTestimonials:'panelTestimonials',
+    panelFeatures:'panelFeatures', panelFaq:'panelFaq',
+    panelInfo:'panelInfo', panelUsers:'panelUsers',
+  };
+  document.querySelectorAll('#mobileBottomNav a[data-panel], #mobileMoreMenu a[data-panel]').forEach(a => {
+    a.classList.toggle('active', a.dataset.panel === panelId);
+  });
+}
+
+window.addEventListener('resize', initMobileNav);
 
 // ===== CATEGORY / LEVEL MANAGER =====
 // Key di site_settings: 'product_categories' dan 'class_levels' (JSON array)
