@@ -109,7 +109,11 @@ function initEditor(id) {
 
 function setEditorData(id, html) {
   if (editors[id]) {
-    editors[id].root.innerHTML = html || '';
+    if (html) {
+      editors[id].clipboard.dangerouslyPasteHTML(0, html, 'silent');
+    } else {
+      editors[id].setText('');
+    }
     const ta = document.getElementById(id);
     if (ta) ta.value = html || '';
   } else {
@@ -131,11 +135,46 @@ function getEditorData(id) {
 // Selalu set data bahkan jika editor sudah ada (untuk edit produk berbeda)
 function initEditorWithData(id, html) {
   if (editors[id]) {
-    // Editor sudah ada — langsung update konten
-    setEditorData(id, html);
+    // Editor sudah ada — pakai clipboard API agar tidak di-reset Quill
+    if (html) {
+      editors[id].clipboard.dangerouslyPasteHTML(0, html, 'silent');
+    } else {
+      editors[id].setText('');
+    }
+    const ta = document.getElementById(id);
+    if (ta) ta.value = html || '';
   } else {
-    // Belum ada — init dulu baru set
-    initEditor(id).then(() => setEditorData(id, html));
+    _initEditorAndSet(id, html);
+  }
+}
+
+function _initEditorAndSet(id, html) {
+  if (!_initQuillFormats()) return;
+  const container = document.getElementById(id + 'Editor');
+  if (!container) return;
+  try {
+    const isSmall = SMALL_EDITORS.includes(id);
+    const quill = new Quill(container, {
+      theme: 'snow',
+      modules: { toolbar: isSmall ? TOOLBAR_SMALL : TOOLBAR },
+      placeholder: '',
+    });
+    const qlEditor = container.querySelector('.ql-editor');
+    if (qlEditor && isSmall) qlEditor.classList.add('small');
+
+    if (html) quill.clipboard.dangerouslyPasteHTML(0, html, 'silent');
+
+    quill.on('text-change', () => {
+      const ta = document.getElementById(id);
+      if (ta) ta.value = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
+    });
+
+    const ta = document.getElementById(id);
+    if (ta) ta.value = html || '';
+
+    editors[id] = quill;
+  } catch(e) {
+    console.warn('Quill init failed for', id, ':', e.message);
   }
 }
 
