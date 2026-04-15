@@ -666,10 +666,11 @@
   function trackPageView() {
     const db = getClient();
     if (!db) return;
-    if (window.location.pathname.startsWith('/admin')) return;
-    const page     = window.location.pathname || '/';
+    // Hanya track kunjungan ke beranda (/)
+    const path = window.location.pathname;
+    if (path !== '/' && path !== '/index.html') return;
     const referrer = document.referrer ? (() => { try { return new URL(document.referrer).hostname; } catch(e) { return null; } })() : null;
-    db.from('page_views').insert({ page, referrer }).then(() => {});
+    db.from('page_views').insert({ page: '/', referrer }).then(() => {});
   }
 
   // ── Visitor Counter (beranda) ─────────────────────────────────
