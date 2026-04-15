@@ -203,7 +203,7 @@
                 <input type="text" id="productSubtitle" placeholder="Solusi praktis untuk..." />
               </div>
               <div class="form-field full-width">
-                <label>Foto Produk</label>
+                <label for="uploadProductImage">Foto Produk</label>
                 <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                   <button type="button" onclick="switchUploadTab('product','file')" id="tabFile_product" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
                   <button type="button" onclick="switchUploadTab('product','url')" id="tabUrl_product" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
@@ -325,7 +325,7 @@
                 <input type="text" id="articleTitle" placeholder="Judul artikel" required />
               </div>
               <div class="form-field full-width">
-                <label>Gambar Artikel</label>
+                <label for="uploadArticleImage">Gambar Artikel</label>
                 <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                   <button type="button" onclick="switchUploadTab('article','file')" id="tabFile_article" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
                   <button type="button" onclick="switchUploadTab('article','url')" id="tabUrl_article" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
@@ -410,7 +410,7 @@
                 <input type="text" id="classTitle" placeholder="Judul kelas" required />
               </div>
               <div class="form-field full-width">
-                <label>Gambar Kelas</label>
+                <label for="uploadClassImage">Gambar Kelas</label>
                 <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                   <button type="button" onclick="switchUploadTab('class','file')" id="tabFile_class" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
                   <button type="button" onclick="switchUploadTab('class','url')" id="tabUrl_class" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
@@ -504,7 +504,7 @@
                 <input type="text" id="downloadTitle" placeholder="Judul materi download" required />
               </div>
               <div class="form-field full-width">
-                <label>Gambar Thumbnail</label>
+                <label for="uploadDownloadImage">Gambar Thumbnail</label>
                 <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                   <button type="button" onclick="switchUploadTab('dlimg','file')" id="tabFile_dlimg" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
                   <button type="button" onclick="switchUploadTab('dlimg','url')" id="tabUrl_dlimg" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
@@ -609,7 +609,7 @@
               <div style="font-weight:700;color:var(--text-dark);margin-bottom:1rem;font-size:0.95rem;">🏠 Beranda (Hero)</div>
               <div class="form-grid">
                 <div class="form-field full-width">
-                  <label>Gambar Hero</label>
+                  <label for="uploadHeroImage">Gambar Hero</label>
                   <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
                     <button type="button" onclick="switchUploadTab('hero','file')" id="tabFile_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
                     <button type="button" onclick="switchUploadTab('hero','url')" id="tabUrl_hero" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
@@ -643,7 +643,7 @@
               <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">🛍️ Toko</div>
               <div class="form-grid">
                 <div class="form-field full-width">
-                  <label>Gambar Header</label>
+                  <span class="form-label-text">Gambar Header</span>
                   <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
                     <button type="button" onclick="switchUploadTab('shop','file')" id="tabFile_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
                     <button type="button" onclick="switchUploadTab('shop','url')" id="tabUrl_shop" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
@@ -657,15 +657,15 @@
                   <img id="previewHeader_shop" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
                 </div>
                 <div class="form-field">
-                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTag_shop" placeholder="contoh: 🌿 Herbal Terpercaya" />
                 </div>
                 <div class="form-field">
-                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTitle_shop" placeholder="Judul halaman" />
                 </div>
                 <div class="form-field full-width">
-                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderSubtitle_shop" placeholder="Deskripsi singkat halaman" />
                 </div>
               </div>
@@ -676,7 +676,7 @@
               <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">📖 Teori</div>
               <div class="form-grid">
                 <div class="form-field full-width">
-                  <label>Gambar Header</label>
+                  <span class="form-label-text">Gambar Header</span>
                   <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
                     <button type="button" onclick="switchUploadTab('teori','file')" id="tabFile_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
                     <button type="button" onclick="switchUploadTab('teori','url')" id="tabUrl_teori" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
@@ -690,15 +690,15 @@
                   <img id="previewHeader_teori" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
                 </div>
                 <div class="form-field">
-                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTag_teori" placeholder="contoh: 🌿 Herbal Terpercaya" />
                 </div>
                 <div class="form-field">
-                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTitle_teori" placeholder="Judul halaman" />
                 </div>
                 <div class="form-field full-width">
-                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderSubtitle_teori" placeholder="Deskripsi singkat halaman" />
                 </div>
               </div>
@@ -709,7 +709,7 @@
               <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">🎓 Kelas</div>
               <div class="form-grid">
                 <div class="form-field full-width">
-                  <label>Gambar Header</label>
+                  <span class="form-label-text">Gambar Header</span>
                   <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
                     <button type="button" onclick="switchUploadTab('kelas','file')" id="tabFile_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
                     <button type="button" onclick="switchUploadTab('kelas','url')" id="tabUrl_kelas" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
@@ -723,15 +723,15 @@
                   <img id="previewHeader_kelas" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
                 </div>
                 <div class="form-field">
-                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTag_kelas" placeholder="contoh: 🌿 Herbal Terpercaya" />
                 </div>
                 <div class="form-field">
-                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTitle_kelas" placeholder="Judul halaman" />
                 </div>
                 <div class="form-field full-width">
-                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderSubtitle_kelas" placeholder="Deskripsi singkat halaman" />
                 </div>
               </div>
@@ -742,7 +742,7 @@
               <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">📥 Download</div>
               <div class="form-grid">
                 <div class="form-field full-width">
-                  <label>Gambar Header</label>
+                  <span class="form-label-text">Gambar Header</span>
                   <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
                     <button type="button" onclick="switchUploadTab('download','file')" id="tabFile_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
                     <button type="button" onclick="switchUploadTab('download','url')" id="tabUrl_download" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
@@ -756,15 +756,15 @@
                   <img id="previewHeader_download" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
                 </div>
                 <div class="form-field">
-                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTag_download" placeholder="contoh: 🌿 Herbal Terpercaya" />
                 </div>
                 <div class="form-field">
-                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTitle_download" placeholder="Judul halaman" />
                 </div>
                 <div class="form-field full-width">
-                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderSubtitle_download" placeholder="Deskripsi singkat halaman" />
                 </div>
               </div>
@@ -775,7 +775,7 @@
               <div style="font-weight:600;color:var(--text-dark);margin-bottom:1rem;">✉️ Kontak</div>
               <div class="form-grid">
                 <div class="form-field full-width">
-                  <label>Gambar Header</label>
+                  <span class="form-label-text">Gambar Header</span>
                   <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
                     <button type="button" onclick="switchUploadTab('kontak','file')" id="tabFile_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.8rem;cursor:pointer;">📁 Upload File</button>
                     <button type="button" onclick="switchUploadTab('kontak','url')" id="tabUrl_kontak" style="padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.8rem;cursor:pointer;">🔗 Pakai URL</button>
@@ -789,15 +789,15 @@
                   <img id="previewHeader_kontak" src="" alt="" style="display:none;margin-top:0.75rem;max-height:120px;border-radius:var(--radius-sm);object-fit:cover;width:100%;" />
                 </div>
                 <div class="form-field">
-                  <label>Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Tag <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTag_kontak" placeholder="contoh: 🌿 Herbal Terpercaya" />
                 </div>
                 <div class="form-field">
-                  <label>Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Judul <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderTitle_kontak" placeholder="Judul halaman" />
                 </div>
                 <div class="form-field full-width">
-                  <label>Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></label>
+                  <span class="form-label-text">Subtitle <span style="font-size:0.75rem;color:var(--text-light);">(opsional)</span></span>
                   <input type="text" id="settingHeaderSubtitle_kontak" placeholder="Deskripsi singkat halaman" />
                 </div>
               </div>
@@ -1022,7 +1022,7 @@
               <textarea id="infoAboutBody" style="display:none;"></textarea>
               </div>
               <div class="form-field full-width">
-                <label>Gambar Tentang Kami</label>
+                <label for="uploadAboutImg">Gambar Tentang Kami</label>
                 <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
                   <button type="button" onclick="switchUploadTab('aboutImg','file')" id="tabFile_aboutImg" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--green-mid);background:var(--green-mid);color:#fff;font-size:0.78rem;cursor:pointer;">📁 Upload</button>
                   <button type="button" onclick="switchUploadTab('aboutImg','url')" id="tabUrl_aboutImg" style="padding:0.3rem 0.75rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:#fff;color:var(--text-mid);font-size:0.78rem;cursor:pointer;">🔗 URL</button>
