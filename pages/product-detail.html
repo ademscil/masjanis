@@ -94,32 +94,6 @@
           <h1 class="detail-title" id="detailTitle">&mdash;</h1>
           <p class="detail-subtitle" id="detailSubtitle">Informasi belum tersedia</p>
 
-          <!-- Juga dikenal sebagai -->
-          <div class="detail-aka">
-            <div class="detail-aka-label">&#127807; Juga dikenal sebagai</div>
-            <div class="detail-aka-value" id="detailAka">Informasi belum tersedia</div>
-          </div>
-
-          <!-- Properties grid -->
-          <div class="detail-props">
-            <div class="detail-prop">
-              <div class="detail-prop-label">&#10024; Manfaat Utama</div>
-              <div class="detail-prop-value" id="propManfaat">Informasi belum tersedia</div>
-            </div>
-            <div class="detail-prop">
-              <div class="detail-prop-label">&#127991;&#65039; Kategori Herbal</div>
-              <div class="detail-prop-value" id="propKategori">&mdash;</div>
-            </div>
-            <div class="detail-prop">
-              <div class="detail-prop-label">&#129514; Kandungan</div>
-              <div class="detail-prop-value" id="propKandungan">Informasi belum tersedia</div>
-            </div>
-            <div class="detail-prop">
-              <div class="detail-prop-label">&#128203; Cara Pakai</div>
-              <div class="detail-prop-value" id="propCaraPakai">Informasi belum tersedia</div>
-            </div>
-          </div>
-
           <!-- Price -->
           <div class="detail-price-wrap">
             <span class="detail-price" id="detailPrice">&mdash;</span>
@@ -398,31 +372,11 @@
     // Category badge — capitalize custom categories too
     const catDisplay = catLabels[p.category]
       || (p.category || '').replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    // Category + title
     document.getElementById('detailCategory').textContent = catDisplay;
-    document.getElementById('propKategori').textContent   = catDisplay;
-
-    // Title & subtitle
     document.getElementById('detailTitle').textContent    = p.name;
     document.getElementById('detailSubtitle').textContent = p.subtitle || '';
     if (!p.subtitle) document.getElementById('detailSubtitle').style.display = 'none';
-
-    // Juga dikenal sebagai
-    if (p.aka) {
-      document.getElementById('detailAka').textContent = p.aka;
-    }
-
-    // Properties — manfaat utama & kandungan (plain text preview)
-    if (p.manfaat) {
-      const plain = p.manfaat.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,120);
-      document.getElementById('propManfaat').textContent = plain + (plain.length >= 120 ? '...' : '');
-    }
-    if (p.kandungan) {
-      document.getElementById('propKandungan').textContent = p.kandungan;
-    }
-    if (p.cara_pakai) {
-      const plainCara = p.cara_pakai.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,80);
-      document.getElementById('propCaraPakai').textContent = plainCara + (plainCara.length >= 80 ? '...' : '');
-    }
 
     // Price
     document.getElementById('detailPrice').textContent = p.price ? fmt(p.price) : 'Hubungi Kami';
