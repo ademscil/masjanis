@@ -149,6 +149,7 @@ async function saveArticle() {
       ({ error } = await supabase.from('articles').insert(payload));
     }
     if (error) throw error;
+    clearDirty();
     hideArticleForm();
     showToast('Artikel berhasil disimpan ✓', 'success');
     await loadArticles();

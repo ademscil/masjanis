@@ -162,6 +162,7 @@ async function saveClass() {
     if (id) { ({ error } = await supabase.from('classes').update(payload).eq('id', id)); }
     else    { ({ error } = await supabase.from('classes').insert(payload)); }
     if (error) throw error;
+    clearDirty();
     hideClassForm();
     showToast('Kelas berhasil disimpan ✓', 'success');
     await loadClasses();
