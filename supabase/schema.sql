@@ -10,6 +10,9 @@ CREATE TABLE products (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name           TEXT NOT NULL,
   description    TEXT,
+  subtitle       TEXT,
+  aka            TEXT,
+  kandungan      TEXT,
   price          INTEGER NOT NULL,
   original_price INTEGER,
   category       TEXT NOT NULL,
@@ -17,7 +20,12 @@ CREATE TABLE products (
   badge_label    TEXT,
   image_url      TEXT,
   is_active      BOOLEAN NOT NULL DEFAULT true,
+  is_featured    BOOLEAN NOT NULL DEFAULT false,
   payment_url    TEXT,
+  manfaat        TEXT,
+  cara_pakai     TEXT,
+  peringatan     TEXT,
+  spesifikasi    TEXT,
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

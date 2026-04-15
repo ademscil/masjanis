@@ -294,9 +294,13 @@ body { background: #f7f8f5; }
   color: var(--text-dark);
   font-size: 1.15rem;
   margin-bottom: 0.75rem;
-  margin-top: 1.25rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
 }
-.tab-panel-inner h3:first-child { margin-top: 0; }
+.tab-panel-inner h3:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.tab-panel-inner ol { padding-left: 1.25rem; }
+.tab-panel-inner ol li { margin-bottom: 0.4rem; }
 .tab-panel-inner p { margin-bottom: 0.75rem; }
 .tab-panel-inner ul { padding-left: 1.25rem; list-style: disc; }
 .tab-panel-inner ul li { margin-bottom: 0.4rem; }
