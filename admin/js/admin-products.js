@@ -92,23 +92,11 @@ function showProductForm(product = null) {
   document.getElementById('productActive').checked     = product ? product.is_active : true;
   document.getElementById('productFeatured').checked   = product ? (product.is_featured || false) : false;
 
-  // Tab content fields
+  // Tab content fields — set textarea value sebagai fallback
   document.getElementById('productManfaat').value     = product?.manfaat     || '';
   document.getElementById('productCaraPakai').value   = product?.cara_pakai  || '';
   document.getElementById('productPeringatan').value  = product?.peringatan  || '';
   document.getElementById('productSpesifikasi').value = product?.spesifikasi || '';
-
-  // Tab content — selalu set data setelah form dibuka
-  const tabFields = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
-  const tabValues = {
-    productManfaat:     product?.manfaat     || '',
-    productCaraPakai:   product?.cara_pakai  || '',
-    productPeringatan:  product?.peringatan  || '',
-    productSpesifikasi: product?.spesifikasi || '',
-  };
-  tabFields.forEach(f => {
-    initEditorWithData(f, tabValues[f]);
-  });
 
   // Reset image fields
   document.getElementById('uploadProductImage').value = '';
@@ -138,8 +126,17 @@ function showProductForm(product = null) {
     el.addEventListener('input', markDirty, { once: false });
     el.addEventListener('change', markDirty, { once: false });
   });
-  // Init editor
+
+  // Init semua editor SETELAH form visible (Quill tidak bisa init di display:none)
   initEditorWithData('productDesc', product?.description || '');
+  const tabFields = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
+  const tabValues = {
+    productManfaat:     product?.manfaat     || '',
+    productCaraPakai:   product?.cara_pakai  || '',
+    productPeringatan:  product?.peringatan  || '',
+    productSpesifikasi: product?.spesifikasi || '',
+  };
+  tabFields.forEach(f => initEditorWithData(f, tabValues[f]));
 }
 
 function hideProductForm() {
