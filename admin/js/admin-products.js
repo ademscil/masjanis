@@ -98,7 +98,7 @@ function showProductForm(product = null) {
   document.getElementById('productPeringatan').value  = product?.peringatan  || '';
   document.getElementById('productSpesifikasi').value = product?.spesifikasi || '';
 
-  // Init editor untuk tab content
+  // Tab content — selalu set data setelah form dibuka
   const tabFields = ['productManfaat','productCaraPakai','productPeringatan','productSpesifikasi'];
   const tabValues = {
     productManfaat:     product?.manfaat     || '',
@@ -107,7 +107,7 @@ function showProductForm(product = null) {
     productSpesifikasi: product?.spesifikasi || '',
   };
   tabFields.forEach(f => {
-    initEditor(f).then(() => setEditorData(f, tabValues[f]));
+    initEditorWithData(f, tabValues[f]);
   });
 
   // Reset image fields
@@ -139,7 +139,7 @@ function showProductForm(product = null) {
     el.addEventListener('change', markDirty, { once: false });
   });
   // Init editor
-  initEditor('productDesc').then(() => setEditorData('productDesc', product?.description || ''));
+  initEditorWithData('productDesc', product?.description || '');
 }
 
 function hideProductForm() {

@@ -82,7 +82,7 @@ function showArticleForm(article = null) {
   document.getElementById('articleForm').style.display = 'block';
   document.getElementById('articleForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
   // Init editor
-  initEditor('articleExcerpt').then(() => setEditorData('articleExcerpt', article?.excerpt || ''));
+  initEditorWithData('articleExcerpt', article?.excerpt || '');
 }
 
 function hideArticleForm() {

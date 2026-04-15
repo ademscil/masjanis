@@ -87,7 +87,7 @@ function showClassForm(cls = null) {
   document.getElementById('classForm').style.display = 'block';
   document.getElementById('classForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
   // Init editor
-  initEditor('classDesc').then(() => setEditorData('classDesc', cls?.description || ''));
+  initEditorWithData('classDesc', cls?.description || '');
 }
 
 function hideClassForm() {

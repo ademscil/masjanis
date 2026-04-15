@@ -41,7 +41,7 @@ function showTestimonialForm(t = null) {
   errEl.textContent = ''; errEl.classList.remove('visible');
   document.getElementById('testimonialForm').style.display = 'block';
   document.getElementById('testimonialForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  initEditor('testimonialContent').then(() => setEditorData('testimonialContent', t?.content || ''));
+  initEditorWithData('testimonialContent', t?.content || '');
 }
 
 function hideTestimonialForm() { document.getElementById('testimonialForm').style.display = 'none'; }
@@ -130,7 +130,7 @@ function showFeatureForm(f = null) {
   errEl.textContent = ''; errEl.classList.remove('visible');
   document.getElementById('featureForm').style.display = 'block';
   document.getElementById('featureForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  initEditor('featureDesc').then(() => setEditorData('featureDesc', f?.description || ''));
+  initEditorWithData('featureDesc', f?.description || '');
 }
 
 function hideFeatureForm() { document.getElementById('featureForm').style.display = 'none'; }

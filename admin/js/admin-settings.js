@@ -180,7 +180,7 @@ async function loadInfo() {
   const map = Object.fromEntries(data.map(s => [s.key, s.value]));
   document.getElementById('infoAboutTitle').value = map.about_title || '';
   document.getElementById('infoAboutBody').value  = map.about_body  || '';
-  initEditor('infoAboutBody').then(() => setEditorData('infoAboutBody', map.about_body || ''));
+  initEditorWithData('infoAboutBody', map.about_body || '');
   if (map.about_image_url) {
     document.getElementById('infoAboutImageUrl').value = map.about_image_url;
     const img = document.getElementById('previewAboutImg');

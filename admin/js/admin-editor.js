@@ -127,6 +127,18 @@ function getEditorData(id) {
   return ta ? ta.value : '';
 }
 
+// Helper: init editor jika belum ada, lalu set data
+// Selalu set data bahkan jika editor sudah ada (untuk edit produk berbeda)
+function initEditorWithData(id, html) {
+  if (editors[id]) {
+    // Editor sudah ada — langsung update konten
+    setEditorData(id, html);
+  } else {
+    // Belum ada — init dulu baru set
+    initEditor(id).then(() => setEditorData(id, html));
+  }
+}
+
 // Init Quill formats saat DOM ready (pastikan Quill CDN sudah load)
 document.addEventListener('DOMContentLoaded', () => {
   _initQuillFormats();
