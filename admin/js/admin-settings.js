@@ -197,6 +197,15 @@ async function loadInfo() {
   document.getElementById('infoTiktok').value         = map.tiktok         || '';
   document.getElementById('infoMapEmbed').value        = map.map_embed_url      || '';
   document.getElementById('infoFooterTagline').value   = map.footer_tagline     || '';
+  // Trust badges — stored as JSON array, display as one per line
+  if (map.trust_badges) {
+    try {
+      const badges = JSON.parse(map.trust_badges);
+      document.getElementById('infoTrustBadges').value = badges.join('\n');
+    } catch(e) {
+      document.getElementById('infoTrustBadges').value = map.trust_badges || '';
+    }
+  }
   document.getElementById('infoFooterCopyright').value = map.footer_copyright   || '';
   document.getElementById('infoFooterCol2Title').value = map.footer_col2_title  || '';
   document.getElementById('infoFooterCol3Title').value = map.footer_col3_title  || '';
@@ -246,6 +255,12 @@ async function saveInfo() {
     facebook:         document.getElementById('infoFacebook').value.trim(),
     tiktok:           document.getElementById('infoTiktok').value.trim(),
     map_embed_url:    document.getElementById('infoMapEmbed').value.trim(),
+    trust_badges:     (() => {
+      const raw = document.getElementById('infoTrustBadges').value.trim();
+      if (!raw) return '';
+      const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+      return JSON.stringify(lines);
+    })(),
     footer_tagline:   document.getElementById('infoFooterTagline').value.trim(),
     footer_copyright: document.getElementById('infoFooterCopyright').value.trim(),
     footer_col2_title: document.getElementById('infoFooterCol2Title').value.trim(),
