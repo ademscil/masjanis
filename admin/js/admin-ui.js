@@ -48,9 +48,11 @@ function showDashboardView(user) {
   // Update avatar initial
   const avatar = document.querySelector('.user-avatar');
   if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
-  // Update mobile top bar avatar too
+  // Update mobile top bar
   const mobileAvatar = document.querySelector('#mobileTopBar .user-avatar');
   if (mobileAvatar) mobileAvatar.textContent = name.charAt(0).toUpperCase();
+  const mobileAdminName = document.getElementById('mobileAdminName');
+  if (mobileAdminName) mobileAdminName.textContent = name.split('@')[0];
 
   // Hanya show dashboard jika belum ada panel aktif
   const activePanel = document.querySelector('.admin-panel:not([hidden])');
@@ -168,8 +170,11 @@ function openFormInDrawer(title, formId, saveBtn, cancelFn) {
   document.getElementById('drawerTitle').textContent = title;
   document.getElementById('drawerFooter').innerHTML = `
     <button class="btn-cancel" onclick="${cancelFn}()">Batal</button>
-    <button class="btn-save" id="${saveBtn.id}" onclick="${saveBtn.fn}()">&#128190; ${saveBtn.label || 'Simpan'}</button>
-    <button class="drawer-expand-btn" id="drawerExpandBtn" onclick="toggleDrawerExpand()" title="Perluas">&#8596;</button>`;
+    <button class="btn-save" id="${saveBtn.id}" onclick="${saveBtn.fn}()">&#128190; ${saveBtn.label || 'Simpan'}</button>`;
+
+  // Reset expand button state
+  const expandBtn = document.getElementById('drawerExpandBtn');
+  if (expandBtn) { expandBtn.innerHTML = '&#8596;'; expandBtn.title = 'Perluas'; }
 
   document.getElementById('mainDrawer').classList.add('open');
   document.getElementById('drawerOverlay').classList.add('open');
@@ -379,31 +384,38 @@ function showConfirm(title, message, onConfirm, icon = '🗑️', okLabel = null
 // ===== MOBILE NAV =====
 function initMobileNav() {
   const isMobile = window.innerWidth <= 768;
-  const topBar   = document.getElementById('mobileTopBar');
-  const bottomNav= document.getElementById('mobileBottomNav');
+  const topBar    = document.getElementById('mobileTopBar');
+  const bottomNav = document.getElementById('mobileBottomNav');
   if (topBar)    topBar.style.display    = isMobile ? 'flex' : 'none';
   if (bottomNav) bottomNav.style.display = isMobile ? 'flex' : 'none';
 }
 
-function toggleMobileMore() {
-  document.getElementById('mobileMoreMenu')?.classList.toggle('open');
+function toggleMobileSidebar() {
+  const sidebar  = document.getElementById('mobileSidebar');
+  const overlay  = document.getElementById('mobileSidebarOverlay');
+  if (!sidebar) return;
+  const isOpen = sidebar.style.transform === 'translateX(0px)' || sidebar.style.transform === 'translateX(0)';
+  if (isOpen) {
+    closeMobileSidebar();
+  } else {
+    sidebar.style.display = 'flex';
+    overlay.style.display = 'block';
+    requestAnimationFrame(() => { sidebar.style.transform = 'translateX(0)'; });
+  }
 }
 
-function closeMobileMore() {
-  document.getElementById('mobileMoreMenu')?.classList.remove('open');
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('mobileSidebar');
+  const overlay = document.getElementById('mobileSidebarOverlay');
+  if (!sidebar) return;
+  sidebar.style.transform = 'translateX(-100%)';
+  overlay.style.display = 'none';
+  setTimeout(() => { if (sidebar.style.transform === 'translateX(-100%)') sidebar.style.display = 'none'; }, 300);
 }
 
-// Update active state on mobile bottom nav
+// Update active state on mobile nav
 function updateMobileNav(panelId) {
-  const hashMap = {
-    panelDashboard:'panelDashboard', panelProducts:'panelProducts',
-    panelArticles:'panelArticles', panelClasses:'panelClasses',
-    panelDownloads:'panelDownloads', panelContacts:'panelContacts',
-    panelSettings:'panelSettings', panelTestimonials:'panelTestimonials',
-    panelFeatures:'panelFeatures', panelFaq:'panelFaq',
-    panelInfo:'panelInfo', panelUsers:'panelUsers',
-  };
-  document.querySelectorAll('#mobileBottomNav a[data-panel], #mobileMoreMenu a[data-panel]').forEach(a => {
+  document.querySelectorAll('#mobileBottomNav a[data-panel], #mobileSidebar a[data-panel]').forEach(a => {
     a.classList.toggle('active', a.dataset.panel === panelId);
   });
 }

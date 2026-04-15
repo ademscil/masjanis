@@ -1219,14 +1219,42 @@
   <div id="mobileTopBar" style="display:none;">
     <a href="/" style="display:flex;align-items:center;gap:0.5rem;">
       <img src="/assets/img/gambarlogo-removebg-preview.png" alt="MasJanis" style="height:32px;filter:brightness(0) invert(1);" />
+      <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;">MasJanis</span>
     </a>
     <div style="display:flex;align-items:center;gap:0.5rem;">
-      <div class="user-avatar" style="width:28px;height:28px;font-size:0.75rem;background:rgba(255,255,255,0.2);color:#fff;">A</div>
-      <button class="btn-logout" onclick="handleLogout()" style="padding:0.25rem 0.6rem;font-size:0.72rem;">Keluar</button>
+      <span id="mobileAdminName" style="color:rgba(255,255,255,0.7);font-size:0.78rem;"></span>
+      <button class="btn-logout" onclick="handleLogout()" style="padding:0.3rem 0.75rem;font-size:0.78rem;">Keluar</button>
+      <button onclick="toggleMobileSidebar()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">&#9776;</button>
     </div>
   </div>
 
-  <!-- Mobile Bottom Navigation -->
+  <!-- Mobile Sidebar Overlay -->
+  <div id="mobileSidebarOverlay" onclick="closeMobileSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;"></div>
+
+  <!-- Mobile Sidebar Drawer -->
+  <div id="mobileSidebar" style="display:none;position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--green-dark);z-index:301;overflow-y:auto;transform:translateX(-100%);transition:transform 0.3s ease;flex-direction:column;">
+    <div style="padding:1.25rem;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:#fff;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;">Menu</span>
+      <button onclick="closeMobileSidebar()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;">&#10005;</button>
+    </div>
+    <nav style="padding:0.5rem 0;flex:1;">
+      <a class="mobile-sidebar-link" data-panel="panelDashboard" onclick="showPanel('panelDashboard');closeMobileSidebar()">&#128202; Dashboard</a>
+      <a class="mobile-sidebar-link" data-panel="panelProducts" onclick="showPanel('panelProducts');closeMobileSidebar()">&#128717; Produk</a>
+      <a class="mobile-sidebar-link" data-panel="panelArticles" onclick="showPanel('panelArticles');closeMobileSidebar()">&#128221; Artikel</a>
+      <a class="mobile-sidebar-link" data-panel="panelClasses" onclick="showPanel('panelClasses');closeMobileSidebar()">&#127891; Kelas</a>
+      <a class="mobile-sidebar-link" data-panel="panelDownloads" onclick="showPanel('panelDownloads');closeMobileSidebar()">&#128229; Download</a>
+      <a class="mobile-sidebar-link" data-panel="panelContacts" onclick="showPanel('panelContacts');closeMobileSidebar()">&#9993; Pesan</a>
+      <div style="height:1px;background:rgba(255,255,255,0.1);margin:0.5rem 0;"></div>
+      <a class="mobile-sidebar-link" data-panel="panelSettings" onclick="showPanel('panelSettings');closeMobileSidebar()">&#9881; Pengaturan</a>
+      <a class="mobile-sidebar-link" data-panel="panelTestimonials" onclick="showPanel('panelTestimonials');closeMobileSidebar()">&#128172; Testimoni</a>
+      <a class="mobile-sidebar-link" data-panel="panelFeatures" onclick="showPanel('panelFeatures');closeMobileSidebar()">&#11088; Fitur</a>
+      <a class="mobile-sidebar-link" data-panel="panelFaq" onclick="showPanel('panelFaq');closeMobileSidebar()">&#10067; FAQ</a>
+      <a class="mobile-sidebar-link" data-panel="panelInfo" onclick="showPanel('panelInfo');closeMobileSidebar()">&#128203; Informasi</a>
+      <a class="mobile-sidebar-link" data-panel="panelUsers" onclick="showPanel('panelUsers');closeMobileSidebar()">&#128101; Pengguna</a>
+    </nav>
+  </div>
+
+  <!-- Mobile Bottom Navigation — 5 tab utama -->
   <nav id="mobileBottomNav" style="display:none;">
     <a data-panel="panelDashboard" onclick="showPanel('panelDashboard')">
       <span class="nav-icon">&#128202;</span>
@@ -1244,47 +1272,11 @@
       <span class="nav-icon">&#127891;</span>
       <span>Kelas</span>
     </a>
-    <a onclick="toggleMobileMore()">
-      <span class="nav-icon">&#8943;</span>
-      <span>Lainnya</span>
+    <a onclick="toggleMobileSidebar()">
+      <span class="nav-icon">&#9776;</span>
+      <span>Menu</span>
     </a>
   </nav>
-
-  <!-- Mobile More Menu -->
-  <div id="mobileMoreMenu">
-    <a data-panel="panelDownloads" onclick="showPanel('panelDownloads');closeMobileMore()">
-      <span class="nav-icon">&#128229;</span>
-      <span>Download</span>
-    </a>
-    <a data-panel="panelContacts" onclick="showPanel('panelContacts');closeMobileMore()">
-      <span class="nav-icon">&#9993;</span>
-      <span>Pesan</span>
-    </a>
-    <a data-panel="panelSettings" onclick="showPanel('panelSettings');closeMobileMore()">
-      <span class="nav-icon">&#9881;</span>
-      <span>Pengaturan</span>
-    </a>
-    <a data-panel="panelTestimonials" onclick="showPanel('panelTestimonials');closeMobileMore()">
-      <span class="nav-icon">&#128172;</span>
-      <span>Testimoni</span>
-    </a>
-    <a data-panel="panelFeatures" onclick="showPanel('panelFeatures');closeMobileMore()">
-      <span class="nav-icon">&#11088;</span>
-      <span>Fitur</span>
-    </a>
-    <a data-panel="panelFaq" onclick="showPanel('panelFaq');closeMobileMore()">
-      <span class="nav-icon">&#10067;</span>
-      <span>FAQ</span>
-    </a>
-    <a data-panel="panelInfo" onclick="showPanel('panelInfo');closeMobileMore()">
-      <span class="nav-icon">&#128203;</span>
-      <span>Informasi</span>
-    </a>
-    <a data-panel="panelUsers" onclick="showPanel('panelUsers');closeMobileMore()">
-      <span class="nav-icon">&#128101;</span>
-      <span>Pengguna</span>
-    </a>
-  </div>
 
   <!-- Drawer Overlay -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -1293,7 +1285,10 @@
   <div class="drawer" id="mainDrawer">
     <div class="drawer-header">
       <h3 id="drawerTitle">Form</h3>
-      <button class="drawer-close" onclick="closeDrawer()" title="Tutup">&#10005;</button>
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-left:auto;">
+        <button class="drawer-expand-btn" id="drawerExpandBtn" onclick="toggleDrawerExpand()" title="Perluas">&#8596;</button>
+        <button class="drawer-close" onclick="closeDrawer()" title="Tutup">&#10005;</button>
+      </div>
     </div>
     <div class="drawer-body" id="drawerBody"></div>
     <div class="drawer-footer" id="drawerFooter"></div>
