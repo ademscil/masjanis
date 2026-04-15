@@ -509,7 +509,9 @@
                 <textarea id="downloadDesc" style="display:none;"></textarea>
               </div>
               <div class="form-field">
-                <label for="downloadCategory">Kategori <span style="color:#be123c">*</span></label>
+                <label for="downloadCategory">Kategori <span style="color:#be123c">*</span>
+                  <button type="button" onclick="openCategoryManager('download')" style="margin-left:0.5rem;padding:0.15rem 0.5rem;font-size:0.72rem;background:var(--green-pale);color:var(--green-dark);border:1px solid var(--green-light);border-radius:4px;cursor:pointer;">⚙ Kelola</button>
+                </label>
                 <select id="downloadCategory" required>
                   <option value="ebook">Ebook</option>
                   <option value="panduan">Panduan</option>

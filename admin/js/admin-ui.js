@@ -62,7 +62,7 @@ function loadPanelData(panelId) {
   if (panelId === 'panelProducts')  { loadProducts(); loadCategoriesFromDB(); }
   if (panelId === 'panelArticles')  { loadArticles(); loadCategoriesFromDB(); }
   if (panelId === 'panelClasses')   { loadClasses(); loadCategoriesFromDB(); }
-  if (panelId === 'panelDownloads') loadDownloads();
+  if (panelId === 'panelDownloads') { loadDownloads(); loadCategoriesFromDB(); }
   if (panelId === 'panelContacts')  loadContacts();
   if (panelId === 'panelSettings')     loadSettings();
   if (panelId === 'panelTestimonials') loadTestimonials();
@@ -221,12 +221,13 @@ const CAT_DEFAULTS = {
 };
 
 async function openCategoryManager(type) {
-  const isProduct = type === 'product';
-  const isArticle = type === 'article';
-  const selectId  = isProduct ? 'productCategory' : isArticle ? 'articleCategory' : 'classLevel';
-  const settingKey= isProduct ? 'product_categories' : isArticle ? 'article_categories' : 'class_levels';
-  const title     = isProduct ? 'Kelola Kategori Produk' : isArticle ? 'Kelola Kategori Artikel' : 'Kelola Level Kelas';
-  const icon      = isProduct ? '🏷️' : isArticle ? '📝' : '🎓';
+  const isProduct  = type === 'product';
+  const isArticle  = type === 'article';
+  const isDownload = type === 'download';
+  const selectId   = isProduct ? 'productCategory' : isArticle ? 'articleCategory' : isDownload ? 'downloadCategory' : 'classLevel';
+  const settingKey = isProduct ? 'product_categories' : isArticle ? 'article_categories' : isDownload ? 'download_categories' : 'class_levels';
+  const title      = isProduct ? 'Kelola Kategori Produk' : isArticle ? 'Kelola Kategori Artikel' : isDownload ? 'Kelola Kategori Download' : 'Kelola Level Kelas';
+  const icon       = isProduct ? '🏷️' : isArticle ? '📝' : isDownload ? '📥' : '🎓';
 
   // Ambil data dari DB atau pakai default dari select saat ini
   let items = [];
@@ -333,9 +334,9 @@ function catMgrAdd() {
 async function catMgrSave() {
   const modal = document.getElementById('catManagerOverlay');
   if (!modal) return;
-  const items     = modal._items;
-  const selectId  = modal._selectId;
-  const settingKey= modal._settingKey;
+  const items      = modal._items;
+  const selectId   = modal._selectId;
+  const settingKey = modal._settingKey;
 
   if (!items.length) { showToast('Minimal harus ada 1 opsi', 'warning'); return; }
 
@@ -345,32 +346,34 @@ async function catMgrSave() {
       .upsert({ key: settingKey, value: JSON.stringify(items) }, { onConflict: 'key' });
     if (error) throw error;
 
-    // Update dropdown di form
+    // Update dropdown di form — hanya jika select ada di DOM (form mungkin belum dibuka)
     const select = document.getElementById(selectId);
-    const currentVal = select.value;
-    select.innerHTML = items.map(i => `<option value="${i.value}">${i.label}</option>`).join('');
-    // Pertahankan nilai yang dipilih jika masih ada
-    if (items.find(i => i.value === currentVal)) select.value = currentVal;
+    if (select) {
+      const currentVal = select.value;
+      select.innerHTML = items.map(i => `<option value="${i.value}">${i.label}</option>`).join('');
+      if (items.find(i => i.value === currentVal)) select.value = currentVal;
+    }
 
-    showToast('Berhasil disimpan ke database ✓', 'success');
+    showToast('Berhasil disimpan ✓', 'success');
     modal.remove();
   } catch(e) {
     showToast('Gagal menyimpan: ' + e.message, 'error');
   }
 }
 
-// Load kategori dari DB saat panel produk/kelas dibuka
+// Load kategori dari DB saat panel produk/kelas/download dibuka
 async function loadCategoriesFromDB() {
   try {
     const { data } = await dataClient.from('site_settings')
       .select('key,value')
-      .in('key', ['product_categories', 'class_levels', 'article_categories']);
+      .in('key', ['product_categories', 'class_levels', 'article_categories', 'download_categories']);
     if (!data) return;
     data.forEach(row => {
       const items = JSON.parse(row.value || '[]');
       if (!items.length) return;
-      const selectId = row.key === 'product_categories' ? 'productCategory'
-                     : row.key === 'article_categories' ? 'articleCategory'
+      const selectId = row.key === 'product_categories'  ? 'productCategory'
+                     : row.key === 'article_categories'  ? 'articleCategory'
+                     : row.key === 'download_categories' ? 'downloadCategory'
                      : 'classLevel';
       const select = document.getElementById(selectId);
       if (!select) return;
