@@ -227,8 +227,8 @@ async function saveProduct() {
 
     if (error) throw error;
 
-    hideProductForm();
     clearDirty();
+    hideProductForm();
     showToast('Produk berhasil disimpan ✓', 'success');
     await loadProducts();
 
