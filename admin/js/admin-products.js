@@ -83,9 +83,6 @@ function showProductForm(product = null) {
   document.getElementById('productId').value           = product?.id || '';
   document.getElementById('productName').value         = product?.name || '';
   document.getElementById('productSubtitle').value     = product?.subtitle || '';
-  document.getElementById('productAka').value          = product?.aka || '';
-  document.getElementById('productDesc').value         = product?.description || '';
-  document.getElementById('productKandungan').value    = product?.kandungan || '';
   document.getElementById('productPrice').value        = product?.price ?? '';
   document.getElementById('productOriginalPrice').value = product?.original_price ?? '';
   document.getElementById('productCategory').value     = product?.category || 'suplemen';
@@ -207,8 +204,6 @@ async function saveProduct() {
       name,
       description: description || null,
       subtitle:    document.getElementById('productSubtitle').value.trim() || null,
-      aka:         document.getElementById('productAka').value.trim() || null,
-      kandungan:   document.getElementById('productKandungan').value.trim() || null,
       price,
       original_price: origPrice !== '' ? parseInt(origPrice, 10) : null,
       category,
