@@ -5,6 +5,22 @@ let _formDirty = false;
 function markDirty() { _formDirty = true; }
 function clearDirty() { _formDirty = false; }
 
+// ===== GLOBAL HELPERS (used by all modules) =====
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatRupiah(amount) {
+  if (!amount && amount !== 0) return '—';
+  return 'Rp ' + Number(amount).toLocaleString('id-ID');
+}
+
 function confirmDiscard(onConfirm) {
   if (!_formDirty) { onConfirm(); return; }
   showConfirm(
@@ -101,17 +117,29 @@ function loadPanelData(panelId) {
   if (panelId === 'panelDashboard') setTimeout(() => {
     if (typeof loadDashboardStats === 'function') loadDashboardStats();
   }, 50);
-  if (panelId === 'panelProducts')  { loadProducts(); loadCategoriesFromDB(); }
-  if (panelId === 'panelArticles')  { loadArticles(); loadCategoriesFromDB(); }
-  if (panelId === 'panelClasses')   { loadClasses(); loadCategoriesFromDB(); }
-  if (panelId === 'panelDownloads') { loadDownloads(); loadCategoriesFromDB(); }
-  if (panelId === 'panelContacts')  loadContacts();
-  if (panelId === 'panelSettings')     loadSettings();
-  if (panelId === 'panelTestimonials') loadTestimonials();
-  if (panelId === 'panelFeatures')     loadFeatures();
-  if (panelId === 'panelFaq')          loadFaqs();
-  if (panelId === 'panelInfo')         loadInfo();
-  if (panelId === 'panelUsers')        loadUsers();
+  if (panelId === 'panelProducts')  {
+    if (typeof loadProducts === 'function') loadProducts();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelArticles')  {
+    if (typeof loadArticles === 'function') loadArticles();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelClasses')   {
+    if (typeof loadClasses === 'function') loadClasses();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelDownloads') {
+    if (typeof loadDownloads === 'function') loadDownloads();
+    if (typeof loadCategoriesFromDB === 'function') loadCategoriesFromDB();
+  }
+  if (panelId === 'panelContacts')     { if (typeof loadContacts === 'function') loadContacts(); }
+  if (panelId === 'panelSettings')     { if (typeof loadSettings === 'function') loadSettings(); }
+  if (panelId === 'panelTestimonials') { if (typeof loadTestimonials === 'function') loadTestimonials(); }
+  if (panelId === 'panelFeatures')     { if (typeof loadFeatures === 'function') loadFeatures(); }
+  if (panelId === 'panelFaq')          { if (typeof loadFaqs === 'function') loadFaqs(); }
+  if (panelId === 'panelInfo')         { if (typeof loadInfo === 'function') loadInfo(); }
+  if (panelId === 'panelUsers')        { if (typeof loadUsers === 'function') loadUsers(); }
 }
 
 // ===== DRAWER =====

@@ -1,20 +1,5 @@
 // ===== ADMIN PRODUCTS =====
 
-function formatRupiah(amount) {
-  if (!amount && amount !== 0) return '—';
-  return 'Rp ' + Number(amount).toLocaleString('id-ID');
-}
-
-function escHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 async function loadProducts() {
   const container = document.getElementById('productsList');
   if (!container) return;
@@ -120,8 +105,7 @@ function showProductForm(product = null) {
   );
 
   clearDirty();
-  const formEl = document.getElementById('productForm');
-  formEl.querySelectorAll('input,textarea,select').forEach(el => {
+  document.getElementById('productForm').querySelectorAll('input,textarea,select').forEach(el => {
     el.addEventListener('input', markDirty, { once: false });
     el.addEventListener('change', markDirty, { once: false });
   });
