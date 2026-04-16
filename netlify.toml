@@ -1,6 +1,18 @@
 [build]
   publish = "."
 
+[[edge_functions]]
+  path = "/teori-detail/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/product-detail/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/kelas-detail/*"
+  function = "og-meta"
+
 [[headers]]
   for = "/*"
   [headers.values]
